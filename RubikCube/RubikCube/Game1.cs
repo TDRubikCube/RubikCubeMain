@@ -44,6 +44,7 @@ namespace RubikCube
 
         #endregion
 
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -73,6 +74,7 @@ namespace RubikCube
         /// </summary>
         protected override void LoadContent()
         {
+
             spriteBatch = new SpriteBatch(GraphicsDevice);
         }
 

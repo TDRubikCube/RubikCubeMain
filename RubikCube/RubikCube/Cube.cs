@@ -49,11 +49,12 @@ namespace RubikCube
         #region void
         public void Scramble()
         {
-            List<Vector3> possibleTurns = new List<Vector3> { Vector3.Up, Vector3.Down, Vector3.Right, Vector3.Left, Vector3.Forward, Vector3.Backward };
+            List<char> tempCheckForRepetetive = new List<char>();
+            List<char> possibleTurns = new List<char> { 'R','L','U','D','F','B','I'};
             for (int i = 0; i < 50; i++)
             {
-                Vector3 randomDirection = possibleTurns[rand.Next(0, 5)];
-                ScramblingVectors.Add(randomDirection);
+                tempCheckForRepetetive.Add(possibleTurns[rand.Next(0, 6)]);
+                ScrambleResult += possibleTurns[rand.Next(0, 6)];
             }
         }
 
@@ -62,21 +63,6 @@ namespace RubikCube
             cubeState.OriginalCubeState();
             OriginalCubeDraw();
             ScramblingVectors.Clear();
-        }
-
-        public void Update(GameTime gameTime, bool shouldRotate, List<Vector3> rotatingPlan, bool isInverted)
-        {
-            if (shouldRotate)
-            {
-                //ADD SCRAMBLE
-
-                //Scramble();
-                //if (timer.CallTimer(gameTime) && rotatingPlan != null && rotatingPlan.Count != 0)
-                //{
-                //    Rotate(rotatingPlan[ScrambleIndex], isInverted);
-                //    ScrambleIndex++;
-                //}
-            }
         }
 
         private void OriginalCubeDraw()
@@ -231,6 +217,8 @@ namespace RubikCube
             set { meshTransforms = value; }
         }
         #endregion
+
+        public string ScrambleResult { get; set; }
     }
 }
  

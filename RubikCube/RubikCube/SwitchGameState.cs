@@ -329,22 +329,6 @@ namespace RubikCube
                     if (keyboardState.IsKeyDown(Keys.Right) && oldKeyboardState.IsKeyUp(Keys.Right)) MediaPlayer.Stop();
                     if (button.BtnHebrew.IsClicked) lang.Hebrew();
                     if (button.BtnEnglish.IsClicked) lang.English();
-                    //if (button.ClassicBound.Contains(mousePos) && mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released && whichGenre != "classic")
-                    //{
-                    //    whichGenre = "classic";
-                    //    justSwitched = true;
-                    //    MediaPlayer.Stop();
-                    //}
-                    //else if (whichGenre == "classic") justSwitched = false;
-                    //if (button.RockBound.Contains(mousePos) && mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released && whichGenre != "rock")
-                    //{
-                    //    whichGenre = "rock";
-                    //    justSwitched = true;
-                    //    MediaPlayer.Stop();
-                    //}
-
-                    //else if (whichGenre == "rock") justSwitched = false;
-                    //music.Update(mouseState, whichGenre, justSwitched);
                     button.BtnEnglish.Update(false, gameTime);
                     button.BtnHebrew.Update(false, gameTime);
                     if (keyboardState.IsKeyDown(Keys.Back)) CurrentGameState = GameState.MainMenu;
@@ -357,14 +341,22 @@ namespace RubikCube
                         cube.Solve();
                         shouldRotate = false;
                     }
-                    cube.Update(gameTime, shouldRotate, cube.ScramblingVectors, false);
-                    if (cube.ScrambleIndex >= 25)
+                    //cube.Update(gameTime, shouldRotate, cube.ScramblingVectors, false);
+                    if (shouldRotate)
                     {
+                        cube.Scramble();
+                        AlgOrder += cube.ScrambleResult;
                         shouldRotate = false;
-                        cube.ScrambleIndex = 0;
                     }
+
+                    //if (cube.ScrambleIndex >= 25)
+                    //{
+                    //    shouldRotate = false;
+                    //    cube.ScrambleIndex = 0;
+                    //}
                     button.BtnScramble.Update(false, gameTime);
                     button.BtnSolve.Update(false, gameTime);
+
                     break;
 
             }
@@ -381,11 +373,7 @@ namespace RubikCube
             {
                 case GameState.MainMenu:
                     spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
-                    //if (typedText != null)
-                    //{
-                    //    spriteBatch.DrawString(font, typedText, new Vector2(GraphicsDevice.Viewport.Width / 3, GraphicsDevice.Viewport.Height / 3), Color.Black,0,Vector2.Zero,1.0f,SpriteEffects.None,1.0f);
-                    //}
-                    if (!System.Windows.Forms.Application.OpenForms.OfType<FirstPopup>().Any())
+                    if (!Application.OpenForms.OfType<FirstPopup>().Any())
                         spriteBatch.DrawString(font, lang.MainTitle, new Vector2(graphicsDevice.Viewport.Width / 3f, 10), Color.Black);
                     button.BtnTutorial.Draw(spriteBatch);
                     button.BtnOptions.Draw(spriteBatch);
@@ -408,7 +396,6 @@ namespace RubikCube
                     button.BtnEnglish.Draw(spriteBatch);
                     spriteBatch.DrawString(font, lang.OptionsTitle, new Vector2(graphicsDevice.Viewport.Width / 3f, 10), Color.Black);
                     spriteBatch.DrawString(font, lang.OptionsFreeText, new Vector2(graphicsDevice.Viewport.Width / 3f, 40), Color.Black);
-                    //spriteBatch.DrawString(text, "Choose Music Genre:         Rock       Classic", new Vector2(GraphicsDevice.Viewport.Width / 3f, GraphicsDevice.Viewport.Height / 3f), Color.Black);
                     spriteBatch.DrawString(font, "English", new Vector2(graphicsDevice.Viewport.Width / 2.5f, 440), Color.Black);
                     spriteBatch.DrawString(font, "ת י ר ב ע", new Vector2(graphicsDevice.Viewport.Width / 1.85f, 440), Color.Black);
                     spriteBatch.End();
