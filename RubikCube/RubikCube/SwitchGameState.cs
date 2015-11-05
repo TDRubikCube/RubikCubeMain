@@ -33,8 +33,7 @@ namespace RubikCube
         private Vector3 cameraPos;
         KeyboardState oldKeyboardState;
         readonly SpriteFont font;
-        //String firstText;
-        //String typedText;
+        private Clocks clocks;
         Point mousePos;
 
         #endregion
@@ -61,6 +60,7 @@ namespace RubikCube
             cube = new Cube();
             lang = new Text();
             camera = new Camera();
+            clocks = new Clocks();
             button = new ButtonSetUp(graphics, graphicsDevice, content)
             {
                 ClassicBound =
@@ -315,7 +315,8 @@ namespace RubikCube
             switch (CurrentGameState)
             {
                 case GameState.MainMenu:
-                    if (button.BtnFreePlay.IsClicked) CurrentGameState = GameState.FreePlay;
+                    if (button.BtnFreePlay.IsClicked)
+                        CurrentGameState = GameState.FreePlay;
                     if (button.BtnTutorial.IsClicked) CurrentGameState = GameState.Tutorial;
                     if (button.BtnOptions.IsClicked) CurrentGameState = GameState.Options;
                     button.BtnOptions.Update(false, gameTime);
@@ -341,19 +342,14 @@ namespace RubikCube
                         cube.Solve();
                         shouldRotate = false;
                     }
-                    //cube.Update(gameTime, shouldRotate, cube.ScramblingVectors, false);
                     if (shouldRotate)
                     {
                         cube.Scramble();
                         AlgOrder += cube.ScrambleResult;
                         shouldRotate = false;
                     }
-
-                    //if (cube.ScrambleIndex >= 25)
-                    //{
-                    //    shouldRotate = false;
-                    //    cube.ScrambleIndex = 0;
-                    //}
+                    clocks.UpdateStoper(gameTime);
+                    clocks.StartStoper();
                     button.BtnScramble.Update(false, gameTime);
                     button.BtnSolve.Update(false, gameTime);
 
@@ -385,6 +381,7 @@ namespace RubikCube
                     spriteBatch.DrawString(font, lang.FreePlayTitle, new Vector2(graphicsDevice.Viewport.Width / 3f, 10), Color.Black);
                     spriteBatch.DrawString(font, lang.FreePlayScramble, new Vector2(graphicsDevice.Viewport.Width / 13f, graphicsDevice.Viewport.Height / 1.4f), Color.Black);
                     spriteBatch.DrawString(font, lang.FreePlaySolve, new Vector2(graphicsDevice.Viewport.Width / 4f, graphicsDevice.Viewport.Height / 1.4f), Color.Black);
+                    clocks.DrawStoper(spriteBatch,font,new Vector2(graphicsDevice.Viewport.Width /3f, 30));
                     button.BtnScramble.Draw(spriteBatch);
                     button.BtnSolve.Draw(spriteBatch);
                     spriteBatch.End();

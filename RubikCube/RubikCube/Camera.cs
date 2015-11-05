@@ -18,8 +18,6 @@ namespace RubikCube
             
     class Camera
     {
-        Vector3 cameraPos;
-        private Vector3 oldCameraPos;
         Vector2 previousMousePosition;
         private MouseState oldMouseState;
         private Matrix view;
@@ -39,7 +37,6 @@ namespace RubikCube
         public void Update()
         {
             MouseState mouseState = Mouse.GetState();
-            cameraPos = Matrix.Invert(view).Translation;
             CameraMovement(mouseState,oldMouseState);
             oldMouseState = mouseState;
             previousMouseWheel = mouseState.ScrollWheelValue;
@@ -100,7 +97,6 @@ namespace RubikCube
                -(float)(radius * Math.Sin(horizontalAngle) * Math.Sin(verticalAngle)),  //x
                 (float)(radius * Math.Cos(verticalAngle)),                              //y
                 (float)(radius * Math.Sin(verticalAngle) * Math.Cos(horizontalAngle))); //z
-            oldCameraPos = newCameraPosition;
             #region restrict camera(FIX)
             //if (!IsCameraAtRightAngle(newCameraPosition))
             //{

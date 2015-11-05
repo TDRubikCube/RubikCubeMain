@@ -18,7 +18,7 @@ namespace RubikCube
         #region class vars
         Model model;
         Save save;
-        Timer timer = new Timer(500);
+        Clocks clocks = new Clocks();
         Matrix[] meshTransforms;
         readonly CubeState cubeState = new CubeState();
         readonly Random rand = new Random();

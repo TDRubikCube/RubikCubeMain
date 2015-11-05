@@ -20,15 +20,17 @@ namespace RubikCube
         Rectangle rectangle;
         public Vector2 Size;
         public bool IsClicked;
-        private Timer normalTimer;
-        private Timer muteTimer;
+        private readonly Clocks normalClocks;
+        private readonly Clocks muteClocks;
         private bool clickDetected;
         private MouseState oldMouseState;
 
         public Button(Texture2D newTexture, GraphicsDevice graphics)
         {
-            normalTimer = new Timer(500);
-            muteTimer = new Timer(40);
+            normalClocks = new Clocks();
+            normalClocks.InitTimer(500);
+            muteClocks = new Clocks();
+            muteClocks.InitTimer(20);
             texture = newTexture;
             Size = new Vector2(graphics.Viewport.Width / 5f, graphics.Viewport.Height / 7f);
         }
@@ -41,14 +43,14 @@ namespace RubikCube
             if ((rectangle.Contains(mousePos) && mouse.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released)|| clickDetected)
             {
                 clickDetected = true;
-                if (normalTimer.CallTimer(gameTime) && !isMuteButton)
+                if (normalClocks.CallTimer(gameTime) && !isMuteButton)
                 {
                     IsClicked = true;
                     clickDetected = false;
                 }
                 else
                 {
-                    if (isMuteButton && muteTimer.CallTimer(gameTime))
+                    if (isMuteButton && muteClocks.CallTimer(gameTime))
                     {
                         IsClicked = true;
                         clickDetected = false;

@@ -26,7 +26,7 @@ namespace RubikCube
         SpriteBatch spriteBatch;
         Music music;
         //save save;
-        private Timer timer;
+        private Clocks clocks;
         FirstPopup popup;
         LoadingScreen loading;
         Thread loadingThread;
@@ -107,8 +107,8 @@ namespace RubikCube
                         isFirstTime = Convert.ToBoolean(b.Item2);
                 }
 
-                // checks if the loading & the timer are done
-                if (justFinshed && timer.CallTimer(gameTime))
+                // checks if the loading & the Clocks are done
+                if (justFinshed && clocks.CallTimer(gameTime))
                 {
                     MediaPlayer.Resume();
                     if (isFirstTime)
@@ -172,7 +172,8 @@ namespace RubikCube
             music = new Music(graphics, GraphicsDevice, Content);
             button = new ButtonSetUp(graphics, GraphicsDevice, Content);
             popup = new FirstPopup(gameState);
-            timer = new Timer(200);
+            clocks = new Clocks();
+            clocks.InitTimer(200);
             save = new SaveGame("..\\..\\..\\save.xml", "root");
             justFinshed = true;
         }
