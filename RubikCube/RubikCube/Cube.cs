@@ -49,12 +49,23 @@ namespace RubikCube
         #region void
         public void Scramble()
         {
-            List<char> tempCheckForRepetetive = new List<char>();
+            List<char> temp = new List<char>();
             List<char> possibleTurns = new List<char> { 'R','L','U','D','F','B','I'};
             for (int i = 0; i < 50; i++)
             {
-                tempCheckForRepetetive.Add(possibleTurns[rand.Next(0, 6)]);
-                ScrambleResult += possibleTurns[rand.Next(0, 6)];
+                char currentChar = possibleTurns[rand.Next(0, 6)];
+                if (temp.Count >= 3)
+                {
+                    if (currentChar == temp[temp.Count - 1] && temp[temp.Count - 2] == temp[temp.Count - 3] && currentChar == temp[temp.Count-2])
+                    {
+                        while (currentChar == temp[temp.Count-1])
+                        {
+                            currentChar = possibleTurns[rand.Next(0, 6)];
+                        }
+                    }
+                }
+                temp.Add(currentChar);
+                ScrambleResult += currentChar;
             }
         }
 
