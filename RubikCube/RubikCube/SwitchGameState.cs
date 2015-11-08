@@ -328,6 +328,7 @@ namespace RubikCube
                     break;
                 case GameState.Options:
                     if (keyboardState.IsKeyDown(Keys.Right) && oldKeyboardState.IsKeyUp(Keys.Right)) MediaPlayer.Stop();
+                    if (keyboardState.IsKeyDown(Keys.OemPlus) && oldKeyboardState.IsKeyUp(Keys.OemPlus)) cube.IncreaseRotationSpeed();
                     if (button.BtnHebrew.IsClicked) lang.Hebrew();
                     if (button.BtnEnglish.IsClicked) lang.English();
                     button.BtnEnglish.Update(false, gameTime);

@@ -28,7 +28,7 @@ namespace RubikCube
         #region normal vars
         public int ScrambleIndex = 0;
         public int Angle;
-        const int RotationSpeed = 10;
+        public int RotationSpeed = 10;
         int howManyTurns;
         public bool ShouldAddScrambleToOrder { get; set; }
         #endregion
@@ -90,7 +90,8 @@ namespace RubikCube
             float sidePosition = Game1.CubieSize;
             //Debug.WriteLine("animAngle=     " + Angle);
             //Debug.WriteLine("Angle " + MathHelper.ToRadians(Angle));
-
+            float partOfRotation = (float)(100f / RotationSpeed);
+            Debug.WriteLine(partOfRotation + " = part");
             if (side == Vector3.Left)
             {
                 howManyTurns++;
@@ -99,11 +100,11 @@ namespace RubikCube
                     Debug.WriteLine(i);
                     if (isClockWise)
                     {
-                        RotateSide(i, MathHelper.PiOver2 / 10f, 1.5f * sidePosition, -1.5f * sidePosition, 0, 'x');
+                        RotateSide(i, MathHelper.PiOver2 / partOfRotation, 1.5f * sidePosition, -1.5f * sidePosition, 0, 'x');
                     }
                     else
                     {
-                        RotateSide(i, -MathHelper.PiOver2 / 10f, 1.5f * sidePosition, -1.5f * sidePosition, 0, 'x');
+                        RotateSide(i, -MathHelper.PiOver2 / partOfRotation, 1.5f * sidePosition, -1.5f * sidePosition, 0, 'x');
                     }
                 }
             }
@@ -183,7 +184,7 @@ namespace RubikCube
                     }
                 }
             }
-            if (howManyTurns == 10)
+            if (howManyTurns == (110-RotationSpeed)/10)
             {
                 if ((side == Vector3.Backward || side == Vector3.Forward))
                 {
@@ -212,6 +213,12 @@ namespace RubikCube
                 MeshTransforms[i] *= Matrix.CreateTranslation(new Vector3(x, y, z)) * Matrix.CreateRotationZ(angle) * Matrix.CreateTranslation(new Vector3(-x, -y, -z));
             }
 
+        }
+
+        public void IncreaseRotationSpeed()
+        {
+            RotationSpeed += 10;
+            Debug.WriteLine("speed increased by 1");
         }
         #endregion
 
