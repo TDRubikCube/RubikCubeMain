@@ -89,6 +89,7 @@ namespace RubikCube
         /// <param name="cameraPos"></param>
         private void RotateWhichSide(KeyboardState keyboardState, KeyboardState oldKeyboardState, Vector3 cameraPos)
         {
+            camera.RealRotate(cameraPos);
             if (cube.Angle <= -100)
             {
                 Debug.WriteLine("Original=   " + AlgOrder);
@@ -108,7 +109,6 @@ namespace RubikCube
                 {
                     AlgOrder = "";
                 }
-                camera.RealRotate(cameraPos);
                 rotationsLeft = AlgOrder.Length;
                 if (AlgOrder.Split('i').Length != -1)
                 {
@@ -292,6 +292,7 @@ namespace RubikCube
                     Debug.WriteLine("AlgOrder unknown = " + AlgOrder);
                 }
             }
+            //camera.RealRotate(cameraPos);
         }
 
         /// <summary>
@@ -442,6 +443,8 @@ namespace RubikCube
                 camera.Update();
                 RotateWhichSide(keyboardState, oldKeyboardState, cameraPos);
             }
+            if (keyboardState.IsKeyDown(Keys.A) && oldKeyboardState.IsKeyUp(Keys.A))
+                Debug.WriteLine(AlgOrder);
             mousePos = new Point(mouseState.X, mouseState.Y);
             if (!Application.OpenForms.OfType<FirstPopup>().Any())
                 SwitchUpdate(mouseState, keyboardState, gameTime);

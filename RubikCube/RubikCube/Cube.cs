@@ -159,7 +159,7 @@ namespace RubikCube
                 howManyTurns++;
                 foreach (int i in cubeState.FindCubiesOnSide(side, isClockWise))
                 {
-                    if (isClockWise)
+                    if (!isClockWise)
                     {
                         RotateSide(i, -MathHelper.PiOver2 / 10f, 0, -1.5f * sidePosition, -1.5f * sidePosition, 'z');
                     }
@@ -174,7 +174,7 @@ namespace RubikCube
                 howManyTurns++;
                 foreach (int i in cubeState.FindCubiesOnSide(side, isClockWise))
                 {
-                    if (isClockWise)
+                    if (!isClockWise)
                     {
                         RotateSide(i, MathHelper.PiOver2 / 10f, 0, -1.5f * sidePosition, 1.5f * sidePosition, 'z');
                     }
@@ -186,13 +186,6 @@ namespace RubikCube
             }
             if (howManyTurns == (110-RotationSpeed)/10)
             {
-                if ((side == Vector3.Backward || side == Vector3.Forward))
-                {
-                    if (isClockWise)
-                        isClockWise = false;
-                    else
-                        isClockWise = true;
-                }
                 cubeState.Rotate(side, isClockWise);
                 howManyTurns = 0;
             }
