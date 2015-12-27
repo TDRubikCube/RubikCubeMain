@@ -19,7 +19,7 @@ namespace RubikCube
     class Camera
     {
         Vector2 previousMousePosition;
-        private MouseState oldMouseState;
+        public MouseState oldMouseState;
         private Matrix view;
         float horizontalAngle;
         float verticalAngle;
@@ -37,7 +37,6 @@ namespace RubikCube
         public void Update()
         {
             MouseState mouseState = Mouse.GetState();
-            CameraMovement(mouseState,oldMouseState);
             oldMouseState = mouseState;
             previousMouseWheel = mouseState.ScrollWheelValue;
         }
@@ -83,7 +82,7 @@ namespace RubikCube
         /// </summary>
         /// <param name="mouseState"></param>
         /// <param name="oldMouseState"></param>
-        private void CameraMovement(MouseState mouseState, MouseState oldMouseState)
+        public void CameraMovement(MouseState mouseState, MouseState oldMouseState)
         {
 
             Vector2 currentMousePos = new Vector2(mouseState.X, mouseState.Y);

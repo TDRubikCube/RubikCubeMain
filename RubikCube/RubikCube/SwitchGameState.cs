@@ -45,6 +45,7 @@ namespace RubikCube
         //bool stopAnim = false;
         int rotationsLeft = 0;
         bool shouldRotate;
+        bool shouldAllowCameraMovement = true;
         //double typedTextLength;
         //int delayInMilliseconds;
         //bool isDoneDrawing;
@@ -383,7 +384,7 @@ namespace RubikCube
                     spriteBatch.DrawString(font, lang.FreePlayTitle, new Vector2(graphicsDevice.Viewport.Width / 3f, 10), Color.Black);
                     spriteBatch.DrawString(font, lang.FreePlayScramble, new Vector2(graphicsDevice.Viewport.Width / 13f, graphicsDevice.Viewport.Height / 1.4f), Color.Black);
                     spriteBatch.DrawString(font, lang.FreePlaySolve, new Vector2(graphicsDevice.Viewport.Width / 4f, graphicsDevice.Viewport.Height / 1.4f), Color.Black);
-                    clocks.DrawStoper(spriteBatch,font,new Vector2(graphicsDevice.Viewport.Width /3f, 30));
+                    clocks.DrawStoper(spriteBatch, font, new Vector2(graphicsDevice.Viewport.Width / 3f, 30));
                     button.BtnScramble.Draw(spriteBatch);
                     button.BtnSolve.Draw(spriteBatch);
                     spriteBatch.End();
@@ -440,6 +441,10 @@ namespace RubikCube
             cameraPos = Matrix.Invert(view).Translation;
             if (CurrentGameState == GameState.FreePlay)
             {
+                if (keyboardState.IsKeyDown(Keys.C) && oldKeyboardState.IsKeyUp(Keys.C))
+                    shouldAllowCameraMovement = !shouldAllowCameraMovement;
+                if (shouldAllowCameraMovement)
+                    camera.CameraMovement(mouseState, camera.oldMouseState);
                 camera.Update();
                 RotateWhichSide(keyboardState, oldKeyboardState, cameraPos);
             }
