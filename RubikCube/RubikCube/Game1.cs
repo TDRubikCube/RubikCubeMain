@@ -123,7 +123,7 @@ namespace RubikCube
                 button.BtnMute.Update(true, gameTime);
                 button.BtnUnMute.Update(true, gameTime);
                 MuteEvent();
-                gameState.Update(gameTime, graphics);
+                gameState.Update(gameTime, graphics,GraphicsDevice);
             }
             else
             {

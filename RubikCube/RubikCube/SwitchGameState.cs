@@ -32,6 +32,10 @@ namespace RubikCube
         readonly Matrix projection;
         private Vector3 cameraPos;
         KeyboardState oldKeyboardState;
+        MouseState oldMouseState;
+        Ray currentRay;
+        ModelMesh previousMeshCollided = null;
+        Tuple<ModelMesh, ModelMesh> meshesDifference;
         readonly SpriteFont font;
         private Clocks clocks;
         Point mousePos;
@@ -42,14 +46,9 @@ namespace RubikCube
         private float currentScale;
         public bool JustSwitched = false;
         public string AlgOrder = "";
-        //bool stopAnim = false;
         int rotationsLeft = 0;
         bool shouldRotate;
         bool shouldAllowCameraMovement = true;
-        //double typedTextLength;
-        //int delayInMilliseconds;
-        //bool isDoneDrawing;
-        //bool lockScreen = true;
         //string whichGenre = "default";
         public GameState CurrentGameState;
 
@@ -303,6 +302,7 @@ namespace RubikCube
         /// <param name="keyboardState"></param>
         private void OldState(ref MouseState mouseState, ref KeyboardState keyboardState)
         {
+            oldMouseState = mouseState;
             oldKeyboardState = keyboardState;
         }
 
@@ -410,9 +410,47 @@ namespace RubikCube
             }
         }
 
-        public void UpdateAlgo(string algo)
+        private void MainRayControl(MouseState mouseState, MouseState oldMouseState, GraphicsDevice graphicsDevice)
         {
-            AlgOrder = algo;
+            DrawRay(mouseState, oldMouseState, graphicsDevice);
+            if (CheckRayCollision())
+            {
+                Debug.WriteLine("found 2 different meshes");
+            }
+        }
+
+        private void DrawRay(MouseState mouseState, MouseState oldMouseState, GraphicsDevice graphicsDevice)
+        {
+            Vector3 nearSource = new Vector3(mouseState.X, mouseState.Y, 0);
+            Vector3 farSource = new Vector3(mouseState.X, mouseState.Y, 1);
+            Vector3 nearPoint = graphicsDevice.Viewport.Unproject(nearSource, projection, view, world);
+            Vector3 farPoint = graphicsDevice.Viewport.Unproject(farSource, projection, view, world);
+            Vector3 direction = farPoint - nearPoint;
+            direction.Normalize();
+            currentRay = new Ray(nearPoint, direction);
+        }
+
+        private bool CheckRayCollision()
+        {
+            if (currentRay != null)
+            {
+                foreach (ModelMesh mesh in cube.Model.Meshes)
+                {
+                    BoundingSphere bs = mesh.BoundingSphere;
+                    bs.Radius = Game1.CubieSize;
+                    if (currentRay.Intersects(bs).HasValue)
+                    {
+                        if (previousMeshCollided != null)
+                            if (mesh != previousMeshCollided)
+                            {
+                                meshesDifference = new Tuple<ModelMesh, ModelMesh>(mesh, previousMeshCollided);
+                                return true;
+                            }
+                        previousMeshCollided = mesh;
+                    }
+                }
+            }
+            return false;
         }
         #endregion
 
@@ -433,7 +471,7 @@ namespace RubikCube
         /// </summary>
         /// <param name="gameTime"></param>
         /// <param name="graphics"></param>
-        public void Update(GameTime gameTime, GraphicsDeviceManager graphics)
+        public void Update(GameTime gameTime, GraphicsDeviceManager graphics,GraphicsDevice graphicsDevice)
         {
             KeyboardState keyboardState = Keyboard.GetState();
             MouseState mouseState = Mouse.GetState();
@@ -444,7 +482,9 @@ namespace RubikCube
                 if (keyboardState.IsKeyDown(Keys.C) && oldKeyboardState.IsKeyUp(Keys.C))
                     shouldAllowCameraMovement = !shouldAllowCameraMovement;
                 if (shouldAllowCameraMovement)
-                    camera.CameraMovement(mouseState, camera.oldMouseState);
+                    camera.CameraMovement(mouseState, oldMouseState);
+                else
+                    MainRayControl(mouseState, oldMouseState, graphicsDevice);
                 camera.Update();
                 RotateWhichSide(keyboardState, oldKeyboardState, cameraPos);
             }
@@ -490,6 +530,11 @@ namespace RubikCube
                 mesh.Draw();
 
             }
+        }
+
+        public void UpdateAlgo(string algo)
+        {
+            AlgOrder = algo;
         }
 
         #endregion
