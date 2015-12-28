@@ -414,9 +414,7 @@ namespace RubikCube
         {
             DrawRay(mouseState, oldMouseState, graphicsDevice);
             if (CheckRayCollision())
-            {
-                Debug.WriteLine("found 2 different meshes");
-            }
+                Debug.WriteLine("Success!");
         }
 
         private void DrawRay(MouseState mouseState, MouseState oldMouseState, GraphicsDevice graphicsDevice)
@@ -429,28 +427,50 @@ namespace RubikCube
             direction.Normalize();
             currentRay = new Ray(nearPoint, direction);
         }
-
         private bool CheckRayCollision()
+        {
+            if (FindClosestMesh() != null)
+            {
+                ModelMesh currentMesh = FindClosestMesh();
+                if (currentMesh != previousMeshCollided && previousMeshCollided != null)
+                {
+                    previousMeshCollided = currentMesh;
+                    return true;
+                }
+                previousMeshCollided = currentMesh;
+            }
+            return false;
+        }
+        private ModelMesh FindClosestMesh()
         {
             if (currentRay != null)
             {
-                foreach (ModelMesh mesh in cube.Model.Meshes)
+                Tuple<ModelMesh, float> closestMesh = null;
+                for (int index = 0; index < cube.Model.Meshes.Count; index++)
                 {
-                    BoundingSphere bs = mesh.BoundingSphere;
-                    bs.Radius = Game1.CubieSize;
+
+                    ModelMesh mesh = cube.Model.Meshes[index];
+                    Vector3 meshCenter = cube.Model.Meshes[index].BoundingSphere.Center;
+                    meshCenter = Vector3.Transform(meshCenter, Matrix.CreateScale(currentScale) * mesh.ParentBone.Transform * Matrix.CreateTranslation(Game1.CubieSize, -Game1.CubieSize, -Game1.CubieSize) * cube.MeshTransforms[index] * world);
+                    BoundingSphere bs = new BoundingSphere(meshCenter, Game1.CubieSize / 2);
                     if (currentRay.Intersects(bs).HasValue)
                     {
-                        if (previousMeshCollided != null)
-                            if (mesh != previousMeshCollided)
+                        float distance = currentRay.Intersects(bs).Value;
+                        if (closestMesh != null)
+                        {
+                            if (distance < closestMesh.Item2)
                             {
-                                meshesDifference = new Tuple<ModelMesh, ModelMesh>(mesh, previousMeshCollided);
-                                return true;
+                                closestMesh = new Tuple<ModelMesh, float>(mesh, distance);
                             }
-                        previousMeshCollided = mesh;
+                        }
+                        else
+                            closestMesh = new Tuple<ModelMesh, float>(mesh, distance);
                     }
                 }
+                if (closestMesh != null)
+                    return closestMesh.Item1;
             }
-            return false;
+            return null;
         }
         #endregion
 
@@ -471,7 +491,7 @@ namespace RubikCube
         /// </summary>
         /// <param name="gameTime"></param>
         /// <param name="graphics"></param>
-        public void Update(GameTime gameTime, GraphicsDeviceManager graphics,GraphicsDevice graphicsDevice)
+        public void Update(GameTime gameTime, GraphicsDeviceManager graphics, GraphicsDevice graphicsDevice)
         {
             KeyboardState keyboardState = Keyboard.GetState();
             MouseState mouseState = Mouse.GetState();

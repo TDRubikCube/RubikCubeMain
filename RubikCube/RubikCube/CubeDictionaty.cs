@@ -67,5 +67,31 @@ namespace RubikCube
         public const int YELLOW_BOTTOM_MID = 20;
         public const int YELLOW_BOTTOM_RIGHT = 17;
         
+        // 0 - BLUE WHITE 
+        // 1 - GREEN
+        // 2 - GREEN WHITE
+        // 3 - BLUE 
+        // 4 - RED GREEN WHITE
+        // 5 - ORANGE WHITE
+        // 6 - ORANGE GREEN YELLOW
+        // 7 - RED GREEN 
+        // 8 - ORANGE YELLOW  
+        // 9 - BLUE RED
+        // 10 - ORANGE
+        // 11 - YELLOW BLUE 
+        // 12 - RED WHITE BLUE 
+        // 13 - WHITE
+        // 14 - WHITE ORANGE GREEN
+        // 15 - GREEN ORANGE
+        // 16 - WHITE RED 
+        // 17 - RED GREEN YELLOW
+        // 18 - GREEN YELLOW 
+        // 19 - WHITE BLUE ORANGE
+        // 20 - YELLOW RED 
+        // 21 - YELLOW
+        // 22 - BLUE ORANGE YELLOW
+        // 23 - RED YELLOW BLUE
+        // 24 - ORANGE BLUE
+        // 25 - RED 
     }
 }
