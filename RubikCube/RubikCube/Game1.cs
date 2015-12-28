@@ -60,7 +60,6 @@ namespace RubikCube
         protected override void Initialize()
         {
             this.IsMouseVisible = true;
-            Window.AllowUserResizing = true;
             this.IsFixedTimeStep = false;
             loading = new LoadingScreen(Content);
             loadingThread = new Thread(Load);
