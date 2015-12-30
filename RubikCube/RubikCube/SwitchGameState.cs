@@ -412,12 +412,12 @@ namespace RubikCube
 
         private void MainRayControl(MouseState mouseState, MouseState oldMouseState, GraphicsDevice graphicsDevice)
         {
-            DrawRay(mouseState, oldMouseState, graphicsDevice);
+            DrawRay(mouseState, graphicsDevice);
             if (CheckRayCollision())
                 Debug.WriteLine("Success!");
         }
 
-        private void DrawRay(MouseState mouseState, MouseState oldMouseState, GraphicsDevice graphicsDevice)
+        private void DrawRay(MouseState mouseState, GraphicsDevice graphicsDevice)
         {
             Vector3 nearSource = new Vector3(mouseState.X, mouseState.Y, 0);
             Vector3 farSource = new Vector3(mouseState.X, mouseState.Y, 1);
@@ -443,33 +443,30 @@ namespace RubikCube
         }
         private ModelMesh FindClosestMesh()
         {
-            if (currentRay != null)
+            Tuple<ModelMesh, float> closestMesh = null;
+            for (int index = 0; index < cube.Model.Meshes.Count; index++)
             {
-                Tuple<ModelMesh, float> closestMesh = null;
-                for (int index = 0; index < cube.Model.Meshes.Count; index++)
-                {
 
-                    ModelMesh mesh = cube.Model.Meshes[index];
-                    Vector3 meshCenter = cube.Model.Meshes[index].BoundingSphere.Center;
-                    meshCenter = Vector3.Transform(meshCenter, Matrix.CreateScale(currentScale) * mesh.ParentBone.Transform * Matrix.CreateTranslation(Game1.CubieSize, -Game1.CubieSize, -Game1.CubieSize) * cube.MeshTransforms[index] * world);
-                    BoundingSphere bs = new BoundingSphere(meshCenter, Game1.CubieSize / 2);
-                    if (currentRay.Intersects(bs).HasValue)
+                ModelMesh mesh = cube.Model.Meshes[index];
+                Vector3 meshCenter = cube.Model.Meshes[index].BoundingSphere.Center;
+                meshCenter = Vector3.Transform(meshCenter, Matrix.CreateScale(currentScale) * mesh.ParentBone.Transform * Matrix.CreateTranslation(Game1.CubieSize, -Game1.CubieSize, -Game1.CubieSize) * cube.MeshTransforms[index] * world);
+                BoundingSphere bs = new BoundingSphere(meshCenter, Game1.CubieSize / 2);
+                if (currentRay.Intersects(bs).HasValue)
+                {
+                    float distance = currentRay.Intersects(bs).Value;
+                    if (closestMesh != null)
                     {
-                        float distance = currentRay.Intersects(bs).Value;
-                        if (closestMesh != null)
+                        if (distance < closestMesh.Item2)
                         {
-                            if (distance < closestMesh.Item2)
-                            {
-                                closestMesh = new Tuple<ModelMesh, float>(mesh, distance);
-                            }
-                        }
-                        else
                             closestMesh = new Tuple<ModelMesh, float>(mesh, distance);
+                        }
                     }
+                    else
+                        closestMesh = new Tuple<ModelMesh, float>(mesh, distance);
                 }
-                if (closestMesh != null)
-                    return closestMesh.Item1;
             }
+            if (closestMesh != null)
+                return closestMesh.Item1;
             return null;
         }
         #endregion

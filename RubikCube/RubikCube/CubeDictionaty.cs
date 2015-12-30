@@ -67,6 +67,8 @@ namespace RubikCube
         public const int YELLOW_BOTTOM_MID = 20;
         public const int YELLOW_BOTTOM_RIGHT = 17;
         
+        // dictionary acording to index (location in array)
+        //
         // 0 - BLUE WHITE 
         // 1 - GREEN
         // 2 - GREEN WHITE
@@ -93,5 +95,34 @@ namespace RubikCube
         // 23 - RED YELLOW BLUE
         // 24 - ORANGE BLUE
         // 25 - RED 
+
+        //dictionary acording to mesh name
+        //
+        // 1 - RED GREEN WHITE
+        // 2 - RED GREEN 
+        // 3 - RED GREEN YELLOW
+        // 4 - GREEN WHITE
+        // 5 - GREEN
+        // 6 - GREEN YELLOW 
+        // 7 - WHITE ORANGE GREEN
+        // 8 - GREEN ORANGE
+        // 9 - ORANGE GREEN YELLOW
+        // 10 - WHITE RED 
+        // 11 - RED 
+        // 12 - YELLOW RED 
+        // 13 - WHITE
+        // 14 - YELLOW
+        // 15 - ORANGE WHITE
+        // 16 - ORANGE
+        // 17 - ORANGE YELLOW  
+        // 18 - RED WHITE BLUE 
+        // 19 - BLUE RED
+        // 20 - RED YELLOW BLUE
+        // 21 - BLUE WHITE 
+        // 22 - BLUE 
+        // 23 - YELLOW BLUE 
+        // 24 - WHITE BLUE ORANGE
+        // 25 - ORANGE BLUE
+        // 26 - BLUE ORANGE YELLOW
     }
 }
