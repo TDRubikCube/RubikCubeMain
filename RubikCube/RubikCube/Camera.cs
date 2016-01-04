@@ -47,34 +47,54 @@ namespace RubikCube
         /// <param name="cameraPos">the camera position as a vector3</param>
         public void RealRotate(Vector3 cameraPos)
         {
-            if (cameraPos.X >= -radius / 1.61f && cameraPos.X <= radius / 1.61f && cameraPos.Z > radius / 1.438f && cameraPos.Z <= radius * 1.012f)
+            if ((IsFaceGreen(cameraPos)))
             {
                 RealLeft = Vector3.Left;
                 RealRight = Vector3.Right;
                 RealForward = Vector3.Backward;
                 RealBackward = Vector3.Forward;
             }
-            if (cameraPos.X >= radius / 1.366f && cameraPos.X <= radius * 1.012f && cameraPos.Z >= -radius / 1.366f && cameraPos.Z <= radius / 1.366f)
+            if (IsFaceYellow(cameraPos))
             {
                 RealLeft = Vector3.Backward;
                 RealRight = Vector3.Forward;
                 RealForward = Vector3.Right;
                 RealBackward = Vector3.Left;
             }
-            if (cameraPos.X >= -radius / 1.366f && cameraPos.X <= radius / 1.366f && cameraPos.Z >= -radius * 1.012f && cameraPos.Z <= -radius / 1.52f)
+            if (IsFaceBlue(cameraPos))
             {
                 RealLeft = Vector3.Right;
                 RealRight = Vector3.Left;
                 RealForward = Vector3.Forward;
                 RealBackward = Vector3.Backward;
             }
-            if (cameraPos.X >= -radius * 1.012f && cameraPos.X <= -radius / 1.52f && cameraPos.Z >= -radius / 1.52f && cameraPos.Z <= radius / 1.52f)
+            if (IsFaceWhite(cameraPos))
             {
                 RealLeft = Vector3.Forward;
                 RealRight = Vector3.Backward;
                 RealForward = Vector3.Left;
                 RealBackward = Vector3.Right;
             }
+        }
+
+        private bool IsFaceWhite(Vector3 cameraPos)
+        {
+            return cameraPos.X >= -radius * 1.012f && cameraPos.X <= -radius / 1.52f && cameraPos.Z >= -radius / 1.52f && cameraPos.Z <= radius / 1.52f;
+        }
+
+        private bool IsFaceBlue(Vector3 cameraPos)
+        {
+            return cameraPos.X >= -radius / 1.366f && cameraPos.X <= radius / 1.366f && cameraPos.Z >= -radius * 1.012f && cameraPos.Z <= -radius / 1.52f;
+        }
+
+        private bool IsFaceYellow(Vector3 cameraPos)
+        {
+            return cameraPos.X >= radius / 1.366f && cameraPos.X <= radius * 1.012f && cameraPos.Z >= -radius / 1.366f && cameraPos.Z <= radius / 1.366f;
+        }
+
+        private bool IsFaceGreen(Vector3 cameraPos)
+        {
+            return cameraPos.X >= -radius / 1.61f && cameraPos.X <= radius / 1.61f && cameraPos.Z > radius / 1.438f && cameraPos.Z <= radius * 1.012f;
         }
 
         /// <summary>
