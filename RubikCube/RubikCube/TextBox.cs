@@ -20,7 +20,9 @@ namespace RubikCube
     {
         public string textbox = "";
         public string drawBox = "";
+        public string tabString = "";
         public int movedTo = 0;
+        public const int boxSize = 20;
         public int tabPlace = 0;
         public TextBox()
         {
@@ -58,21 +60,62 @@ namespace RubikCube
             CheckForClick(ref state, ref oldState, Keys.Z);
             CheckForClick(ref state, ref oldState, Keys.Space);
             CheckForClick(ref state, ref oldState, Keys.OemSemicolon);
+            if (state.IsKeyDown(Keys.Enter))
+            {
+                textbox = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            }
             if (((state.IsKeyDown(Keys.Back)) && (oldState.IsKeyUp(Keys.Back))) && (textbox.Length > 0))
             {
-                textbox = textbox.Substring(0, (textbox.Length - 1));
-                if (textbox.Length == 34)
+               /* if ((movedTo == 0)&&(tabPlace>0))
                 {
-                    movedTo++;
+                    textbox = textbox.Remove((tabPlace)-1);
+                }
+                if (textbox.Length > textSize)
+                {
+                    movedTo--;
+                }
+                if (movedTo > 0)
+                {
+                    textbox = textbox.Remove(movedTo + (tabPlace-1));
+                    if (!((tabPlace > 0) && ((textbox.Length - (movedTo + tabPlace)) > 0)))
+                    {
+                        movedTo--;
+                    }
+                    else
+                    {
+                        tabPlace--;
+                    }
+                }
+                if (tabPlace > 0)
+                {
+                    tabPlace--;
+                }
+                */
+                if ((tabPlace + movedTo) > 0)
+                {
+                    string leftHalf = textbox.Substring(0, tabPlace + movedTo - 1);
+                    string rightHalf = textbox.Substring(tabPlace + movedTo, textbox.Length - (tabPlace + movedTo));
+                    textbox = leftHalf + rightHalf;
+                    if (tabPlace > 0)
+                    {
+                        tabPlace--;
+                    }
+                    if (movedTo > 0)
+                    {
+                        if ((tabPlace == 0) || ((textbox.Length - (movedTo + tabPlace)) > 0))
+                        {
+                            movedTo--;
+                        }
+                    }
                 }
             }
             if ((state.IsKeyDown(Keys.Right)) && (oldState.IsKeyUp(Keys.Right)))
             {
-                if ((tabPlace >= 35) && ((textbox.Length - movedTo) > 35))
+                if (tabPlace == boxSize)
                 {
                     movedTo++;
                 }
-                if (tabPlace < 35)
+                if (tabPlace < boxSize)
                 {
                     tabPlace++;
                 }
@@ -95,34 +138,55 @@ namespace RubikCube
                     }
                 }
             }
-            if (textbox.Length > 34)
+
+            if (textbox.Length > boxSize)
             {
-                drawBox = textbox.Substring(movedTo, movedTo + 34);
+                drawBox = textbox.Substring(movedTo, (boxSize));
             }
             else
             {
                 drawBox = textbox;
             }
-            oldState = state;
+            tabString = "";
+            for (int i = 0; i < tabPlace; i++)
+            {
+                tabString += " ";
+            }
+                oldState = state;
         }
         private void CheckForClick(ref KeyboardState keyboardState, ref KeyboardState oldKeyboardState, Keys key)
         {
             if (keyboardState.IsKeyDown(key) && oldKeyboardState.IsKeyUp(key))
             {
-                if (((keyboardState.IsKeyDown(Keys.RightShift)) || (keyboardState.IsKeyDown(Keys.LeftShift))) && ((oldKeyboardState.IsKeyUp(Keys.RightShift)) || (oldKeyboardState.IsKeyUp(Keys.LeftShift))))
+                //   if (((keyboardState.IsKeyDown(Keys.RightShift)) || (keyboardState.IsKeyDown(Keys.LeftShift))) && ((oldKeyboardState.IsKeyUp(Keys.RightShift)) || (oldKeyboardState.IsKeyUp(Keys.LeftShift))))
+                // {
+                //   textbox += KeyToChar(key, keyboardState, oldKeyboardState);
+                // textbox += "i";
+                //}
+                //else
+                //{
+                textbox += KeyToChar(key, keyboardState, oldKeyboardState);
+                if (tabPlace <= boxSize)
                 {
-                    textbox += KeyToChar(key, keyboardState, oldKeyboardState);
-                    textbox += "i";
+                    tabPlace++;
                 }
-                else
-                    textbox += KeyToChar(key, keyboardState, oldKeyboardState);
+                if (tabPlace > boxSize)
+                {
+                    tabPlace = boxSize;
+                    movedTo++;
+                }
+                //}
             }
         }
 
         public void Draw(SpriteBatch spriteBatch, SpriteFont font)
         {
             spriteBatch.Begin();
-            spriteBatch.DrawString(font, ("Text: " + drawBox), new Vector2(300, 400), Color.Black);
+            spriteBatch.DrawString(font, ("Text: " + tabString + ","), new Vector2(300, 375), Color.Black);
+            spriteBatch.DrawString(font, ("Text: " + drawBox), new Vector2(300, 375), Color.Black);
+            spriteBatch.DrawString(font, ("Length: " + textbox.Length), new Vector2(300, 400), Color.Black);
+            spriteBatch.DrawString(font, ("MovedTo: " + movedTo), new Vector2(300, 425), Color.Black);
+            spriteBatch.DrawString(font, ("TabPlace: " + tabPlace), new Vector2(300, 450), Color.Black);
             spriteBatch.End();
         }
 
