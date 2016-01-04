@@ -19,6 +19,9 @@ namespace RubikCube
     class TextBox
     {
         public string textbox = "";
+        public string drawBox = "";
+        public int movedTo = 0;
+        public int tabPlace = 0;
         public TextBox()
         {
         }
@@ -54,10 +57,51 @@ namespace RubikCube
             CheckForClick(ref state, ref oldState, Keys.Y);
             CheckForClick(ref state, ref oldState, Keys.Z);
             CheckForClick(ref state, ref oldState, Keys.Space);
-            CheckForClick(ref state, ref oldState, Keys.OemTilde);
-            if (((state.IsKeyDown(Keys.Back)) && (oldState.IsKeyUp(Keys.Back)))&&(textbox.Length > 0))
+            CheckForClick(ref state, ref oldState, Keys.OemSemicolon);
+            if (((state.IsKeyDown(Keys.Back)) && (oldState.IsKeyUp(Keys.Back))) && (textbox.Length > 0))
             {
                 textbox = textbox.Substring(0, (textbox.Length - 1));
+                if (textbox.Length == 34)
+                {
+                    movedTo++;
+                }
+            }
+            if ((state.IsKeyDown(Keys.Right)) && (oldState.IsKeyUp(Keys.Right)))
+            {
+                if ((tabPlace >= 35) && ((textbox.Length - movedTo) > 35))
+                {
+                    movedTo++;
+                }
+                if (tabPlace < 35)
+                {
+                    tabPlace++;
+                }
+            }
+            if ((state.IsKeyDown(Keys.Left)) && (oldState.IsKeyUp(Keys.Left)))
+            {
+                if (tabPlace > 0)
+                {
+                    tabPlace--;
+                }
+                if (tabPlace == 0)
+                {
+                    if (movedTo > 0)
+                    {
+                        movedTo--;
+                    }
+                    else
+                    {
+                        Console.Beep();
+                    }
+                }
+            }
+            if (textbox.Length > 34)
+            {
+                drawBox = textbox.Substring(movedTo, movedTo + 34);
+            }
+            else
+            {
+                drawBox = textbox;
             }
             oldState = state;
         }
@@ -78,125 +122,26 @@ namespace RubikCube
         public void Draw(SpriteBatch spriteBatch, SpriteFont font)
         {
             spriteBatch.Begin();
-            spriteBatch.DrawString(font, ("Text: " +textbox), new Vector2(300, 400), Color.Black);
+            spriteBatch.DrawString(font, ("Text: " + drawBox), new Vector2(300, 400), Color.Black);
             spriteBatch.End();
         }
 
         public string KeyToChar(Keys key, KeyboardState state, KeyboardState oldstate)
         {
-            //key.ToString();
-            if (key == Keys.A)
-            {
-                return "A";
-            }
-            if (key == Keys.B)
-            {
-                return "B";
-            }
-            if (key == Keys.C)
-            {
-                return "C";
-            }
-            if (key == Keys.D)
-            {
-                return "D";
-            }
-            if (key == Keys.E)
-            {
-                return "E";
-            }
-            if (key == Keys.F)
-            {
-                return "F";
-            }
-            if (key == Keys.G)
-            {
-                return "G";
-            }
-            if (key == Keys.H)
-            {
-                return "H";
-            }
-            if (key == Keys.I)
-            {
-                return "I";
-            }
-            if (key == Keys.J)
-            {
-                return "J";
-            }
-            if (key == Keys.K)
-            {
-                return "K";
-            }
-            if (key == Keys.L)
-            {
-                return "L";
-            }
-            if (key == Keys.M)
-            {
-                return "M";
-            }
-            if (key == Keys.N)
-            {
-                return "N";
-            }
-            if (key == Keys.O)
-            {
-                return "O";
-            }
-            if (key == Keys.P)
-            {
-                return "P";
-            }
-            if (key == Keys.Q)
-            {
-                return "Q";
-            }
-            if (key == Keys.R)
-            {
-                return "R";
-            }
-            if (key == Keys.S)
-            {
-                return "S";
-            }
-            if (key == Keys.T)
-            {
-                return "T";
-            }
-            if (key == Keys.U)
-            {
-                return "U";
-            }
-            if (key == Keys.V)
-            {
-                return "V";
-            }
-            if (key == Keys.W)
-            {
-                return "W";
-            }
-            if (key == Keys.X)
-            {
-                return "X";
-            }
-            if (key == Keys.Y)
-            {
-                return "Y";
-            }
-            if (key == Keys.Z)
-            {
-                return "Z";
-            }
+
             if (key == Keys.Space)
             {
                 return " ";
             }
-            if (key == Keys.OemTilde)
+            if (key == Keys.OemSemicolon)
             {
                 return "\'";
             }
+            if (key.ToString().Length == 1)
+            {
+                return (key.ToString());
+            }
+
             return "";
         }
     }
