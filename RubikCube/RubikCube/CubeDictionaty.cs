@@ -104,8 +104,8 @@ namespace RubikCube
         // 4 - GREEN WHITE
         // 5 - GREEN
         // 6 - GREEN YELLOW 
-        // 7 - WHITE ORANGE GREEN
-        // 8 - GREEN ORANGE
+        // 7 - ORANGE GREEN WHITE
+        // 8 - ORANGE GREEN
         // 9 - ORANGE GREEN YELLOW
         // 10 - WHITE RED 
         // 11 - RED 

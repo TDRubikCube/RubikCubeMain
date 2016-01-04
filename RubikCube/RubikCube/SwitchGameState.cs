@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework.Media;
 using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
+using ButtonState = Microsoft.Xna.Framework.Input.ButtonState;
 using Keys = Microsoft.Xna.Framework.Input.Keys;
 
 namespace RubikCube
@@ -34,7 +35,7 @@ namespace RubikCube
         KeyboardState oldKeyboardState;
         MouseState oldMouseState;
         Ray currentRay;
-        ModelMesh previousMeshCollided = null;
+        ModelMesh previousMeshCollided;
         Tuple<ModelMesh, ModelMesh> meshesDifference;
         readonly SpriteFont font;
         private Clocks clocks;
@@ -51,6 +52,8 @@ namespace RubikCube
         bool shouldAllowCameraMovement = true;
         //string whichGenre = "default";
         public GameState CurrentGameState;
+        private bool changeDetected;
+        private Point mousePosOnClick;
 
         #endregion
 
@@ -410,11 +413,57 @@ namespace RubikCube
             }
         }
 
-        private void MainRayControl(MouseState mouseState, MouseState oldMouseState, GraphicsDevice graphicsDevice)
+        private void MainRayControl(MouseState mouseState, GraphicsDevice graphicsDevice)
         {
+            ModelMesh closestMesh = FindClosestMesh(mouseState);
             DrawRay(mouseState, graphicsDevice);
-            if (CheckRayCollision())
-                Debug.WriteLine("Success!");
+            if (CheckRayCollision(mouseState))
+            {
+                changeDetected = true;
+            }
+            if (changeDetected && mouseState.LeftButton == ButtonState.Released && mousePosOnClick != new Point(0, 0))
+            {
+                //Debug.WriteLine(FindClosestMesh(mouseState).BoundingSphere.Center + " " + FindClosestMesh(mouseState).Name);
+                changeDetected = false;
+                double diffX = mouseState.X - mousePosOnClick.X;
+                double diffY = mousePosOnClick.Y - mouseState.Y;
+                double angle = (Math.Atan(diffY / (diffX + 1))) * 180.0 / Math.PI;
+                if (Math.Abs(diffX) > Math.Abs(diffY) && angle < 45 && angle > -45)
+                {
+                    if (diffX > 0)
+                    {
+                        //rotation right
+                        if (closestMesh.BoundingSphere.Center.Y < 70)
+                            AlgOrder += "dI";
+                        else
+                        {
+                            AlgOrder += "UI";
+                        }
+                    }
+                    else
+                    {
+                        //rotation left
+                        if (mouseState.Y > graphicsDevice.Viewport.Height / 2)
+                            AlgOrder += "d";
+                        else
+                        {
+                            AlgOrder += "U";
+                        }
+                    }
+                }
+                else if (Math.Abs(diffX) > Math.Abs(diffY) && angle < -45 || angle > 45)
+                {
+                    if (diffY > 0)
+                    {
+                        //rotation down
+                    }
+                    else
+                    {
+                        //rotation up
+                    }
+                }
+                Debug.WriteLine(diffX + " = x " + diffY + " = diffY " + angle + " = angle");
+            }
         }
 
         private void DrawRay(MouseState mouseState, GraphicsDevice graphicsDevice)
@@ -427,11 +476,12 @@ namespace RubikCube
             direction.Normalize();
             currentRay = new Ray(nearPoint, direction);
         }
-        private bool CheckRayCollision()
+
+        private bool CheckRayCollision(MouseState mouseState)
         {
-            if (FindClosestMesh() != null)
+            if (FindClosestMesh(mouseState) != null)
             {
-                ModelMesh currentMesh = FindClosestMesh();
+                ModelMesh currentMesh = FindClosestMesh(mouseState);
                 if (currentMesh != previousMeshCollided && previousMeshCollided != null)
                 {
                     previousMeshCollided = currentMesh;
@@ -441,7 +491,8 @@ namespace RubikCube
             }
             return false;
         }
-        private ModelMesh FindClosestMesh()
+
+        private ModelMesh FindClosestMesh(MouseState mouseState)
         {
             Tuple<ModelMesh, float> closestMesh = null;
             for (int index = 0; index < cube.Model.Meshes.Count; index++)
@@ -466,9 +517,18 @@ namespace RubikCube
                 }
             }
             if (closestMesh != null)
+            {
+                if (mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released)
+                    mousePosOnClick = new Point(mouseState.X, mouseState.Y);
+                else if (mouseState.LeftButton == ButtonState.Released && oldMouseState.LeftButton == ButtonState.Released)
+                {
+                    mousePosOnClick = new Point(0, 0);
+                }
                 return closestMesh.Item1;
+            }
             return null;
         }
+
         #endregion
 
         #region public methods
@@ -501,7 +561,7 @@ namespace RubikCube
                 if (shouldAllowCameraMovement)
                     camera.CameraMovement(mouseState, oldMouseState);
                 else
-                    MainRayControl(mouseState, oldMouseState, graphicsDevice);
+                    MainRayControl(mouseState, graphicsDevice);
                 camera.Update();
                 RotateWhichSide(keyboardState, oldKeyboardState, cameraPos);
             }
