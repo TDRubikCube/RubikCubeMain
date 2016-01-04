@@ -83,7 +83,6 @@
     <Compile Include="Button.cs" />
     <Compile Include="ButtonSetUp.cs" />
     <Compile Include="Camera.cs" />
-    <Compile Include="TextBox.cs" />
     <Compile Include="Cube.cs" />
     <Compile Include="CubeDictionaty.cs" />
     <Compile Include="CubeState.cs" />
