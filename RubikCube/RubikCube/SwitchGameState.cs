@@ -415,27 +415,28 @@ namespace RubikCube
 
         private void MainRayControl(MouseState mouseState, GraphicsDevice graphicsDevice)
         {
-            ModelMesh closestMesh = FindClosestMesh(mouseState);
             DrawRay(mouseState, graphicsDevice);
             if (CheckRayCollision(mouseState))
             {
                 changeDetected = true;
             }
-            if (changeDetected && mouseState.LeftButton == ButtonState.Released && mousePosOnClick != new Point(0, 0))
+            if (changeDetected && mouseState.LeftButton == ButtonState.Released && mousePosOnClick != new Point(0, 0) && FindClosestMesh(mouseState) != null)
             {
+                ModelMesh closestMesh = FindClosestMesh(mouseState).Item1;
                 //Debug.WriteLine(FindClosestMesh(mouseState).BoundingSphere.Center + " " + FindClosestMesh(mouseState).Name);
                 changeDetected = false;
                 double diffX = mouseState.X - mousePosOnClick.X;
                 double diffY = mousePosOnClick.Y - mouseState.Y;
                 double angle = (Math.Atan(diffY / (diffX + 1))) * 180.0 / Math.PI;
+                Debug.WriteLine(diffX + " = x " + diffY + " = diffY " + angle + " = angle");
                 if (Math.Abs(diffX) > Math.Abs(diffY) && angle < 45 && angle > -45)
                 {
                     if (diffX > 0)
                     {
                         //rotation right
-                        if (closestMesh.BoundingSphere.Center.Y < 70)
+                        if (FindClosestMesh(mouseState).Item2.Y < 3)
                             AlgOrder += "dI";
-                        else
+                        else if(FindClosestMesh(mouseState).Item2.Y > 4)
                         {
                             AlgOrder += "UI";
                         }
@@ -443,26 +444,38 @@ namespace RubikCube
                     else
                     {
                         //rotation left
-                        if (mouseState.Y > graphicsDevice.Viewport.Height / 2)
+                        if (FindClosestMesh(mouseState).Item2.Y < 3)
                             AlgOrder += "d";
-                        else
+                        else if (FindClosestMesh(mouseState).Item2.Y > 4)
                         {
                             AlgOrder += "U";
                         }
                     }
                 }
-                else if (Math.Abs(diffX) > Math.Abs(diffY) && angle < -45 || angle > 45)
+                else if (Math.Abs(diffY) > Math.Abs(diffX) && (angle < -45 || angle > 45))
                 {
                     if (diffY > 0)
                     {
                         //rotation down
+                        if (FindClosestMesh(mouseState).Item2.X < 0)
+                            AlgOrder += "LI";
+                        else if (FindClosestMesh(mouseState).Item2.X > 1)
+                        {
+                            AlgOrder += "R";
+                        }
                     }
                     else
                     {
                         //rotation up
+                        Debug.WriteLine(FindClosestMesh(mouseState).Item2);
+                        if (FindClosestMesh(mouseState).Item2.X < 0)
+                            AlgOrder += "L";
+                        else if (FindClosestMesh(mouseState).Item2.X > 1)
+                        {
+                            AlgOrder += "RI";
+                        }
                     }
                 }
-                Debug.WriteLine(diffX + " = x " + diffY + " = diffY " + angle + " = angle");
             }
         }
 
@@ -481,7 +494,7 @@ namespace RubikCube
         {
             if (FindClosestMesh(mouseState) != null)
             {
-                ModelMesh currentMesh = FindClosestMesh(mouseState);
+                ModelMesh currentMesh = FindClosestMesh(mouseState).Item1;
                 if (currentMesh != previousMeshCollided && previousMeshCollided != null)
                 {
                     previousMeshCollided = currentMesh;
@@ -492,9 +505,9 @@ namespace RubikCube
             return false;
         }
 
-        private ModelMesh FindClosestMesh(MouseState mouseState)
+        private Tuple<ModelMesh, Vector3> FindClosestMesh(MouseState mouseState)
         {
-            Tuple<ModelMesh, float> closestMesh = null;
+            Tuple<ModelMesh, float, Vector3> closestMesh = null;
             for (int index = 0; index < cube.Model.Meshes.Count; index++)
             {
 
@@ -502,6 +515,7 @@ namespace RubikCube
                 Vector3 meshCenter = cube.Model.Meshes[index].BoundingSphere.Center;
                 meshCenter = Vector3.Transform(meshCenter, Matrix.CreateScale(currentScale) * mesh.ParentBone.Transform * Matrix.CreateTranslation(Game1.CubieSize, -Game1.CubieSize, -Game1.CubieSize) * cube.MeshTransforms[index] * world);
                 BoundingSphere bs = new BoundingSphere(meshCenter, Game1.CubieSize / 2);
+                //Debug.WriteLine(meshCenter);
                 if (currentRay.Intersects(bs).HasValue)
                 {
                     float distance = currentRay.Intersects(bs).Value;
@@ -509,24 +523,22 @@ namespace RubikCube
                     {
                         if (distance < closestMesh.Item2)
                         {
-                            closestMesh = new Tuple<ModelMesh, float>(mesh, distance);
+                            closestMesh = new Tuple<ModelMesh, float, Vector3>(mesh, distance, meshCenter);
                         }
                     }
                     else
-                        closestMesh = new Tuple<ModelMesh, float>(mesh, distance);
+                        closestMesh = new Tuple<ModelMesh, float, Vector3>(mesh, distance, meshCenter);
                 }
             }
-            if (closestMesh != null)
+            if (closestMesh == null)
+                return null;
+            if (mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released)
+                mousePosOnClick = new Point(mouseState.X, mouseState.Y);
+            else if (mouseState.LeftButton == ButtonState.Released && oldMouseState.LeftButton == ButtonState.Released)
             {
-                if (mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released)
-                    mousePosOnClick = new Point(mouseState.X, mouseState.Y);
-                else if (mouseState.LeftButton == ButtonState.Released && oldMouseState.LeftButton == ButtonState.Released)
-                {
-                    mousePosOnClick = new Point(0, 0);
-                }
-                return closestMesh.Item1;
+                mousePosOnClick = new Point(0, 0);
             }
-            return null;
+            return new Tuple<ModelMesh, Vector3>(closestMesh.Item1, closestMesh.Item3);
         }
 
         #endregion
