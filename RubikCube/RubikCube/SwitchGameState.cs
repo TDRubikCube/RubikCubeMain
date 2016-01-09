@@ -471,7 +471,7 @@ namespace RubikCube
                         DebugBorders("Reset!");
                     }
                     cube.Update(gameTime, shouldRotate, cube.ScramblingVectors, false);
-                    textbox.Update(keyboardState, oldKeyboardState);
+                    textbox.Update(keyboardState, oldKeyboardState,gameTime);
                     if (cube.ScrambleIndex >= 25)
                     {
                         shouldRotate = false;

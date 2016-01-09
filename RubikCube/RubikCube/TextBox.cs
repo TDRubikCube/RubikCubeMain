@@ -22,13 +22,14 @@ namespace RubikCube
         public string drawBox = "";
         public string tabString = "";
         public int movedTo = 0;
+        int timeSincePress = 0;
         public const int boxSize = 20;
         public int tabPlace = 0;
         public TextBox()
         {
         }
 
-        public void Update(KeyboardState state, KeyboardState oldState)
+        public void Update(KeyboardState state, KeyboardState oldState, GameTime gameTime)
         {
             //34
             //(Keys)(Enum.Parse(typeof(Keys), "A"));
@@ -59,89 +60,101 @@ namespace RubikCube
             CheckForClick(ref state, ref oldState, Keys.Y);
             CheckForClick(ref state, ref oldState, Keys.Z);
             CheckForClick(ref state, ref oldState, Keys.Space);
-            CheckForClick(ref state, ref oldState, Keys.OemSemicolon);
-            if (state.IsKeyDown(Keys.Enter))
+            CheckForClick(ref state, ref oldState, Keys.OemSemicolon); //nope
+            if ((state.IsKeyDown(Keys.Enter)) && (oldState.IsKeyUp(Keys.Enter)))
             {
-                textbox = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                textbox += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             }
-            if (((state.IsKeyDown(Keys.Back)) && (oldState.IsKeyUp(Keys.Back))) && (textbox.Length > 0))
+            //cheaks if one of the keys that count how much time has passed since you pressed them have been...um...Un-pressed?
+            if (((state.IsKeyUp(Keys.Right)) && (oldState.IsKeyDown(Keys.Right)))||((state.IsKeyUp(Keys.Left))&&(oldState.IsKeyDown(Keys.Left)))||((state.IsKeyUp(Keys.Back))&&(oldState.IsKeyDown(Keys.Back))))
             {
-               /* if ((movedTo == 0)&&(tabPlace>0))
+                timeSincePress = 0;
+            }
+
+            if ((state.IsKeyDown(Keys.Back)) && (textbox.Length > 0))
+            {
+                timeSincePress += gameTime.ElapsedGameTime.Milliseconds;
+                if ((oldState.IsKeyUp(Keys.Back) || (timeSincePress > 250)))
                 {
-                    textbox = textbox.Remove((tabPlace)-1);
-                }
-                if (textbox.Length > textSize)
-                {
-                    movedTo--;
-                }
-                if (movedTo > 0)
-                {
-                    textbox = textbox.Remove(movedTo + (tabPlace-1));
-                    if (!((tabPlace > 0) && ((textbox.Length - (movedTo + tabPlace)) > 0)))
+                    if (timeSincePress > 250)
                     {
-                        movedTo--;
+                        timeSincePress = 225;
+                    }
+                    if ((tabPlace + movedTo) > 0)
+                    {
+                        if ((textbox.Length -boxSize -movedTo >0)&&)
+                        {
+                            tabPlace--;
+                        }
+                        else if (tabPlace<boxSize)
+                        {
+                            tabPlace--;
+                        }
+                        if (movedTo > 0)
+                        {
+                            if (textbox.Length - boxSize - movedTo ==0)
+                            {
+                                movedTo--;
+                            }
+                           
+                        }
+                        textbox = textbox.Remove(movedTo + tabPlace);
+                    }
+
+                }
+            }
+            if (state.IsKeyDown(Keys.Right))
+            {
+                timeSincePress += gameTime.ElapsedGameTime.Milliseconds;
+                if ((oldState.IsKeyUp(Keys.Right) || (timeSincePress > 250)))
+                {
+                    if (timeSincePress > 250)
+                    {
+                        timeSincePress = 225;
+                    }
+                    if ((tabPlace == boxSize) && (textbox.Length - boxSize - movedTo > 0))
+                    {
+                        movedTo++;
+                    }
+                    else if ((tabPlace < boxSize) && (textbox.Length - tabPlace > 0))
+                    {
+                        tabPlace++;
                     }
                     else
+                        Console.Beep();
+                }
+            }
+            if (state.IsKeyDown(Keys.Left))
+            {
+                timeSincePress += gameTime.ElapsedGameTime.Milliseconds;
+                if ((oldState.IsKeyUp(Keys.Left) || (timeSincePress > 250)))
+                {
+                    if (timeSincePress > 250)
                     {
-                        tabPlace--;
+                        timeSincePress = 225;
                     }
-                }
-                if (tabPlace > 0)
-                {
-                    tabPlace--;
-                }
-                */
-                if ((tabPlace + movedTo) > 0)
-                {
-                    string leftHalf = textbox.Substring(0, tabPlace + movedTo - 1);
-                    string rightHalf = textbox.Substring(tabPlace + movedTo, textbox.Length - (tabPlace + movedTo));
-                    textbox = leftHalf + rightHalf;
                     if (tabPlace > 0)
                     {
                         tabPlace--;
                     }
-                    if (movedTo > 0)
+                    if (tabPlace == 0)
                     {
-                        if ((tabPlace == 0) || ((textbox.Length - (movedTo + tabPlace)) > 0))
+                        if (movedTo > 0)
                         {
                             movedTo--;
                         }
+                        else
+                        {
+                            Console.Beep();
+                        }
                     }
-                }
-            }
-            if ((state.IsKeyDown(Keys.Right)) && (oldState.IsKeyUp(Keys.Right)))
-            {
-                if (tabPlace == boxSize)
-                {
-                    movedTo++;
-                }
-                if (tabPlace < boxSize)
-                {
-                    tabPlace++;
-                }
-            }
-            if ((state.IsKeyDown(Keys.Left)) && (oldState.IsKeyUp(Keys.Left)))
-            {
-                if (tabPlace > 0)
-                {
-                    tabPlace--;
-                }
-                if (tabPlace == 0)
-                {
-                    if (movedTo > 0)
-                    {
-                        movedTo--;
-                    }
-                    else
-                    {
-                        Console.Beep();
-                    }
+
                 }
             }
 
             if (textbox.Length > boxSize)
             {
-                drawBox = textbox.Substring(movedTo, (boxSize));
+                drawBox = textbox.Substring(movedTo, boxSize);
             }
             else
             {
@@ -150,9 +163,9 @@ namespace RubikCube
             tabString = "";
             for (int i = 0; i < tabPlace; i++)
             {
-                tabString += " ";
+                tabString += "  ";
             }
-                oldState = state;
+            oldState = state;
         }
         private void CheckForClick(ref KeyboardState keyboardState, ref KeyboardState oldKeyboardState, Keys key)
         {
@@ -165,12 +178,12 @@ namespace RubikCube
                 //}
                 //else
                 //{
-                textbox += KeyToChar(key, keyboardState, oldKeyboardState);
-                if (tabPlace <= boxSize)
+                textbox = textbox.Insert(movedTo + tabPlace,KeyToChar(key, keyboardState, oldKeyboardState));
+                if (tabPlace < boxSize)
                 {
                     tabPlace++;
                 }
-                if (tabPlace > boxSize)
+                if ((tabPlace >= boxSize) && (textbox.Length - boxSize - movedTo > 0))
                 {
                     tabPlace = boxSize;
                     movedTo++;
@@ -182,6 +195,7 @@ namespace RubikCube
         public void Draw(SpriteBatch spriteBatch, SpriteFont font)
         {
             spriteBatch.Begin();
+            spriteBatch.DrawString(font, ("TimeSincePress: " + timeSincePress), new Vector2(300, 350), Color.Black);
             spriteBatch.DrawString(font, ("Text: " + tabString + ","), new Vector2(300, 375), Color.Black);
             spriteBatch.DrawString(font, ("Text: " + drawBox), new Vector2(300, 375), Color.Black);
             spriteBatch.DrawString(font, ("Length: " + textbox.Length), new Vector2(300, 400), Color.Black);
