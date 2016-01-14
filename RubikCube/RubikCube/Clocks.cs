@@ -17,7 +17,6 @@ namespace RubikCube
     class Clocks
     {
         private float timer;
-        private bool shouldStartStoper;
         private int mSeconds;
         private int seconds;
         private int minutes;
@@ -27,6 +26,7 @@ namespace RubikCube
         string displaySeconds;
         string displayMSseconds;
         private bool isStoperPaused;
+        private bool shouldStartStoper;
 
         public void InitTimer(int intervel)
         {

@@ -90,7 +90,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="firstPopup.Designer.cs" />
-    <Compile Include="Game1.cs" />
+    <Compile Include="Main.cs" />
     <Compile Include="LoadingScreen.cs" />
     <Compile Include="Music.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

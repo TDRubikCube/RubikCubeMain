@@ -18,7 +18,7 @@ namespace RubikCube
     /// <summary>
     /// This is the main type for your game
     /// </summary>
-    public class Game1 : Microsoft.Xna.Framework.Game
+    public class Main : Microsoft.Xna.Framework.Game
     {
         #region classes & xna.vars declaration
 
@@ -46,7 +46,7 @@ namespace RubikCube
         #endregion
 
 
-        public Game1()
+        public Main()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
@@ -116,7 +116,7 @@ namespace RubikCube
                 // checks if the loading & the Clocks are done
                 if (justFinshed && clocks.CallTimer(gameTime))
                 {
-                    MediaPlayer.Resume();
+                    //MediaPlayer.Resume();
                     if (isFirstTime)
                     {
                         popup.Show();

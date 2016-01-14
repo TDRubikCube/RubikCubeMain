@@ -40,18 +40,19 @@ namespace RubikCube
         readonly SpriteFont font;
         private Clocks clocks;
         Point mousePos;
+        Vector3 centerOfClickedMesh = Vector3.Zero;
+        string currentFace = "";
+        private string faceClosestToRay = "";
+        private BasicEffect basicEffect;
 
         #endregion
 
         #region normal vars
+
         private float currentScale;
         public bool JustSwitched = false;
         public string AlgOrder = "";
-<<<<<<< HEAD
-        int rotationsLeft = 0;
-        bool shouldRotate;
         bool shouldAllowCameraMovement = true;
-=======
         public string AllTimeAlgOrder = "";
         public string YAlgOrder = "";
         //bool stopAnim = false;
@@ -61,7 +62,6 @@ namespace RubikCube
         //int delayInMilliseconds;
         //bool isDoneDrawing;
         //bool lockScreen = true;
->>>>>>> refs/remotes/origin/master
         //string whichGenre = "default";
         public GameState CurrentGameState;
         private bool changeDetected;
@@ -92,6 +92,8 @@ namespace RubikCube
             world = Matrix.CreateTranslation(new Vector3(0, 0, 0));
             view = camera.View;
             projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45f), graphicsDevice.Viewport.AspectRatio, 10f, 200f);
+
+            basicEffect = new BasicEffect(graphicsDevice);
         }
 
         #region private methods
@@ -195,7 +197,7 @@ namespace RubikCube
                         AlgOrder += (VectorToChar(camera.RealRight));
                         AlgOrder += ("I");
                         AllTimeAlgOrder += (VectorToChar(camera.RealRight));
-                        AllTimeAlgOrder +=("I");
+                        AllTimeAlgOrder += ("I");
                     }
                 }
                 else
@@ -216,7 +218,7 @@ namespace RubikCube
                 Debug.WriteLine("AlgOrder is: " + AlgOrder);
                 Debug.WriteLine("AllTimeAlgOrder is: " + AllTimeAlgOrder);
                 Debug.WriteLine("YAlgOrder is: " + YAlgOrder);
-                Debug.WriteLine("cameraPos.X is: "+cameraPos.X);
+                Debug.WriteLine("cameraPos.X is: " + cameraPos.X);
                 Debug.WriteLine("cameraPos.Y is: " + cameraPos.Y);
                 Debug.WriteLine("cameraPos.Z is: " + cameraPos.Z);
                 Debug.WriteLine("Angle is: " + cube.Angle);
@@ -254,7 +256,7 @@ namespace RubikCube
                     {
                         if (AllTimeAlgOrder.Length > 0)
                         {
-                            ControlZ();
+                            UnDo();
                         }
                         else
                         {
@@ -266,12 +268,12 @@ namespace RubikCube
                     {
                         if (YAlgOrder.Length > 0)
                         {
-                            ControlY();
+                            ReDo();
                         }
                         else
                         {
                             AlgOrder.Substring(1);
-                            Console.Beep(1,100);
+                            Console.Beep(1, 100);
                             Console.Beep(5, 100);
                         }
                     }
@@ -442,11 +444,8 @@ namespace RubikCube
                     break;
                 case GameState.Options:
                     if (keyboardState.IsKeyDown(Keys.Right) && oldKeyboardState.IsKeyUp(Keys.Right)) MediaPlayer.Stop();
-<<<<<<< HEAD
                     if (keyboardState.IsKeyDown(Keys.OemPlus) && oldKeyboardState.IsKeyUp(Keys.OemPlus)) cube.IncreaseRotationSpeed();
-=======
                     if (button.BtnRussian.IsClicked) lang.Russian();
->>>>>>> refs/remotes/origin/master
                     if (button.BtnHebrew.IsClicked) lang.Hebrew();
                     if (button.BtnEnglish.IsClicked) lang.English();
                     button.BtnEnglish.Update(false, gameTime);
@@ -509,12 +508,9 @@ namespace RubikCube
                     spriteBatch.Begin();
                     spriteBatch.DrawString(font, lang.FreePlayTitle, new Vector2(graphicsDevice.Viewport.Width / 3f, 10), Color.Black);
                     spriteBatch.DrawString(font, lang.FreePlayScramble, new Vector2(graphicsDevice.Viewport.Width / 13f, graphicsDevice.Viewport.Height / 1.4f), Color.Black);
-<<<<<<< HEAD
                     spriteBatch.DrawString(font, lang.FreePlaySolve, new Vector2(graphicsDevice.Viewport.Width / 4f, graphicsDevice.Viewport.Height / 1.4f), Color.Black);
                     clocks.DrawStoper(spriteBatch, font, new Vector2(graphicsDevice.Viewport.Width / 3f, 30));
-=======
-                    spriteBatch.DrawString(font, lang.FreePlayReset, new Vector2(graphicsDevice.Viewport.Width / 4f, graphicsDevice.Viewport.Height / 1.4f), Color.Black);
->>>>>>> refs/remotes/origin/master
+                    spriteBatch.DrawString(font, lang.FreePlaySolve, new Vector2(graphicsDevice.Viewport.Width / 4f, graphicsDevice.Viewport.Height / 1.4f), Color.Black);
                     button.BtnScramble.Draw(spriteBatch);
                     button.BtnSolve.Draw(spriteBatch);
                     spriteBatch.End();
@@ -542,137 +538,9 @@ namespace RubikCube
             }
         }
 
-        private void MainRayControl(MouseState mouseState, GraphicsDevice graphicsDevice)
-        {
-            DrawRay(mouseState, graphicsDevice);
-            if (CheckRayCollision(mouseState))
-            {
-                changeDetected = true;
-            }
-            if (changeDetected && mouseState.LeftButton == ButtonState.Released && mousePosOnClick != new Point(0, 0) && FindClosestMesh(mouseState) != null)
-            {
-                ModelMesh closestMesh = FindClosestMesh(mouseState).Item1;
-                //Debug.WriteLine(FindClosestMesh(mouseState).BoundingSphere.Center + " " + FindClosestMesh(mouseState).Name);
-                changeDetected = false;
-                double diffX = mouseState.X - mousePosOnClick.X;
-                double diffY = mousePosOnClick.Y - mouseState.Y;
-                double angle = (Math.Atan(diffY / (diffX + 1))) * 180.0 / Math.PI;
-                Debug.WriteLine(diffX + " = x " + diffY + " = diffY " + angle + " = angle");
-                if (Math.Abs(diffX) > Math.Abs(diffY) && angle < 45 && angle > -45)
-                {
-                    if (diffX > 0)
-                    {
-                        //rotation right
-                        if (FindClosestMesh(mouseState).Item2.Y < 3)
-                            AlgOrder += "dI";
-                        else if(FindClosestMesh(mouseState).Item2.Y > 4)
-                        {
-                            AlgOrder += "UI";
-                        }
-                    }
-                    else
-                    {
-                        //rotation left
-                        if (FindClosestMesh(mouseState).Item2.Y < 3)
-                            AlgOrder += "d";
-                        else if (FindClosestMesh(mouseState).Item2.Y > 4)
-                        {
-                            AlgOrder += "U";
-                        }
-                    }
-                }
-                else if (Math.Abs(diffY) > Math.Abs(diffX) && (angle < -45 || angle > 45))
-                {
-                    if (diffY > 0)
-                    {
-                        //rotation down
-                        if (FindClosestMesh(mouseState).Item2.X < 0)
-                            AlgOrder += "LI";
-                        else if (FindClosestMesh(mouseState).Item2.X > 1)
-                        {
-                            AlgOrder += "R";
-                        }
-                    }
-                    else
-                    {
-                        //rotation up
-                        Debug.WriteLine(FindClosestMesh(mouseState).Item2);
-                        if (FindClosestMesh(mouseState).Item2.X < 0)
-                            AlgOrder += "L";
-                        else if (FindClosestMesh(mouseState).Item2.X > 1)
-                        {
-                            AlgOrder += "RI";
-                        }
-                    }
-                }
-            }
-        }
 
-        private void DrawRay(MouseState mouseState, GraphicsDevice graphicsDevice)
-        {
-            Vector3 nearSource = new Vector3(mouseState.X, mouseState.Y, 0);
-            Vector3 farSource = new Vector3(mouseState.X, mouseState.Y, 1);
-            Vector3 nearPoint = graphicsDevice.Viewport.Unproject(nearSource, projection, view, world);
-            Vector3 farPoint = graphicsDevice.Viewport.Unproject(farSource, projection, view, world);
-            Vector3 direction = farPoint - nearPoint;
-            direction.Normalize();
-            currentRay = new Ray(nearPoint, direction);
-        }
-<<<<<<< HEAD
 
-        private bool CheckRayCollision(MouseState mouseState)
-        {
-            if (FindClosestMesh(mouseState) != null)
-            {
-                ModelMesh currentMesh = FindClosestMesh(mouseState).Item1;
-                if (currentMesh != previousMeshCollided && previousMeshCollided != null)
-                {
-                    previousMeshCollided = currentMesh;
-                    return true;
-                }
-                previousMeshCollided = currentMesh;
-            }
-            return false;
-        }
-
-        private Tuple<ModelMesh, Vector3> FindClosestMesh(MouseState mouseState)
-        {
-            Tuple<ModelMesh, float, Vector3> closestMesh = null;
-            for (int index = 0; index < cube.Model.Meshes.Count; index++)
-            {
-
-                ModelMesh mesh = cube.Model.Meshes[index];
-                Vector3 meshCenter = cube.Model.Meshes[index].BoundingSphere.Center;
-                meshCenter = Vector3.Transform(meshCenter, Matrix.CreateScale(currentScale) * mesh.ParentBone.Transform * Matrix.CreateTranslation(Game1.CubieSize, -Game1.CubieSize, -Game1.CubieSize) * cube.MeshTransforms[index] * world);
-                BoundingSphere bs = new BoundingSphere(meshCenter, Game1.CubieSize / 2);
-                //Debug.WriteLine(meshCenter);
-                if (currentRay.Intersects(bs).HasValue)
-                {
-                    float distance = currentRay.Intersects(bs).Value;
-                    if (closestMesh != null)
-                    {
-                        if (distance < closestMesh.Item2)
-                        {
-                            closestMesh = new Tuple<ModelMesh, float, Vector3>(mesh, distance, meshCenter);
-                        }
-                    }
-                    else
-                        closestMesh = new Tuple<ModelMesh, float, Vector3>(mesh, distance, meshCenter);
-                }
-            }
-            if (closestMesh == null)
-                return null;
-            if (mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released)
-                mousePosOnClick = new Point(mouseState.X, mouseState.Y);
-            else if (mouseState.LeftButton == ButtonState.Released && oldMouseState.LeftButton == ButtonState.Released)
-            {
-                mousePosOnClick = new Point(0, 0);
-            }
-            return new Tuple<ModelMesh, Vector3>(closestMesh.Item1, closestMesh.Item3);
-        }
-
-=======
-        public void ControlZ()
+        public void UnDo()
         {
             if (AllTimeAlgOrder.Length > 0)
             {
@@ -715,7 +583,8 @@ namespace RubikCube
                 Debug.WriteLine("AllTimeAlgOrder is 0!!!");
             }
         }
-        public void ControlY()
+
+        public void ReDo()
         {
             if (YAlgOrder.Length > 0)
             {
@@ -760,6 +629,7 @@ namespace RubikCube
                 Debug.WriteLine("YAlgOrder is 0!!!");
             }
         }
+
         public string VectorToChar(Vector3 real)
         {
             if (real == Vector3.Left)
@@ -790,6 +660,7 @@ namespace RubikCube
             return "";
 
         }
+
         public Vector3 CharToVector(string real)
         {
             if ((real == "l") || (real == "L"))
@@ -819,6 +690,7 @@ namespace RubikCube
             Debug.WriteLine("CharToVector returned null");
             return Vector3.Zero;
         }
+
         public void DebugBorders(string a)
         {
             string b = "~~~~~~~~~~~~~~";
@@ -837,14 +709,14 @@ namespace RubikCube
                     b += a + b;
                 }
                 Debug.WriteLine(b);
-              //Debug.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                //Debug.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             }
             else
             {
                 Debug.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             }
         }
->>>>>>> refs/remotes/origin/master
+
         #endregion
 
         #region public methods
@@ -872,6 +744,7 @@ namespace RubikCube
             cameraPos = Matrix.Invert(view).Translation;
             if (CurrentGameState == GameState.FreePlay)
             {
+                SetCurrentFace();
                 if (keyboardState.IsKeyDown(Keys.C) && oldKeyboardState.IsKeyUp(Keys.C))
                     shouldAllowCameraMovement = !shouldAllowCameraMovement;
                 if (shouldAllowCameraMovement)
@@ -887,7 +760,7 @@ namespace RubikCube
             if (!Application.OpenForms.OfType<FirstPopup>().Any())
                 SwitchUpdate(mouseState, keyboardState, gameTime);
             OldState(ref mouseState, ref keyboardState);
-            currentScale = Game1.CubieSize * 3 / graphics.GraphicsDevice.Viewport.AspectRatio / Game1.OriginalScale;
+            currentScale = Main.CubieSize * 3 / graphics.GraphicsDevice.Viewport.AspectRatio / Main.OriginalScale;
         }
 
         /// <summary>
@@ -916,7 +789,7 @@ namespace RubikCube
                 foreach (BasicEffect effect in mesh.Effects)
                 {
                     effect.EnableDefaultLighting();
-                    effect.World = Matrix.CreateScale(currentScale) * mesh.ParentBone.Transform * Matrix.CreateTranslation(Game1.CubieSize, -Game1.CubieSize, -Game1.CubieSize) * cube.MeshTransforms[index] * objectWorldMatrix;
+                    effect.World = Matrix.CreateScale(currentScale) * mesh.ParentBone.Transform * Matrix.CreateTranslation(Main.CubieSize, -Main.CubieSize, -Main.CubieSize) * cube.MeshTransforms[index] * objectWorldMatrix;
                     effect.View = view;
                     effect.Projection = projection;
                 }
@@ -931,5 +804,293 @@ namespace RubikCube
         }
 
         #endregion
+
+        #region Rays
+
+        private void MainRayControl(MouseState mouseState, GraphicsDevice graphicsDevice)
+        {
+            DrawRay(mouseState, graphicsDevice);
+            if (FindMeshOnClick(mouseState, graphicsDevice) != null)
+            {
+                changeDetected = true;
+                centerOfClickedMesh = FindMeshOnClick(mouseState, graphicsDevice).Item2;
+            }
+            //Debug.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            //if (mouseState.LeftButton == ButtonState.Released)
+            //    Debug.WriteLine("condition 1 cleared");
+            //if (mousePosOnClick != new Point(0, 0))
+            //    Debug.WriteLine("condition 2 cleared");
+            //if (changeDetected)
+            //    Debug.WriteLine("condition 3 cleared");
+
+            if (mouseState.LeftButton == ButtonState.Released && mousePosOnClick != new Point(0, 0) && changeDetected)
+            {
+                changeDetected = false;
+                double diffX = mouseState.X - mousePosOnClick.X;
+                double diffY = mousePosOnClick.Y - mouseState.Y;
+                double angle = (Math.Atan(diffY / (diffX + 1))) * 180.0 / Math.PI;
+                if (Math.Abs(diffX) > Math.Abs(diffY) && angle < 45 && angle > -45)
+                {
+                    if (diffX > 0)
+                    {
+                        //rotation right
+                        if (centerOfClickedMesh.Y < 3)
+                            AlgOrder += "dI";
+                        else if (centerOfClickedMesh.Y > 4)
+                        {
+                            AlgOrder += "UI";
+                        }
+                    }
+                    else
+                    {
+                        //rotation left
+                        if (centerOfClickedMesh.Y < 3)
+                            AlgOrder += "d";
+                        else if (centerOfClickedMesh.Y > 4)
+                        {
+                            AlgOrder += "U";
+                        }
+                    }
+                }
+                //checks if it should rotate the left/right sides
+                else if (Math.Abs(diffY) > Math.Abs(diffX) && (angle < -45 || angle > 45))
+                {
+                    if (currentFace == "green")
+                    {
+                        if (diffY > 0)
+                        {
+                            AlgOrder += RotateWhichLayer(centerOfClickedMesh, currentFace, "down");
+                        }
+                        else
+                        {
+                            AlgOrder += RotateWhichLayer(centerOfClickedMesh, currentFace, "up");
+                        }
+                    }
+                    else if (currentFace == "blue")
+                    {
+                        if (diffY > 0)
+                        {
+                            AlgOrder += RotateWhichLayer(centerOfClickedMesh, currentFace, "down");
+                        }
+                        else
+                        {
+                            AlgOrder += RotateWhichLayer(centerOfClickedMesh, currentFace, "up");
+                        }
+                    }
+                    else if (currentFace == "white")
+                    {
+                        if (diffY > 0)
+                        {
+                            AlgOrder += RotateWhichLayer(centerOfClickedMesh, currentFace, "down");
+                        }
+                        else
+                        {
+                            AlgOrder += RotateWhichLayer(centerOfClickedMesh, currentFace, "up");
+                        }
+                    }
+                    else if (currentFace == "yellow")
+                    {
+                        if (diffY > 0)
+                        {
+                            AlgOrder += RotateWhichLayer(centerOfClickedMesh, currentFace, "down");
+                        }
+                        else
+                        {
+                            AlgOrder += RotateWhichLayer(centerOfClickedMesh, currentFace, "up");
+                        }
+                    }
+                }
+            }
+        }
+
+        private void SetCurrentFace()
+        {
+            if (camera.IsFaceGreen(cameraPos))
+                currentFace = "green";
+            if (camera.IsFaceBlue(cameraPos))
+                currentFace = "blue";
+            if (camera.IsFaceWhite(cameraPos))
+                currentFace = "white";
+            if (camera.IsFaceYellow(cameraPos))
+                currentFace = "yellow";
+        }
+
+        private Tuple<ModelMesh, Vector3> FindMeshOnClick(MouseState mouseState,GraphicsDevice graphicsDevice)
+        {
+            Tuple<ModelMesh, float, Vector3> closestMesh = null;
+            Tuple<string,float> closestFace = new Tuple<string, float>("",int.MaxValue);
+            for (int index = 0; index < cube.Model.Meshes.Count; index++)
+            {
+                ModelMesh mesh = cube.Model.Meshes[index];
+                Vector3 meshCenter = mesh.BoundingSphere.Center;
+                meshCenter = Vector3.Transform(meshCenter,
+                    Matrix.CreateScale(currentScale) * mesh.ParentBone.Transform *
+                    Matrix.CreateTranslation(Main.CubieSize, -Main.CubieSize, -Main.CubieSize) *
+                    cube.MeshTransforms[index] * world);
+
+                BoundingSphere bs = new BoundingSphere(meshCenter, Main.CubieSize / 2);
+                //Debug.WriteLine(meshCenter);
+                if (CheckIndex(index).Item2)
+                {
+                    if (FindDistance(bs, mouseState, graphicsDevice) < closestFace.Item2)
+                    {
+                        closestFace = new Tuple<string, float>(CheckIndex(index).Item1, FindDistance(bs, mouseState, graphicsDevice));
+                    }
+                }
+                if (currentRay.Intersects(bs).HasValue)
+                {
+                    float distance = currentRay.Intersects(bs).Value;
+                    if (closestMesh != null)
+                    {
+                        if (distance < closestMesh.Item2)
+                        {
+                            closestMesh = new Tuple<ModelMesh, float, Vector3>(mesh, distance, meshCenter);
+                        }
+                    }
+                    else
+                        closestMesh = new Tuple<ModelMesh, float, Vector3>(mesh, distance, meshCenter);
+                }
+            }
+            faceClosestToRay = closestFace.Item1;
+            Debug.WriteLine(faceClosestToRay);
+            if (closestMesh == null)
+                return null;
+            if (mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released)
+            {
+                mousePosOnClick = new Point(mouseState.X, mouseState.Y);
+                return new Tuple<ModelMesh, Vector3>(closestMesh.Item1, closestMesh.Item3);
+            }
+            if (mouseState.LeftButton == ButtonState.Released && oldMouseState.LeftButton == ButtonState.Released)
+                mousePosOnClick = new Point(0, 0);
+            return null;
+        }
+
+        private float FindDistance(BoundingSphere bs,MouseState mouseState,GraphicsDevice graphicsDevice)
+        {
+            Vector3 nearPoint = graphicsDevice.Viewport.Unproject(new Vector3(mouseState.X,mouseState.Y,0), projection, view, world);
+            Vector3 destination = bs.Center - nearPoint;
+            destination.Normalize();
+            Ray rayToTarget = new Ray(nearPoint,destination);
+            if (rayToTarget.Intersects(bs).HasValue)
+            return rayToTarget.Intersects(bs).Value;
+            return 0;
+        }
+
+        private Tuple<string, bool> CheckIndex(int i)
+        {
+            if (i == 1)
+            {
+                return new Tuple<string, bool>("green" , true);
+            }
+            if (i == 3)
+            {
+                return new Tuple<string, bool>("blue", true);
+            }
+            if (i == 10)
+            {
+                return new Tuple<string, bool>("orange", true);
+            }
+            if (i == 13)
+            {
+                return new Tuple<string, bool>("white", true);
+            }
+            if (i == 21)
+            {
+                return new Tuple<string, bool>("yellow", true);
+            }
+            if (i == 25)
+            {
+                return new Tuple<string, bool>("red", true);                
+            }
+            return new Tuple<string, bool>("",false);
+        }
+
+        private void DrawRay(MouseState mouseState, GraphicsDevice graphicsDevice)
+        {
+            Vector3 nearSource = new Vector3(mouseState.X, mouseState.Y, 0);
+            Vector3 farSource = new Vector3(mouseState.X, mouseState.Y, 1);
+            Vector3 nearPoint = graphicsDevice.Viewport.Unproject(nearSource, projection, view, world);
+            Vector3 farPoint = graphicsDevice.Viewport.Unproject(farSource, projection, view, world);
+            Vector3 direction = farPoint - nearPoint;
+            direction.Normalize();
+            currentRay = new Ray(nearPoint, direction);
+        }
+
+        private string RotateWhichLayer(Vector3 meshCenter, string whichFace, string whichDirection)
+        {
+            if (whichFace == "green")
+            {
+                if (meshCenter.X < 0)
+                {
+                    if (whichDirection == "down")
+                        return VectorToChar(camera.RealLeft) + 'i';
+                    if (whichDirection == "up")
+                        return VectorToChar(camera.RealLeft);
+                }
+                if (meshCenter.X > 1)
+                {
+                    if (whichDirection == "down")
+                        return VectorToChar(camera.RealRight);
+                    if (whichDirection == "up")
+                        return VectorToChar(camera.RealRight) + 'i';
+                }
+            }
+            else if (whichFace == "blue")
+            {
+                if (meshCenter.X > 0)
+                {
+                    if (whichDirection == "down")
+                        return VectorToChar(camera.RealLeft) + 'i';
+                    if (whichDirection == "up")
+                        return VectorToChar(camera.RealLeft);
+                }
+                if (meshCenter.X < 1)
+                {
+                    if (whichDirection == "down")
+                        return VectorToChar(camera.RealRight);
+                    if (whichDirection == "up")
+                        return VectorToChar(camera.RealRight) + 'i';
+                }
+            }
+            else if (whichFace == "yellow")
+            {
+                if (meshCenter.Z > 1)
+                {
+                    if (whichDirection == "down")
+                        return VectorToChar(camera.RealLeft) + 'i';
+                    if (whichDirection == "up")
+                        return VectorToChar(camera.RealLeft);
+                }
+                if (meshCenter.Z < 1)
+                {
+                    if (whichDirection == "down")
+                        return VectorToChar(camera.RealRight);
+                    if (whichDirection == "up")
+                        return VectorToChar(camera.RealRight) + 'i';
+                }
+            }
+            else if (whichFace == "white")
+            {
+                if (meshCenter.Z < 1)
+                {
+                    if (whichDirection == "down")
+                        return VectorToChar(camera.RealLeft) + 'i';
+                    if (whichDirection == "up")
+                        return VectorToChar(camera.RealLeft);
+                }
+                if (meshCenter.Z > 1)
+                {
+                    if (whichDirection == "down")
+                        return VectorToChar(camera.RealRight);
+                    if (whichDirection == "up")
+                        return VectorToChar(camera.RealRight) + 'i';
+                }
+            }
+            return "";
+        }
+
+
+        #endregion
+
     }
 }

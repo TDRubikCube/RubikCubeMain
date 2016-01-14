@@ -15,11 +15,11 @@ using Keys = Microsoft.Xna.Framework.Input.Keys;
 
 namespace RubikCube
 {
-            
+
     class Camera
     {
         Vector2 previousMousePosition;
-        public MouseState oldMouseState;
+        public MouseState OldMouseState;
         private Matrix view;
         float horizontalAngle;
         float verticalAngle;
@@ -28,7 +28,7 @@ namespace RubikCube
 
         public Camera()
         {
-            view = Matrix.CreateLookAt(new Vector3(20, 20, 20), new Vector3(0,0,0), Vector3.Up);
+            view = Matrix.CreateLookAt(new Vector3(20, 20, 20), new Vector3(0, 0, 0), Vector3.Up);
             //numbers
             verticalAngle = AngleBetweenVectorAndAxis(Matrix.Invert(view).Translation, "x");
             horizontalAngle = AngleBetweenVectorAndAxis(Matrix.Invert(view).Translation, "y");
@@ -37,7 +37,7 @@ namespace RubikCube
         public void Update()
         {
             MouseState mouseState = Mouse.GetState();
-            oldMouseState = mouseState;
+            OldMouseState = mouseState;
             previousMouseWheel = mouseState.ScrollWheelValue;
         }
 
@@ -47,14 +47,7 @@ namespace RubikCube
         /// <param name="cameraPos">the camera position as a vector3</param>
         public void RealRotate(Vector3 cameraPos)
         {
-<<<<<<< HEAD
             if ((IsFaceGreen(cameraPos)))
-=======
-          //  Debug.WriteLine("cameraPos.X is: "+cameraPos.X);
-           // Debug.WriteLine("cameraPos.Y is: " + cameraPos.Y);
-         //   Debug.WriteLine("cameraPos.Z is: " + cameraPos.Z);
-            if (cameraPos.X >= -radius / 1.61f && cameraPos.X <= radius / 1.61f && cameraPos.Z > radius / 1.438f && cameraPos.Z <= radius * 1.012f)
->>>>>>> refs/remotes/origin/master
             {
                 RealLeft = Vector3.Left;
                 RealRight = Vector3.Right;
@@ -84,22 +77,22 @@ namespace RubikCube
             }
         }
 
-        private bool IsFaceWhite(Vector3 cameraPos)
+        public bool IsFaceWhite(Vector3 cameraPos)
         {
             return cameraPos.X >= -radius * 1.012f && cameraPos.X <= -radius / 1.52f && cameraPos.Z >= -radius / 1.52f && cameraPos.Z <= radius / 1.52f;
         }
 
-        private bool IsFaceBlue(Vector3 cameraPos)
+        public bool IsFaceBlue(Vector3 cameraPos)
         {
             return cameraPos.X >= -radius / 1.366f && cameraPos.X <= radius / 1.366f && cameraPos.Z >= -radius * 1.012f && cameraPos.Z <= -radius / 1.52f;
         }
 
-        private bool IsFaceYellow(Vector3 cameraPos)
+        public bool IsFaceYellow(Vector3 cameraPos)
         {
             return cameraPos.X >= radius / 1.366f && cameraPos.X <= radius * 1.012f && cameraPos.Z >= -radius / 1.366f && cameraPos.Z <= radius / 1.366f;
         }
 
-        private bool IsFaceGreen(Vector3 cameraPos)
+        public bool IsFaceGreen(Vector3 cameraPos)
         {
             return cameraPos.X >= -radius / 1.61f && cameraPos.X <= radius / 1.61f && cameraPos.Z > radius / 1.438f && cameraPos.Z <= radius * 1.012f;
         }
@@ -116,8 +109,8 @@ namespace RubikCube
             previousMousePosition = new Vector2(oldMouseState.X, oldMouseState.Y);
             horizontalAngle += (currentMousePos.X - previousMousePosition.X) * 0.01f;
             //if (IsCameraAtRightAngle(oldCameraPos) || verticalAngle.Equals(0))
-           // {
-                verticalAngle += (currentMousePos.Y - previousMousePosition.Y) * 0.01f;
+            // {
+            verticalAngle += (currentMousePos.Y - previousMousePosition.Y) * 0.01f;
             //}
             Vector3 newCameraPosition = new Vector3(
                -(float)(radius * Math.Sin(horizontalAngle) * Math.Sin(verticalAngle)),  //x
@@ -152,7 +145,7 @@ namespace RubikCube
             {
                 radius -= 2;
             }
-            view = Matrix.CreateLookAt(newCameraPosition, new Vector3(0,0,0), Vector3.Up);
+            view = Matrix.CreateLookAt(newCameraPosition, new Vector3(0, 0, 0), Vector3.Up);
         }
 
         private bool IsCameraAtRightAngle(Vector3 cameraPosition)
@@ -182,8 +175,8 @@ namespace RubikCube
 
         public Matrix View
         {
-            get {return view;}
-            set {view = value;}
+            get { return view; }
+            set { view = value; }
         }
 
         #region RealRotate

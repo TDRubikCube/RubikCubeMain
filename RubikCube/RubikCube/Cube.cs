@@ -87,7 +87,7 @@ namespace RubikCube
         public void Rotate(Vector3 side, bool isClockWise,string algOrder)
         {
             Angle -= RotationSpeed;
-            float sidePosition = Game1.CubieSize;
+            float sidePosition = Main.CubieSize;
             //Debug.WriteLine("animAngle=     " + Angle);
             //Debug.WriteLine("Angle " + MathHelper.ToRadians(Angle));
             float partOfRotation = (float)(100f / RotationSpeed);

@@ -15,7 +15,7 @@ namespace RubikCube
         public string TutorialFreeText;
         public string TutorialFreeText2;
         public string FreePlayScramble;
-        public string FreePlayReset;
+        public string FreePlaySolve;
 
         public Text()
         {
@@ -27,7 +27,7 @@ namespace RubikCube
             TutorialFreeText = "Use the L,R,U,D,F,B keys to turn the cube";
             TutorialFreeText2 = "Hold Shift to turn the cube counter-clockwise";
             FreePlayScramble = "Scramble";
-            FreePlayReset = "Reset!";
+            FreePlaySolve = "Reset!";
         }
 
         public void English()
@@ -40,7 +40,7 @@ namespace RubikCube
             TutorialFreeText = "Use the L,R,U,D,F,B keys to turn the cube";
             TutorialFreeText2 = "Hold Shift to turn the cube counter-clockwise";
             FreePlayScramble = "Scramble";
-            FreePlayReset = "Reset!";
+            FreePlaySolve = "Reset!";
         }
 
         public void Hebrew()
@@ -53,7 +53,7 @@ namespace RubikCube
             TutorialFreeText = "ה י ב ו ק ה  ת א  ז י ז ה ל  י ד כ  L,R,U,D,F,B  ם י ש ק מ ה  ל ע  ץ ח ל";
             TutorialFreeText2 = "ן ו ע ש ה  ן ו ו כ  ד ג נ  ה י ב ו ק ה  ת א  ב ב ו ס ל  י ד כ  Shift ת א  ק ז ח ה";
             FreePlayScramble = "ב ב ר ע";
-            FreePlayReset = "! ס פ א";
+            FreePlaySolve = "! ס פ א";
         }
 
         public void Russian() //not 100% done yet
@@ -66,7 +66,7 @@ namespace RubikCube
             TutorialFreeText = "Использовать L,R,U,D,F,B клавиши чтобы повернуть кубика";
             TutorialFreeText2 = "Держать Shift чтобы повернуть кубика против часовой стрелки";
             FreePlayScramble = "Мишать";
-            FreePlayReset = "Очистить!";
+            FreePlaySolve = "Очистить!";
         }
     }
 }
