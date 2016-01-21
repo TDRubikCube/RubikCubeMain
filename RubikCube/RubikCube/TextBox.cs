@@ -48,32 +48,6 @@ namespace RubikCube
             {
               CheckForClick(ref state, ref oldState, gameTime,(Keys)(Enum.Parse(typeof(Keys), usedKeys.Substring(i,1)))); //converts string letter from usedKeys to Keys, and send to cheak.
             }
-            //CheckForClick(ref state, ref oldState, gameTime, Keys.A);
-            //CheckForClick(ref state, ref oldState, gameTime, Keys.B);
-            //CheckForClick(ref state, ref oldState, gameTime, Keys.C);
-            //CheckForClick(ref state, ref oldState, gameTime, Keys.D);
-            //CheckForClick(ref state, ref oldState, gameTime, Keys.E);
-            //CheckForClick(ref state, ref oldState, gameTime, Keys.F);
-            //CheckForClick(ref state, ref oldState, gameTime, Keys.G);
-            //CheckForClick(ref state, ref oldState, gameTime, Keys.H);
-            //CheckForClick(ref state, ref oldState, gameTime, Keys.I);
-            //CheckForClick(ref state, ref oldState, gameTime, Keys.J);
-            //CheckForClick(ref state, ref oldState, gameTime, Keys.K);
-            //CheckForClick(ref state, ref oldState, gameTime, Keys.L);
-            //CheckForClick(ref state, ref oldState, gameTime, Keys.M);
-            //CheckForClick(ref state, ref oldState, gameTime, Keys.N);
-            //CheckForClick(ref state, ref oldState, gameTime, Keys.O);
-            //CheckForClick(ref state, ref oldState, gameTime, Keys.P);
-            //CheckForClick(ref state, ref oldState, gameTime, Keys.Q);
-            //CheckForClick(ref state, ref oldState, gameTime, Keys.R);
-            //CheckForClick(ref state, ref oldState, gameTime, Keys.S);
-            //CheckForClick(ref state, ref oldState, gameTime, Keys.T);
-            //CheckForClick(ref state, ref oldState, gameTime, Keys.U);
-            //CheckForClick(ref state, ref oldState, gameTime, Keys.V);
-            //CheckForClick(ref state, ref oldState, gameTime, Keys.W);
-            //CheckForClick(ref state, ref oldState, gameTime, Keys.X);
-            //CheckForClick(ref state, ref oldState, gameTime, Keys.Y);
-            //CheckForClick(ref state, ref oldState, gameTime, Keys.Z);
             CheckForClick(ref state, ref oldState, gameTime, Keys.Space);
             CheckForClick(ref state, ref oldState, gameTime, Keys.OemSemicolon); //nope
             if ((state.IsKeyDown(Keys.Enter)) && (oldState.IsKeyUp(Keys.Enter)))
@@ -81,9 +55,14 @@ namespace RubikCube
                 textbox = textbox.Insert(movedTo+tabPlace,"ABCDEFGHIJKLMNOPQRSTUVWXYZ");
             }
             //cheaks if one of the keys that count how much time has passed since you pressed them have been...um...Un-pressed?
-            if ((CheakForKeyChange(state, oldState, Keys.Right)) || (CheakForKeyChange(state, oldState, Keys.Left)) || (CheakForKeyChange(state, oldState, Keys.Back))||(CheakForKeyChange(state, oldState, Keys.Space))) 
+            if ((CheakForKeyChange(state, oldState, Keys.Right)) || (CheakForKeyChange(state, oldState, Keys.Left)) || (CheakForKeyChange(state, oldState, Keys.Back)) || (CheakForKeyChange(state, oldState, Keys.Space))) 
             {
                 timeSincePress = 0;
+                oldKey = Keys.F24;
+                tabTimer = 0;
+            }
+            if (CheakForKeyChange(state, oldState, oldKey))
+            {
                 timeSinceLetterPress = 0;
                 oldKey = Keys.F24;
                 tabTimer = 0;
@@ -195,7 +174,7 @@ namespace RubikCube
                 int cheak = 1;
                 while((font.MeasureString(drawBox.Substring(0, drawBox.Length - cheak)).X) > realBoxSize)
                 {
-                    Debug.WriteLine(font.MeasureString(drawBox.Substring(0, drawBox.Length - cheak)).X);
+                    Debug.WriteLine("size of string" + font.MeasureString(drawBox.Substring(0, drawBox.Length - cheak)).X);
                     boxSize--;
                     if (tabPlace > boxSize)
                     {
@@ -204,16 +183,15 @@ namespace RubikCube
                     cheak++;
                 }
 
-            }
-            else if (drawBox.Length == boxSize)
-            {
-                boxSize++;
-                if (tabPlace >= boxSize)
-                {
-                    tabPlace++;
-                }
-
-            }
+            //}
+            //else if (drawBox.Length < (boxSize - 1))
+            //{
+            //    if (font.MeasureString(textbox.Substring(movedTo, drawBox.Length + 1)).X <= realBoxSize)
+            //    {
+            //        boxSize++;
+            //    }
+                
+            //}
 
             if (textbox.Length > boxSize)
             {
@@ -295,6 +273,8 @@ namespace RubikCube
             Vector2 tabVector = (font.MeasureString ("Text: " +drawBox.Substring(0, tabPlace)));
             tabVector = new Vector2((tabVector.X + 295),(375));
             spriteBatch.Begin();
+            spriteBatch.DrawString(font, "DraBoxSize.X " + font.MeasureString(drawBox).X, new Vector2(300, 325), Color.Black);
+            spriteBatch.DrawString(font, "BoxMax.X " + realBoxSize, new Vector2(475, 325), Color.Black);
             spriteBatch.DrawString(font, ("TabX: " + (tabVector.X - uslessWordSize)), new Vector2(300, 350), Color.Black);
             spriteBatch.DrawString(font, ("Text: " + drawBox), new Vector2(300, 375), Color.Black);
             spriteBatch.DrawString(font, ("|"), new Vector2(300 + realBoxSize + uslessWordSize, 375), Color.Red);
