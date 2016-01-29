@@ -35,15 +35,14 @@ namespace RubikCube
         KeyboardState oldKeyboardState;
         MouseState oldMouseState;
         Ray currentRay;
-        ModelMesh previousMeshCollided;
-        Tuple<ModelMesh, ModelMesh> meshesDifference;
         readonly SpriteFont font;
         private Clocks clocks;
         Point mousePos;
         Vector3 centerOfClickedMesh = Vector3.Zero;
         string currentFace = "";
         private string faceClosestToRay = "";
-        private BasicEffect basicEffect;
+        private GraphicsDevice graphicsDevice;
+        private float previousDistanceToMesh;
 
         #endregion
 
@@ -66,11 +65,13 @@ namespace RubikCube
         public GameState CurrentGameState;
         private bool changeDetected;
         private Point mousePosOnClick;
+        private Vector3 direction;
 
         #endregion
 
-        public SwitchGameState(GraphicsDevice graphicsDevice, GraphicsDeviceManager graphics, ContentManager content)
+        public SwitchGameState(GraphicsDevice graphicsDeviceFromMain, GraphicsDeviceManager graphics, ContentManager content)
         {
+            graphicsDevice = graphicsDeviceFromMain;
             //class initialize
             cube = new Cube();
             lang = new Text();
@@ -93,7 +94,6 @@ namespace RubikCube
             view = camera.View;
             projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45f), graphicsDevice.Viewport.AspectRatio, 10f, 200f);
 
-            basicEffect = new BasicEffect(graphicsDevice);
         }
 
         #region private methods
@@ -462,6 +462,7 @@ namespace RubikCube
                     if (button.BtnScramble.IsClicked) shouldRotate = true;
                     if (button.BtnSolve.IsClicked)
                     {
+                        clocks.StopStoper();
                         cube.Angle = 0;
                         shouldRotate = false;
                         AlgOrder = "";
@@ -491,14 +492,13 @@ namespace RubikCube
         /// </summary>
         /// <param name="spriteBatch"></param>
         /// <param name="graphicsDevice"></param>
-        private void SwitchDraw(SpriteBatch spriteBatch, GraphicsDevice graphicsDevice)
+        private void SwitchDraw(SpriteBatch spriteBatch)
         {
             switch (CurrentGameState)
             {
                 case GameState.MainMenu:
                     spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
-                    if (!Application.OpenForms.OfType<FirstPopup>().Any())
-                        spriteBatch.DrawString(font, lang.MainTitle, new Vector2(graphicsDevice.Viewport.Width / 3f, 10), Color.Black);
+                    spriteBatch.DrawString(font, lang.MainTitle, new Vector2(graphicsDevice.Viewport.Width / 3f, 10), Color.Black);
                     button.BtnTutorial.Draw(spriteBatch);
                     button.BtnOptions.Draw(spriteBatch);
                     button.BtnFreePlay.Draw(spriteBatch);
@@ -514,7 +514,7 @@ namespace RubikCube
                     button.BtnScramble.Draw(spriteBatch);
                     button.BtnSolve.Draw(spriteBatch);
                     spriteBatch.End();
-                    DrawModel(cube, world, view, projection, graphicsDevice);
+                    DrawModel(cube, world, view, projection);
                     break;
                 case GameState.Options:
                     spriteBatch.Begin();
@@ -537,8 +537,6 @@ namespace RubikCube
                     break;
             }
         }
-
-
 
         public void UnDo()
         {
@@ -726,9 +724,9 @@ namespace RubikCube
         /// </summary>
         /// <param name="spriteBatch"></param>
         /// <param name="graphicsDevice"></param>
-        public void Draw(SpriteBatch spriteBatch, GraphicsDevice graphicsDevice)
+        public void Draw(SpriteBatch spriteBatch)
         {
-            SwitchDraw(spriteBatch, graphicsDevice);
+            SwitchDraw(spriteBatch);
         }
 
         /// <summary>
@@ -736,8 +734,9 @@ namespace RubikCube
         /// </summary>
         /// <param name="gameTime"></param>
         /// <param name="graphics"></param>
-        public void Update(GameTime gameTime, GraphicsDeviceManager graphics, GraphicsDevice graphicsDevice)
+        public void Update(GameTime gameTime, GraphicsDevice graphicsDeviceFromMain)
         {
+            graphicsDevice = graphicsDeviceFromMain;
             KeyboardState keyboardState = Keyboard.GetState();
             MouseState mouseState = Mouse.GetState();
             view = camera.View;
@@ -750,17 +749,16 @@ namespace RubikCube
                 if (shouldAllowCameraMovement)
                     camera.CameraMovement(mouseState, oldMouseState);
                 else
-                    MainRayControl(mouseState, graphicsDevice);
+                    MainRayControl(mouseState);
                 camera.Update();
                 RotateWhichSide(keyboardState, oldKeyboardState, cameraPos);
             }
             if (keyboardState.IsKeyDown(Keys.A) && oldKeyboardState.IsKeyUp(Keys.A))
                 Debug.WriteLine(AlgOrder);
             mousePos = new Point(mouseState.X, mouseState.Y);
-            if (!Application.OpenForms.OfType<FirstPopup>().Any())
-                SwitchUpdate(mouseState, keyboardState, gameTime);
+            SwitchUpdate(mouseState, keyboardState, gameTime);
             OldState(ref mouseState, ref keyboardState);
-            currentScale = Main.CubieSize * 3 / graphics.GraphicsDevice.Viewport.AspectRatio / Main.OriginalScale;
+            currentScale = Main.CubieSize * 3 / graphicsDevice.Viewport.AspectRatio / Main.OriginalScale;
         }
 
         /// <summary>
@@ -779,7 +777,7 @@ namespace RubikCube
         /// <param name="view"></param>
         /// <param name="projection"></param>
         /// <param name="graphicsDevice"></param>
-        public void DrawModel(Cube cube, Matrix objectWorldMatrix, Matrix view, Matrix projection, GraphicsDevice graphicsDevice)
+        public void DrawModel(Cube cube, Matrix objectWorldMatrix, Matrix view, Matrix projection)
         {
             graphicsDevice.BlendState = BlendState.Opaque;
             graphicsDevice.DepthStencilState = DepthStencilState.Default;
@@ -807,21 +805,14 @@ namespace RubikCube
 
         #region Rays
 
-        private void MainRayControl(MouseState mouseState, GraphicsDevice graphicsDevice)
+        private void MainRayControl(MouseState mouseState)
         {
-            DrawRay(mouseState, graphicsDevice);
-            if (FindMeshOnClick(mouseState, graphicsDevice) != null)
+            DrawRay(mouseState);
+            if (FindMeshOnClick(mouseState) != null)
             {
                 changeDetected = true;
-                centerOfClickedMesh = FindMeshOnClick(mouseState, graphicsDevice).Item2;
+                centerOfClickedMesh = FindMeshOnClick(mouseState).Item2;
             }
-            //Debug.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-            //if (mouseState.LeftButton == ButtonState.Released)
-            //    Debug.WriteLine("condition 1 cleared");
-            //if (mousePosOnClick != new Point(0, 0))
-            //    Debug.WriteLine("condition 2 cleared");
-            //if (changeDetected)
-            //    Debug.WriteLine("condition 3 cleared");
 
             if (mouseState.LeftButton == ButtonState.Released && mousePosOnClick != new Point(0, 0) && changeDetected)
             {
@@ -855,7 +846,7 @@ namespace RubikCube
                 //checks if it should rotate the left/right sides
                 else if (Math.Abs(diffY) > Math.Abs(diffX) && (angle < -45 || angle > 45))
                 {
-                    if (currentFace == "green")
+                    if (currentFace == "green" && faceClosestToRay == "green")
                     {
                         if (diffY > 0)
                         {
@@ -866,7 +857,7 @@ namespace RubikCube
                             AlgOrder += RotateWhichLayer(centerOfClickedMesh, currentFace, "up");
                         }
                     }
-                    else if (currentFace == "blue")
+                    else if (currentFace == "blue" && faceClosestToRay == "blue")
                     {
                         if (diffY > 0)
                         {
@@ -877,7 +868,7 @@ namespace RubikCube
                             AlgOrder += RotateWhichLayer(centerOfClickedMesh, currentFace, "up");
                         }
                     }
-                    else if (currentFace == "white")
+                    else if (currentFace == "white" && faceClosestToRay == "white")
                     {
                         if (diffY > 0)
                         {
@@ -888,7 +879,7 @@ namespace RubikCube
                             AlgOrder += RotateWhichLayer(centerOfClickedMesh, currentFace, "up");
                         }
                     }
-                    else if (currentFace == "yellow")
+                    else if (currentFace == "yellow" && faceClosestToRay == "yellow")
                     {
                         if (diffY > 0)
                         {
@@ -915,10 +906,10 @@ namespace RubikCube
                 currentFace = "yellow";
         }
 
-        private Tuple<ModelMesh, Vector3> FindMeshOnClick(MouseState mouseState,GraphicsDevice graphicsDevice)
+        private Tuple<ModelMesh, Vector3> FindMeshOnClick(MouseState mouseState)
         {
             Tuple<ModelMesh, float, Vector3> closestMesh = null;
-            Tuple<string,float> closestFace = new Tuple<string, float>("",int.MaxValue);
+            Tuple<string, float> closestFace = new Tuple<string, float>("", int.MaxValue);
             for (int index = 0; index < cube.Model.Meshes.Count; index++)
             {
                 ModelMesh mesh = cube.Model.Meshes[index];
@@ -930,11 +921,11 @@ namespace RubikCube
 
                 BoundingSphere bs = new BoundingSphere(meshCenter, Main.CubieSize / 2);
                 //Debug.WriteLine(meshCenter);
-                if (CheckIndex(index).Item2)
+                if (CheckIndex(index).Item2 && !previousDistanceToMesh.Equals(0))
                 {
-                    if (FindDistance(bs, mouseState, graphicsDevice) < closestFace.Item2)
+                    if (FindDistance(bs, mouseState, previousDistanceToMesh) < closestFace.Item2)
                     {
-                        closestFace = new Tuple<string, float>(CheckIndex(index).Item1, FindDistance(bs, mouseState, graphicsDevice));
+                        closestFace = new Tuple<string, float>(CheckIndex(index).Item1, FindDistance(bs, mouseState, previousDistanceToMesh));
                     }
                 }
                 if (currentRay.Intersects(bs).HasValue)
@@ -951,13 +942,14 @@ namespace RubikCube
                         closestMesh = new Tuple<ModelMesh, float, Vector3>(mesh, distance, meshCenter);
                 }
             }
-            faceClosestToRay = closestFace.Item1;
-            Debug.WriteLine(faceClosestToRay);
+            Debug.WriteLine(faceClosestToRay + " here2");
             if (closestMesh == null)
                 return null;
+            previousDistanceToMesh = closestMesh.Item2;
             if (mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released)
             {
                 mousePosOnClick = new Point(mouseState.X, mouseState.Y);
+                faceClosestToRay = closestFace.Item1;
                 return new Tuple<ModelMesh, Vector3>(closestMesh.Item1, closestMesh.Item3);
             }
             if (mouseState.LeftButton == ButtonState.Released && oldMouseState.LeftButton == ButtonState.Released)
@@ -965,22 +957,23 @@ namespace RubikCube
             return null;
         }
 
-        private float FindDistance(BoundingSphere bs,MouseState mouseState,GraphicsDevice graphicsDevice)
+        private float FindDistance(BoundingSphere bs, MouseState mouseState, float rayLength)
         {
-            Vector3 nearPoint = graphicsDevice.Viewport.Unproject(new Vector3(mouseState.X,mouseState.Y,0), projection, view, world);
-            Vector3 destination = bs.Center - nearPoint;
+            Vector3 nearPoint = graphicsDevice.Viewport.Unproject(new Vector3(mouseState.X, mouseState.Y, 0), projection, view, world);
+            Vector3 intersectionPoint = nearPoint + direction * rayLength;
+            Vector3 destination = bs.Center - intersectionPoint;
             destination.Normalize();
-            Ray rayToTarget = new Ray(nearPoint,destination);
+            Ray rayToTarget = new Ray(intersectionPoint, destination);
             if (rayToTarget.Intersects(bs).HasValue)
-            return rayToTarget.Intersects(bs).Value;
-            return 0;
+                return rayToTarget.Intersects(bs).Value;
+            return int.MaxValue;
         }
 
         private Tuple<string, bool> CheckIndex(int i)
         {
             if (i == 1)
             {
-                return new Tuple<string, bool>("green" , true);
+                return new Tuple<string, bool>("green", true);
             }
             if (i == 3)
             {
@@ -1000,18 +993,18 @@ namespace RubikCube
             }
             if (i == 25)
             {
-                return new Tuple<string, bool>("red", true);                
+                return new Tuple<string, bool>("red", true);
             }
-            return new Tuple<string, bool>("",false);
+            return new Tuple<string, bool>("", false);
         }
 
-        private void DrawRay(MouseState mouseState, GraphicsDevice graphicsDevice)
+        private void DrawRay(MouseState mouseState)
         {
             Vector3 nearSource = new Vector3(mouseState.X, mouseState.Y, 0);
             Vector3 farSource = new Vector3(mouseState.X, mouseState.Y, 1);
             Vector3 nearPoint = graphicsDevice.Viewport.Unproject(nearSource, projection, view, world);
             Vector3 farPoint = graphicsDevice.Viewport.Unproject(farSource, projection, view, world);
-            Vector3 direction = farPoint - nearPoint;
+            direction = farPoint - nearPoint;
             direction.Normalize();
             currentRay = new Ray(nearPoint, direction);
         }

@@ -27,7 +27,6 @@ namespace RubikCube
         Music music;
         //save save;
         private Clocks clocks;
-        FirstPopup popup;
         LoadingScreen loading;
         Thread loadingThread;
         ButtonSetUp button;
@@ -119,7 +118,6 @@ namespace RubikCube
                     //MediaPlayer.Resume();
                     if (isFirstTime)
                     {
-                        popup.Show();
                         save.AddBool("isFirstTime", "false");
                     }
                     justFinshed = false;
@@ -129,7 +127,7 @@ namespace RubikCube
                 button.BtnMute.Update(true, gameTime);
                 button.BtnUnMute.Update(true, gameTime);
                 MuteEvent();
-                gameState.Update(gameTime, graphics,GraphicsDevice);
+                gameState.Update(gameTime,GraphicsDevice);
             }
             else
             {
@@ -152,7 +150,7 @@ namespace RubikCube
             if (!loadingThread.IsAlive)
             {
                 //draw main game components
-                gameState.Draw(spriteBatch, GraphicsDevice);
+                gameState.Draw(spriteBatch);
                 spriteBatch.Begin();
                 //draw mute/unmute button
                 if (music.IsMuted)
@@ -177,7 +175,6 @@ namespace RubikCube
             gameState = new SwitchGameState(GraphicsDevice, graphics, Content);
             music = new Music(graphics, GraphicsDevice, Content);
             button = new ButtonSetUp(graphics, GraphicsDevice, Content);
-            popup = new FirstPopup(gameState);
             clocks = new Clocks();
             clocks.InitTimer(200);
             save = new SaveGame("..\\..\\..\\save.xml", "root");

@@ -9,19 +9,11 @@ using System.Windows.Forms;
 
 namespace RubikCube
 {
-    public partial class FirstPopup : Form
+    public partial class Welcome : Form
     {
-        readonly SwitchGameState gameState;
-
-        public FirstPopup(SwitchGameState state)
+        public Welcome()
         {
-            gameState = state;
             InitializeComponent();
-        }
-
-        private void firstPopup_Load(object sender, EventArgs e)
-        {
-            
         }
 
         private void label1_Click(object sender, EventArgs e)
@@ -30,12 +22,6 @@ namespace RubikCube
         }
 
         private void button1_Click(object sender, EventArgs e)
-        {
-            gameState.SwitchToTutorial();
-            this.Close();
-        }
-
-        private void button2_Click(object sender, EventArgs e)
         {
             this.Close();
         }
