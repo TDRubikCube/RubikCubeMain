@@ -66,12 +66,14 @@ namespace RubikCube
         private bool changeDetected;
         private Point mousePosOnClick;
         private Vector3 direction;
+        private List<string> allCubeColors;
 
         #endregion
 
         public SwitchGameState(GraphicsDevice graphicsDeviceFromMain, GraphicsDeviceManager graphics, ContentManager content)
         {
             graphicsDevice = graphicsDeviceFromMain;
+            allCubeColors = new List<string>(){"white","yellow","green","blue"};
             //class initialize
             cube = new Cube();
             lang = new Text();
@@ -846,51 +848,30 @@ namespace RubikCube
                 //checks if it should rotate the left/right sides
                 else if (Math.Abs(diffY) > Math.Abs(diffX) && (angle < -45 || angle > 45))
                 {
-                    if (currentFace == "green" && faceClosestToRay == "green")
+                    foreach (string face in allCubeColors)
                     {
-                        if (diffY > 0)
-                        {
-                            AlgOrder += RotateWhichLayer(centerOfClickedMesh, currentFace, "down");
-                        }
-                        else
-                        {
-                            AlgOrder += RotateWhichLayer(centerOfClickedMesh, currentFace, "up");
-                        }
-                    }
-                    else if (currentFace == "blue" && faceClosestToRay == "blue")
-                    {
-                        if (diffY > 0)
-                        {
-                            AlgOrder += RotateWhichLayer(centerOfClickedMesh, currentFace, "down");
-                        }
-                        else
-                        {
-                            AlgOrder += RotateWhichLayer(centerOfClickedMesh, currentFace, "up");
-                        }
-                    }
-                    else if (currentFace == "white" && faceClosestToRay == "white")
-                    {
-                        if (diffY > 0)
-                        {
-                            AlgOrder += RotateWhichLayer(centerOfClickedMesh, currentFace, "down");
-                        }
-                        else
-                        {
-                            AlgOrder += RotateWhichLayer(centerOfClickedMesh, currentFace, "up");
-                        }
-                    }
-                    else if (currentFace == "yellow" && faceClosestToRay == "yellow")
-                    {
-                        if (diffY > 0)
-                        {
-                            AlgOrder += RotateWhichLayer(centerOfClickedMesh, currentFace, "down");
-                        }
-                        else
-                        {
-                            AlgOrder += RotateWhichLayer(centerOfClickedMesh, currentFace, "up");
-                        }
+                        RotateLRorFB(diffY, face);
                     }
                 }
+            }
+        }
+
+        private void RotateLRorFB(double diffY, string givenFace)
+        {
+            if (currentFace == givenFace && faceClosestToRay == givenFace)
+            {
+                if (diffY > 0)
+                {
+                    AlgOrder += RotateWhichLayer(centerOfClickedMesh, currentFace, "down");
+                }
+                else
+                {
+                    AlgOrder += RotateWhichLayer(centerOfClickedMesh, currentFace, "up");
+                }
+            }
+            else
+            {
+
             }
         }
 
