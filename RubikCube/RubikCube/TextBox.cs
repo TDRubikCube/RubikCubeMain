@@ -44,18 +44,18 @@ namespace RubikCube
             tabTimer += gameTime.ElapsedGameTime.Milliseconds % 1000;
             //(Keys)(Enum.Parse(typeof(Keys), "A"));
             string usedKeys = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            for (int i = 0; i < usedKeys.Length;i++ )
+            for (int i = 0; i < usedKeys.Length; i++)
             {
-              CheckForClick(ref state, ref oldState, gameTime,(Keys)(Enum.Parse(typeof(Keys), usedKeys.Substring(i,1)))); //converts string letter from usedKeys to Keys, and send to cheak.
+                CheckForClick(ref state, ref oldState, gameTime, (Keys)(Enum.Parse(typeof(Keys), usedKeys.Substring(i, 1)))); //converts string letter from usedKeys to Keys, and send to cheak.
             }
             CheckForClick(ref state, ref oldState, gameTime, Keys.Space);
             CheckForClick(ref state, ref oldState, gameTime, Keys.OemSemicolon); //nope
             if ((state.IsKeyDown(Keys.Enter)) && (oldState.IsKeyUp(Keys.Enter)))
             {
-                textbox = textbox.Insert(movedTo+tabPlace,"ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+                textbox = textbox.Insert(movedTo + tabPlace, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
             }
             //cheaks if one of the keys that count how much time has passed since you pressed them have been...um...Un-pressed?
-            if ((CheakForKeyChange(state, oldState, Keys.Right)) || (CheakForKeyChange(state, oldState, Keys.Left)) || (CheakForKeyChange(state, oldState, Keys.Back)) || (CheakForKeyChange(state, oldState, Keys.Space))) 
+            if ((CheakForKeyChange(state, oldState, Keys.Right)) || (CheakForKeyChange(state, oldState, Keys.Left)) || (CheakForKeyChange(state, oldState, Keys.Back)) || (CheakForKeyChange(state, oldState, Keys.Space)))
             {
                 timeSincePress = 0;
                 oldKey = Keys.F24;
@@ -117,7 +117,7 @@ namespace RubikCube
                 timeSincePress += gameTime.ElapsedGameTime.Milliseconds;
                 if ((oldState.IsKeyUp(Keys.Right) || (timeSincePress > 250)))
                 {
-                    if (!((tabPlace == boxSize)&&(MovedToRight()==0)))
+                    if (!((tabPlace == boxSize) && (MovedToRight() == 0)))
                     {
                         if (timeSincePress > 250)
                         {
@@ -154,7 +154,7 @@ namespace RubikCube
                         {
                             tabPlace--;
                         }
-                        if ((tabPlace == 0)&&(movedTo>0))
+                        if ((tabPlace == 0) && (movedTo > 0))
                         {
                             movedTo--;
                         }
@@ -172,7 +172,7 @@ namespace RubikCube
             if (boxVector.X > realBoxSize)
             {
                 int cheak = 1;
-                while((font.MeasureString(drawBox.Substring(0, drawBox.Length - cheak)).X) > realBoxSize)
+                while ((font.MeasureString(drawBox.Substring(0, drawBox.Length - cheak)).X) > realBoxSize)
                 {
                     Debug.WriteLine("size of string" + font.MeasureString(drawBox.Substring(0, drawBox.Length - cheak)).X);
                     boxSize--;
@@ -182,39 +182,45 @@ namespace RubikCube
                     }
                     cheak++;
                 }
+            }
+            if ((drawBox.Length >= boxSize)&&(boxVector.X<realBoxSize))
+            {
+                boxSize++;
 
-            //}
-            //else if (drawBox.Length < (boxSize - 1))
-            //{
-            //    if (font.MeasureString(textbox.Substring(movedTo, drawBox.Length + 1)).X <= realBoxSize)
-            //    {
-            //        boxSize++;
-            //    }
-                
-            //}
+            }
+                //}
+                //else if (drawBox.Length < (boxSize - 1))
+                //{
+                //    if (font.MeasureString(textbox.Substring(movedTo, drawBox.Length + 1)).X <= realBoxSize)
+                //    {
+                //        boxSize++;
+                //    }
 
-            if (textbox.Length > boxSize)
-            {
-                drawBox = textbox.Substring(movedTo, boxSize);
-            }
-            else
-            {
-                drawBox = textbox;
-            }
+                //}
 
-            if (tabTimer < 500)
-            {
-                physTab = "|";
-            }
-            else
-            {
-                physTab = "";
-            }
-            if(tabTimer >= 1000)
-            {
-                tabTimer = 0;
-            }
-            oldState = state;
+                if (textbox.Length > boxSize)
+                {
+                    drawBox = textbox.Substring(movedTo, boxSize);
+                }
+                else
+                {
+                    drawBox = textbox;
+                }
+
+                if (tabTimer < 500)
+                {
+                    physTab = "|";
+                }
+                else
+                {
+                    physTab = "";
+                }
+                if (tabTimer >= 1000)
+                {
+                    tabTimer = 0;
+                }
+                oldState = state;
+            
         }
         //private void SentBox(str)
         //{
@@ -258,7 +264,7 @@ namespace RubikCube
                 }
             }
         }
-        private bool CheakForKeyChange(KeyboardState keyboardState,KeyboardState oldKeyboardState, Keys key)
+        private bool CheakForKeyChange(KeyboardState keyboardState, KeyboardState oldKeyboardState, Keys key)
         {
             if ((keyboardState.IsKeyUp(key)) && (oldKeyboardState.IsKeyDown(key)))
             {
@@ -270,8 +276,9 @@ namespace RubikCube
         public void Draw(SpriteBatch spriteBatch, SpriteFont font)
         {
             //265
-            Vector2 tabVector = (font.MeasureString ("Text: " +drawBox.Substring(0, tabPlace)));
-            tabVector = new Vector2((tabVector.X + 295),(375));
+            // should it get to the if before this error
+            Vector2 tabVector = (font.MeasureString("Text: " + drawBox.Substring(0, tabPlace)));
+            tabVector = new Vector2((tabVector.X + 295), (375));
             spriteBatch.Begin();
             spriteBatch.DrawString(font, "DraBoxSize.X " + font.MeasureString(drawBox).X, new Vector2(300, 325), Color.Black);
             spriteBatch.DrawString(font, "BoxMax.X " + realBoxSize, new Vector2(475, 325), Color.Black);
