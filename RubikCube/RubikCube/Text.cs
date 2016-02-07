@@ -56,17 +56,17 @@ namespace RubikCube
             FreePlaySolve = "! ס פ א";
         }
 
-        public void Russian() //not 100% done yet
+        public void Russian()
         {
-            MainTitle = "Кубик Рубика -  Главное Mеню";
-            FreePlayTitle = "Кубик Рубика -  Свободная Игра";
-            OptionsTitle = "Кубик Рубика -  Настройки";
-            TutorialTitle = "Кубик Рубика -  Учебник";
-            OptionsFreeText = "Нажимайте правую клавишу чтобы изменить песни";
-            TutorialFreeText = "Использовать L,R,U,D,F,B клавиши чтобы повернуть кубика";
-            TutorialFreeText2 = "Держать Shift чтобы повернуть кубика против часовой стрелки";
-            FreePlayScramble = "Мишать";
-            FreePlaySolve = "Очистить!";
+            MainTitle = "К у б и к  Р у б и к а   -   Г л а в н о е  M е н ю";
+            FreePlayTitle = "К у б и к  Р у б и к а  -   С в о б о д н а я  И г р а";
+            OptionsTitle = "К у б и к  Р у б и к а  -   Н а с т р о й к и";
+            TutorialTitle = "К у б и к  Р у б и к а  -   У ч е б н и к";
+            OptionsFreeText = "Н а ж и  м а й т е  п р а в у ю  к л а в и ш у  ч т о б ы  и з м е н и т ь  п е с н и";
+            TutorialFreeText = "И с п о л ь з о в а т ь   L,R,U,D,F,B к л а в и ш и  ч т о б ы  п о в е р н у т ь  к у б и к а";
+            TutorialFreeText2 = "Д е р ж а т ь  Shift  ч т о б ы  п о в е р н у т ь  к у б и к а  п р о т и в  ч а с о в о й  с т р е л к и";
+            FreePlayScramble = "М и ш а т ь";
+            FreePlaySolve = "О ч и с т и т ь!";
         }
     }
 }
