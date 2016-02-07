@@ -18,28 +18,26 @@ namespace RubikCube
 {
     class TextBox
     {
-        public string textbox = "";
-        public string drawBox = "";
-        public string tabString = "";
-        int drawTab = 0;
-        string physTab = "";
-        public int movedTo = 0;
-        int timeSincePress = 0;
-        int uslessWordSize = 0;
-        int timeSinceLetterPress = 0;
-        int tabTimer = 0;
-        Keys oldKey = Keys.F24;
-        public int boxSize = 20;
-        public const int realBoxSize = 266;
-        public int tabPlace = 0;
+        public string textbox = ""; // the entirety of what u wrote
+        public string drawBox = ""; // what u see on screen
+        int drawTab = 0; // physical place of tab in vector.x
+        string physTab = ""; // the flashing tab
+        public int movedTo = 0; // how much u moved to the right
+        int timeSincePress = 0; // time passed since last click
+        int uselessWordSize = 0; //the vector.x size of "Text: "
+        int timeSinceLetterPress = 0;//time passed since you started pressing a letter
+        int tabTimer = 0; //timer of the tab
+        Keys oldKey = Keys.F24; //old key last pressed
+        public int boxSize = 20; //the boxsize in letters, not in vector.x!!! this size changes depending on the string vector.x size!
+        public const int realBoxSize = 266; //the real box size in vectors.x, const!
+        public int tabPlace = 0; //the logical place of the tab in the string
         public TextBox()
         {
         }
-
         public void Update(KeyboardState state, KeyboardState oldState, GameTime gameTime, SpriteFont font)
         {
             //34
-            uslessWordSize = (int)(font.MeasureString("Text: ")).X;
+            uselessWordSize = (int)(font.MeasureString("Text: ")).X;
 
             tabTimer += gameTime.ElapsedGameTime.Milliseconds % 1000;
             //(Keys)(Enum.Parse(typeof(Keys), "A"));
@@ -169,58 +167,62 @@ namespace RubikCube
             }
 
             Vector2 boxVector = (font.MeasureString(drawBox));
-            if (boxVector.X > realBoxSize)
+            if (boxVector.X >= realBoxSize)
             {
+                if (drawBox.Length > 0)
+                {
+                    if (drawBox.Last<char>() == 'M')
+                        Debug.WriteLine("");
+                }
                 int cheak = 1;
                 while ((font.MeasureString(drawBox.Substring(0, drawBox.Length - cheak)).X) > realBoxSize)
                 {
                     Debug.WriteLine("size of string" + font.MeasureString(drawBox.Substring(0, drawBox.Length - cheak)).X);
-                    boxSize--;
                     if (tabPlace > boxSize)
                     {
                         tabPlace--;
                     }
+                    boxSize--;
                     cheak++;
                 }
             }
-            if ((drawBox.Length >= boxSize)&&(boxVector.X<realBoxSize))
+            else if ((drawBox.Length >= boxSize) && (boxVector.X < realBoxSize))
             {
                 boxSize++;
 
             }
-                //}
-                //else if (drawBox.Length < (boxSize - 1))
-                //{
-                //    if (font.MeasureString(textbox.Substring(movedTo, drawBox.Length + 1)).X <= realBoxSize)
-                //    {
-                //        boxSize++;
-                //    }
+            //}
+            //else if (drawBox.Length < (boxSize - 1))
+            //{
+            //    if (font.MeasureString(textbox.Substring(movedTo, drawBox.Length + 1)).X <= realBoxSize)
+            //    {
+            //        boxSize++;
+            //    }
 
-                //}
+            //}
+            if (textbox.Length > boxSize)
+            {
+                drawBox = textbox.Substring(movedTo, boxSize);
+            }
+            else
+            {
+                drawBox = textbox;
+            }
 
-                if (textbox.Length > boxSize)
-                {
-                    drawBox = textbox.Substring(movedTo, boxSize);
-                }
-                else
-                {
-                    drawBox = textbox;
-                }
+            if (tabTimer < 500)
+            {
+                physTab = "|";
+            }
+            else
+            {
+                physTab = "";
+            }
+            if (tabTimer >= 1000)
+            {
+                tabTimer = 0;
+            }
+            oldState = state;
 
-                if (tabTimer < 500)
-                {
-                    physTab = "|";
-                }
-                else
-                {
-                    physTab = "";
-                }
-                if (tabTimer >= 1000)
-                {
-                    tabTimer = 0;
-                }
-                oldState = state;
-            
         }
         //private void SentBox(str)
         //{
@@ -228,10 +230,12 @@ namespace RubikCube
         //}
         private int MovedToRight()
         {
-            if ((textbox.Length - boxSize - movedTo) < 0)
+            if ((textbox.Length - boxSize - movedTo) <= 0)
             {
                 return 0;
             }
+            else
+                Debug.Write("");
             return textbox.Length - boxSize - movedTo;
         }
         private void CheckForClick(ref KeyboardState keyboardState, ref KeyboardState oldKeyboardState, GameTime gameTime, Keys key)
@@ -254,10 +258,14 @@ namespace RubikCube
                     textbox = textbox.Insert(movedTo + tabPlace, KeyToChar(key, keyboardState, oldKeyboardState));
                     if (tabPlace < boxSize)
                     {
+                        if (tabPlace >= 52)
+                            Debug.Write("");
                         tabPlace++;
                     }
-                    if ((tabPlace >= boxSize) && (MovedToRight() > 0))
+                    else
                     {
+                        if (tabPlace >= 52)
+                            Debug.Write("");
                         tabPlace = boxSize;
                         movedTo++;
                     }
@@ -282,9 +290,14 @@ namespace RubikCube
             spriteBatch.Begin();
             spriteBatch.DrawString(font, "DraBoxSize.X " + font.MeasureString(drawBox).X, new Vector2(300, 325), Color.Black);
             spriteBatch.DrawString(font, "BoxMax.X " + realBoxSize, new Vector2(475, 325), Color.Black);
-            spriteBatch.DrawString(font, ("TabX: " + (tabVector.X - uslessWordSize)), new Vector2(300, 350), Color.Black);
+            spriteBatch.DrawString(font, ("TabX: " + (tabVector.X - uselessWordSize)), new Vector2(300, 350), Color.Black);
+            if (drawBox.Length > 0)
+            {
+                if (drawBox.Last<char>() == 'M')
+                    Debug.WriteLine("");
+            }
             spriteBatch.DrawString(font, ("Text: " + drawBox), new Vector2(300, 375), Color.Black);
-            spriteBatch.DrawString(font, ("|"), new Vector2(300 + realBoxSize + uslessWordSize, 375), Color.Red);
+            spriteBatch.DrawString(font, ("|"), new Vector2(300 + realBoxSize + uselessWordSize, 375), Color.Red);
             spriteBatch.DrawString(font, (physTab), tabVector, Color.Black);
             spriteBatch.DrawString(font, ("Length: " + textbox.Length), new Vector2(300, 400), Color.Black);
             spriteBatch.DrawString(font, ("BoxSize: " + boxSize), new Vector2(450, 400), Color.Black);
