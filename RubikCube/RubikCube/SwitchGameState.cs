@@ -182,7 +182,7 @@ namespace RubikCube
                         AlgOrder += (VectorToChar(camera.RealRight));
                         AlgOrder += ("I");
                         AllTimeAlgOrder += (VectorToChar(camera.RealRight));
-                        AllTimeAlgOrder +=("I");
+                        AllTimeAlgOrder += ("I");
                     }
                 }
                 else
@@ -203,7 +203,7 @@ namespace RubikCube
                 Debug.WriteLine("AlgOrder is: " + AlgOrder);
                 Debug.WriteLine("AllTimeAlgOrder is: " + AllTimeAlgOrder);
                 Debug.WriteLine("YAlgOrder is: " + YAlgOrder);
-                Debug.WriteLine("cameraPos.X is: "+cameraPos.X);
+                Debug.WriteLine("cameraPos.X is: " + cameraPos.X);
                 Debug.WriteLine("cameraPos.Y is: " + cameraPos.Y);
                 Debug.WriteLine("cameraPos.Z is: " + cameraPos.Z);
                 Debug.WriteLine("Angle is: " + cube.Angle);
@@ -258,7 +258,7 @@ namespace RubikCube
                         else
                         {
                             AlgOrder.Substring(1);
-                            Console.Beep(1,100);
+                            Console.Beep(1, 100);
                             Console.Beep(5, 100);
                         }
                     }
@@ -414,6 +414,7 @@ namespace RubikCube
             switch (CurrentGameState)
             {
                 case GameState.MainMenu:
+                    ShouldActivateTutorial = false;
                     if (button.BtnFreePlay.IsClicked) CurrentGameState = GameState.FreePlay;
                     if (button.BtnTutorial.IsClicked) CurrentGameState = GameState.Tutorial;
                     if (button.BtnOptions.IsClicked) CurrentGameState = GameState.Options;
@@ -423,12 +424,15 @@ namespace RubikCube
                     break;
                 case GameState.Tutorial:
                     if (keyboardState.IsKeyDown(Keys.Escape)) CurrentGameState = GameState.MainMenu;
+                    ShouldActivateTutorial = true;
                     break;
                 case GameState.Options:
                     if (keyboardState.IsKeyDown(Keys.Right) && oldKeyboardState.IsKeyUp(Keys.Right)) MediaPlayer.Stop();
                     if (button.BtnRussian.IsClicked) lang.Russian();
                     if (button.BtnHebrew.IsClicked) lang.Hebrew();
                     if (button.BtnEnglish.IsClicked) lang.English();
+                    #region code from the past
+
                     //if (button.ClassicBound.Contains(mousePos) && mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released && whichGenre != "classic")
                     //{
                     //    whichGenre = "classic";
@@ -442,9 +446,10 @@ namespace RubikCube
                     //    justSwitched = true;
                     //    MediaPlayer.Stop();
                     //}
-
                     //else if (whichGenre == "rock") justSwitched = false;
                     //music.Update(mouseState, whichGenre, justSwitched);
+
+                    #endregion
                     button.BtnEnglish.Update(false, gameTime);
                     button.BtnHebrew.Update(false, gameTime);
                     button.BtnRussian.Update(false, gameTime);
@@ -480,6 +485,8 @@ namespace RubikCube
             }
         }
 
+        public bool ShouldActivateTutorial { get; set; }
+
         /// <summary>
         /// draws everything that is specific for a GameState
         /// </summary>
@@ -491,12 +498,7 @@ namespace RubikCube
             {
                 case GameState.MainMenu:
                     spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
-                    //if (typedText != null)
-                    //{
-                    //    spriteBatch.DrawString(font, typedText, new Vector2(GraphicsDevice.Viewport.Width / 3, GraphicsDevice.Viewport.Height / 3), Color.Black,0,Vector2.Zero,1.0f,SpriteEffects.None,1.0f);
-                    //}
-                    if (!System.Windows.Forms.Application.OpenForms.OfType<FirstPopup>().Any())
-                        spriteBatch.DrawString(font, lang.MainTitle, new Vector2(graphicsDevice.Viewport.Width / 3f, 10), Color.Black);
+                    spriteBatch.DrawString(font, lang.MainTitle, new Vector2(graphicsDevice.Viewport.Width / 3f, 10), Color.Black);
                     button.BtnTutorial.Draw(spriteBatch);
                     button.BtnOptions.Draw(spriteBatch);
                     button.BtnFreePlay.Draw(spriteBatch);
@@ -526,11 +528,6 @@ namespace RubikCube
                     spriteBatch.End();
                     break;
                 case GameState.Tutorial:
-                    spriteBatch.Begin();
-                    spriteBatch.DrawString(font, lang.TutorialTitle, new Vector2(graphicsDevice.Viewport.Width / 3f, 10), Color.Black);
-                    spriteBatch.DrawString(font, lang.TutorialFreeText, new Vector2(graphicsDevice.Viewport.Width / 3f, 50), Color.Black);
-                    spriteBatch.DrawString(font, lang.TutorialFreeText2, new Vector2(graphicsDevice.Viewport.Width / 3f, 90), Color.Black);
-                    spriteBatch.End();
                     break;
             }
         }
@@ -704,7 +701,7 @@ namespace RubikCube
                     b += a + b;
                 }
                 Debug.WriteLine(b);
-              //Debug.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                //Debug.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             }
             else
             {
@@ -742,8 +739,7 @@ namespace RubikCube
                 RotateWhichSide(keyboardState, oldKeyboardState, cameraPos);
             }
             mousePos = new Point(mouseState.X, mouseState.Y);
-            if (!Application.OpenForms.OfType<FirstPopup>().Any())
-                SwitchUpdate(mouseState, keyboardState, gameTime);
+            SwitchUpdate(mouseState, keyboardState, gameTime);
             OldState(ref mouseState, ref keyboardState);
             currentScale = Game1.CubieSize * 3 / graphics.GraphicsDevice.Viewport.AspectRatio / Game1.OriginalScale;
         }

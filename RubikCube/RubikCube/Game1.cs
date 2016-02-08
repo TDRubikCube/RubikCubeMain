@@ -27,19 +27,20 @@ namespace RubikCube
         Music music;
         //save save;
         private Timer timer;
-        FirstPopup popup;
         LoadingScreen loading;
         Thread loadingThread;
         ButtonSetUp button;
         SwitchGameState gameState;
         public bool isDoneLoading = false;
         private SaveGame save;
+        private SpriteFont font;
         #endregion
 
         #region normal vars
 
         bool justFinshed;
         private bool isFirstTime = true;
+        private Tutorial tutorial;
         public const float OriginalScale = 3.4524f;
         public const float CubieSize = 1.918f;
 
@@ -75,6 +76,7 @@ namespace RubikCube
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            font = Content.Load<SpriteFont>("font");
         }
 
         /// <summary>
@@ -102,7 +104,7 @@ namespace RubikCube
                 if ((justFinshed)&&(!isDoneLoading))
                 {
                     isDoneLoading = true;
-                    Debug.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~"); //should upgrade to DebbugBorders (~~~) but too afraid to StuckOverflow the game.
+                    Debug.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                 }
                 //load bools from save file
                 foreach (Tuple<string, string> b in save.LoadBools())
@@ -114,10 +116,9 @@ namespace RubikCube
                 // checks if the loading & the timer are done
                 if (justFinshed && timer.CallTimer(gameTime))
                 {
-                    MediaPlayer.Resume();
+                    //MediaPlayer.Resume();
                     if (isFirstTime)
                     {
-                        popup.Show();
                         save.AddBool("isFirstTime", "false");
                     }
                     justFinshed = false;
@@ -128,6 +129,8 @@ namespace RubikCube
                 button.BtnUnMute.Update(true, gameTime);
                 MuteEvent();
                 gameState.Update(gameTime, graphics);
+                if (gameState.ShouldActivateTutorial)
+                    tutorial.Update();
             }
             else
             {
@@ -151,6 +154,8 @@ namespace RubikCube
             {
                 //draw main game components
                 gameState.Draw(spriteBatch, GraphicsDevice);
+                if(gameState.ShouldActivateTutorial)
+                    tutorial.Draw(spriteBatch);
                 spriteBatch.Begin();
                 //draw mute/unmute button
                 if (music.IsMuted)
@@ -175,9 +180,9 @@ namespace RubikCube
             gameState = new SwitchGameState(GraphicsDevice, graphics, Content);
             music = new Music(graphics, GraphicsDevice, Content);
             button = new ButtonSetUp(graphics, GraphicsDevice, Content);
-            popup = new FirstPopup(gameState);
             timer = new Timer(200);
             save = new SaveGame("..\\..\\..\\save.xml", "root");
+            tutorial = new Tutorial(GraphicsDevice,font,gameState);
             justFinshed = true;
         }
 
