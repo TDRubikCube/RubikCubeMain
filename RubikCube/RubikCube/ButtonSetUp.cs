@@ -25,6 +25,7 @@ namespace RubikCube
         public Button BtnRussian;
         public Button BtnScramble;
         public Button BtnSolve;
+        public Button BtnContinue;
         #endregion
 
         public ButtonSetUp(GraphicsDeviceManager graphics, GraphicsDevice graphicsDevice, ContentManager content)
@@ -40,6 +41,7 @@ namespace RubikCube
             Texture2D englishButton = content.Load<Texture2D>("pics/english");
             Texture2D hebrewButton = content.Load<Texture2D>("pics/hebrew");
             Texture2D russianButton = content.Load<Texture2D>("pics/russian");
+            Texture2D continueButton = content.Load<Texture2D>("pics/continue");
             #endregion
 
             #region buttons initialize
@@ -90,6 +92,11 @@ namespace RubikCube
             BtnSolve = new Button(solveButton, graphics.GraphicsDevice);
             BtnSolve.SetPosition(new Vector2(graphicsDevice.Viewport.Width / 4.5f, graphicsDevice.Viewport.Height / 1.25f));
             BtnSolve.Size = new Vector2(graphicsDevice.Viewport.Width / 7f, graphicsDevice.Viewport.Height / 5f);
+
+            //continue to keyboard check button
+            BtnContinue = new Button(continueButton,graphics.GraphicsDevice);
+            BtnContinue.SetPosition(new Vector2(graphicsDevice.Viewport.Width / 2f - continueButton.Width / 2f, graphicsDevice.Viewport.Height - continueButton.Height));
+            BtnContinue.Size = new Vector2(continueButton.Width,continueButton.Height);
             #endregion
         }
 
