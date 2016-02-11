@@ -26,10 +26,10 @@ namespace RubikCube
         readonly Cube cube;
         readonly ButtonSetUp button;
         readonly Text lang;
-        readonly Matrix world;
+        public Matrix world;
         private Camera camera;
-        Matrix view;
-        readonly Matrix projection;
+        public Matrix view;
+        public Matrix projection;
         private Vector3 cameraPos;
         KeyboardState oldKeyboardState;
         readonly SpriteFont font;
@@ -385,6 +385,30 @@ namespace RubikCube
         {
             if (keyboardState.IsKeyDown(key) && oldKeyboardState.IsKeyUp(key))
             {
+                //ADD CHECKS OF OTHER CASES HERE
+                #region check each key for tutorial
+                switch (key)
+                {
+                    case Keys.U:
+                        CheckKeysTTR["Up"] = true;
+                        break;
+                    case Keys.D:
+                        CheckKeysTTR["Down"] = true;
+                        break;
+                    case Keys.B:
+                        CheckKeysTTR["Back"] = true;
+                        break;
+                    case Keys.F:
+                        CheckKeysTTR["Forward"] = true;
+                        break;
+                    case Keys.L:
+                        CheckKeysTTR["Left"] = true;
+                        break;
+                    case Keys.R:
+                        CheckKeysTTR["Right"] = true;
+                        break;
+                }
+                #endregion
                 AlgOrder += (VectorToChar(direction));
                 AllTimeAlgOrder += (VectorToChar(direction));
                 if (keyboardState.IsKeyDown(Keys.LeftShift) || keyboardState.IsKeyDown(Keys.RightShift))
@@ -461,16 +485,21 @@ namespace RubikCube
                         CurrentGameState = GameState.MainMenu;
                         DebugBorders("MainMenu");
                     }
-                    if (button.BtnScramble.IsClicked) shouldRotate = true;
-                    if (button.BtnSolve.IsClicked)
+                    if (!ShouldActivateTutorial)
                     {
-                        cube.Angle = 0;
-                        shouldRotate = false;
-                        AlgOrder = "";
-                        AllTimeAlgOrder = "";
-                        YAlgOrder = "";
-                        cube.Solve();
-                        DebugBorders("Reset!");
+                        if (button.BtnScramble.IsClicked) shouldRotate = true;
+                        if (button.BtnSolve.IsClicked)
+                        {
+                            cube.Angle = 0;
+                            shouldRotate = false;
+                            AlgOrder = "";
+                            AllTimeAlgOrder = "";
+                            YAlgOrder = "";
+                            cube.Solve();
+                            DebugBorders("Reset!");
+                        }
+                        button.BtnScramble.Update(false, gameTime);
+                        button.BtnSolve.Update(false, gameTime);
                     }
                     cube.Update(gameTime, shouldRotate, cube.ScramblingVectors, false);
                     if (cube.ScrambleIndex >= 25)
@@ -478,8 +507,6 @@ namespace RubikCube
                         shouldRotate = false;
                         cube.ScrambleIndex = 0;
                     }
-                    button.BtnScramble.Update(false, gameTime);
-                    button.BtnSolve.Update(false, gameTime);
                     break;
 
             }
@@ -506,11 +533,14 @@ namespace RubikCube
                     break;
                 case GameState.FreePlay:
                     spriteBatch.Begin();
-                    spriteBatch.DrawString(font, lang.FreePlayTitle, new Vector2(graphicsDevice.Viewport.Width / 3f, 10), Color.Black);
-                    spriteBatch.DrawString(font, lang.FreePlayScramble, new Vector2(graphicsDevice.Viewport.Width / 13f, graphicsDevice.Viewport.Height / 1.4f), Color.Black);
-                    spriteBatch.DrawString(font, lang.FreePlayReset, new Vector2(graphicsDevice.Viewport.Width / 4f, graphicsDevice.Viewport.Height / 1.4f), Color.Black);
-                    button.BtnScramble.Draw(spriteBatch);
-                    button.BtnSolve.Draw(spriteBatch);
+                    if (!ShouldActivateTutorial)
+                    {
+                        spriteBatch.DrawString(font, lang.FreePlayTitle, new Vector2(graphicsDevice.Viewport.Width / 3f, 10), Color.Black);
+                        spriteBatch.DrawString(font, lang.FreePlayScramble, new Vector2(graphicsDevice.Viewport.Width / 13f, graphicsDevice.Viewport.Height / 1.4f), Color.Black);
+                        spriteBatch.DrawString(font, lang.FreePlayReset, new Vector2(graphicsDevice.Viewport.Width / 4f, graphicsDevice.Viewport.Height / 1.4f), Color.Black);
+                        button.BtnScramble.Draw(spriteBatch);
+                        button.BtnSolve.Draw(spriteBatch);
+                    }
                     spriteBatch.End();
                     DrawModel(cube, world, view, projection, graphicsDevice);
                     break;
@@ -745,14 +775,6 @@ namespace RubikCube
         }
 
         /// <summary>
-        /// switches the GameState to tutorial
-        /// </summary>
-        public void SwitchToTutorial()
-        {
-            CurrentGameState = GameState.Tutorial;
-        }
-
-        /// <summary>
         /// draws the model given
         /// </summary>
         /// <param name="cube"></param>
@@ -780,5 +802,10 @@ namespace RubikCube
         }
 
         #endregion
+
+        public bool IsUsingKeyboard { get; set; }
+        public bool IsUsingMouse { get; set; }
+        public bool IsUsingLine { get; set; }
+        public Dictionary<string,bool> CheckKeysTTR { get; set; }
     }
 }
