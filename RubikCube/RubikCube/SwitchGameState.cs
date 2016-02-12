@@ -395,9 +395,6 @@ namespace RubikCube
                     case Keys.D:
                         CheckKeysTTR["Down"] = true;
                         break;
-                    case Keys.B:
-                        CheckKeysTTR["Back"] = true;
-                        break;
                     case Keys.F:
                         CheckKeysTTR["Forward"] = true;
                         break;
@@ -406,6 +403,9 @@ namespace RubikCube
                         break;
                     case Keys.R:
                         CheckKeysTTR["Right"] = true;
+                        break;
+                    case Keys.B:
+                        CheckKeysTTR["Backwards"] = true;
                         break;
                 }
                 #endregion
@@ -806,6 +806,6 @@ namespace RubikCube
         public bool IsUsingKeyboard { get; set; }
         public bool IsUsingMouse { get; set; }
         public bool IsUsingLine { get; set; }
-        public Dictionary<string,bool> CheckKeysTTR { get; set; }
+        public Dictionary<string, bool> CheckKeysTTR { get; set; }
     }
 }

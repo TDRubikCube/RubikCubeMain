@@ -37,11 +37,9 @@ namespace RubikCube
         private bool shouldCheckKeyboard;
         private ButtonSetUp button;
         Cube cube;
-        Matrix world;
-        Matrix view;
-        Matrix projection;
         Texture2D Xtex;
         Texture2D Vtex;
+        List<string> allSides = new List<string> { "Up", "Down", "Left", "Right", "Forward", "Backwards" };
 
         public Tutorial(GraphicsDevice GraphicsDevice, SpriteFont Font, SwitchGameState _gameState, ContentManager Content, GraphicsDeviceManager graphicsManager)
         {
@@ -53,9 +51,6 @@ namespace RubikCube
             graphicsDevice = GraphicsDevice;
             font = Font;
             gameState = _gameState;
-            world = gameState.world;
-            view = gameState.view;
-            projection = gameState.projection;
             gameState.IsUsingKeyboard = false;
             gameState.CheckKeysTTR = InitKeysList();
             Xtex = Content.Load<Texture2D>("pics/X");
@@ -142,41 +137,38 @@ namespace RubikCube
             switch (currentStage)
             {
                 case TutorialStage.BasicUsage:
+                    //checks mouse
                     if (!isMouseWorking)
                     {
                         spriteBatch.DrawString(font, "To move the pointer on screen, move the mouse",
-                            new Vector2(graphicsDevice.Viewport.Width/3f, 50), Color.Black);
+                            new Vector2(graphicsDevice.Viewport.Width / 3f, 50), Color.Black);
                     }
+                    //continue to keyboard
                     else if (!isFirstTime && !shouldCheckKeyboard && !isKeyboardWorikng)
                     {
                         spriteBatch.DrawString(font, "Good job! It looks like the mouse is working",
-                            new Vector2(graphicsDevice.Viewport.Width/3f, 50), Color.Black);
+                            new Vector2(graphicsDevice.Viewport.Width / 3f, 50), Color.Black);
                         button.BtnContinue.Draw(spriteBatch);
                     }
+                    //checks keyboard
                     else if (!isKeyboardWorikng && shouldCheckKeyboard)
                     {
                         spriteBatch.DrawString(font, "Now try to use the keyboard",
-                            new Vector2(graphicsDevice.Viewport.Width/3f, 50), Color.Black);
+                            new Vector2(graphicsDevice.Viewport.Width / 3f, 50), Color.Black);
                     }
+                    //continue to next stage
                     else
                     {
                         spriteBatch.DrawString(font, "Nice! Looks like the keyboard is working as well",
-                            new Vector2(graphicsDevice.Viewport.Width/3f, 50), Color.Black);
+                            new Vector2(graphicsDevice.Viewport.Width / 3f, 50), Color.Black);
                     }
                     break;
                 case TutorialStage.Keyboard:
-                    spriteBatch.DrawString(font, "Up", new Vector2(0, 50), Color.Black);
-                    spriteBatch.DrawString(font, "Down", new Vector2(0, 50 + Xtex.Height / 5), Color.Black);
-                    spriteBatch.DrawString(font, "Left", new Vector2(0, 50 + Xtex.Height / 5 * 2), Color.Black);
-                    spriteBatch.DrawString(font, "Right", new Vector2(0, 50 + Xtex.Height / 5 * 3), Color.Black);
-                    spriteBatch.DrawString(font, "Forward", new Vector2(0, 50 + Xtex.Height / 5 * 4), Color.Black);
-                    spriteBatch.DrawString(font, "Backwards", new Vector2(0, 50 + Xtex.Height / 5 * 5), Color.Black);
-                    DrawXV(spriteBatch, "Up", 50);
-                    DrawXV(spriteBatch, "Down", 50 + Xtex.Height);
-                    DrawXV(spriteBatch, "Left", 50 + Xtex.Height / 5 * 2);
-                    DrawXV(spriteBatch, "Right", 50 + +Xtex.Height / 5 * 3);
-                    DrawXV(spriteBatch, "Forward", 50 + +Xtex.Height / 5 * 4);
-                    DrawXV(spriteBatch, "Backwards", 50 + +Xtex.Height / 5 * 5);
+                    for (int i = 0; i < allSides.Count; i++)
+                    {
+                        spriteBatch.DrawString(font, allSides[i], new Vector2(0, 50 + Xtex.Height / 5 * i), Color.Black);
+                        DrawXV(spriteBatch, allSides[i], 50 + Xtex.Height / 5 * i);
+                    }
                     break;
                 case TutorialStage.CodeLine:
                     break;
@@ -189,20 +181,13 @@ namespace RubikCube
         private void DrawXV(SpriteBatch spriteBatch, string key, int placeY)
         {
             if (gameState.CheckKeysTTR[key])
-                spriteBatch.Draw(Vtex, new Rectangle((int)(Vtex.Width / 5), placeY, Xtex.Width / 5, Xtex.Height / 5), Color.White);
+                spriteBatch.Draw(Vtex, new Rectangle(Vtex.Width / 2, placeY, Xtex.Width / 7, Xtex.Height / 7), Color.White);
             else
-                spriteBatch.Draw(Xtex, new Rectangle((int)(Xtex.Width / 5), placeY, Xtex.Width / 5, Xtex.Height / 5), Color.White);
+                spriteBatch.Draw(Xtex, new Rectangle(Xtex.Width / 2, placeY, Xtex.Width / 7, Xtex.Height / 7), Color.White);
         }
         private Dictionary<string, bool> InitKeysList()
         {
-            Dictionary<string, bool> value = new Dictionary<string, bool>();
-            value.Add("Up", false);
-            value.Add("Down", false);
-            value.Add("Left", false);
-            value.Add("Right", false);
-            value.Add("Forward", false);
-            value.Add("Backwards", false);
-            return value;
+            return allSides.ToDictionary(t => t, t => false);
         }
     }
 }
