@@ -130,7 +130,7 @@ namespace RubikCube
                 MuteEvent();
                 gameState.Update(gameTime, graphics);
                 if (gameState.ShouldActivateTutorial)
-                    tutorial.Update(gameTime);
+                    tutorial.Update(gameTime,graphics);
             }
             else
             {
@@ -182,7 +182,7 @@ namespace RubikCube
             button = new ButtonSetUp(graphics, GraphicsDevice, Content);
             timer = new Timer(200);
             save = new SaveGame("..\\..\\..\\save.xml", "root");
-            tutorial = new Tutorial(GraphicsDevice,font,gameState,graphics,Content);
+            tutorial = new Tutorial(GraphicsDevice,font,gameState,Content,graphics);
             justFinshed = true;
         }
 
