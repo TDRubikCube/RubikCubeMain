@@ -261,7 +261,7 @@ namespace RubikCube
                         if (tabPlace >= 52)
                             Debug.Write("");
                         tabPlace++;
-                    }
+                    }//
                     else
                     {
                         if (tabPlace >= 52)
