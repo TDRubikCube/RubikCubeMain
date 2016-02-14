@@ -36,9 +36,11 @@ namespace RubikCube
         }
         public void Update(KeyboardState state, KeyboardState oldState, GameTime gameTime, SpriteFont font)
         {
+            if (state.IsKeyDown(Keys.D1) && oldState.IsKeyUp(Keys.D1))
+                Debug.WriteLine("");
             //34
             uselessWordSize = (int)(font.MeasureString("Text: ")).X;
-
+            CheckForDeviation(font);
             tabTimer += gameTime.ElapsedGameTime.Milliseconds % 1000;
             //(Keys)(Enum.Parse(typeof(Keys), "A"));
             string usedKeys = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -52,7 +54,7 @@ namespace RubikCube
             {
                 textbox = textbox.Insert(movedTo + tabPlace, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
             }
-            //cheaks if one of the keys that count how much time has passed since you pressed them have been...um...Un-pressed?
+            //checks if one of the keys that count how much time has passed since you pressed them have been...um...Un-pressed?
             if ((CheakForKeyChange(state, oldState, Keys.Right)) || (CheakForKeyChange(state, oldState, Keys.Left)) || (CheakForKeyChange(state, oldState, Keys.Back)) || (CheakForKeyChange(state, oldState, Keys.Space)))
             {
                 timeSincePress = 0;
@@ -165,32 +167,15 @@ namespace RubikCube
 
                 }
             }
-
-            Vector2 boxVector = (font.MeasureString(drawBox));
-            if (boxVector.X >= realBoxSize)
+            if (textbox.Length > boxSize && (movedTo + boxSize + MovedToRight()) == textbox.Length)
             {
-                if (drawBox.Length > 0)
-                {
-                    if (drawBox.Last<char>() == 'M')
-                        Debug.WriteLine("");
-                }
-                int cheak = 1;
-                while ((font.MeasureString(drawBox.Substring(0, drawBox.Length - cheak)).X) > realBoxSize)
-                {
-                    Debug.WriteLine("size of string" + font.MeasureString(drawBox.Substring(0, drawBox.Length - cheak)).X);
-                    if (tabPlace > boxSize)
-                    {
-                        tabPlace--;
-                    }
-                    boxSize--;
-                    cheak++;
-                }
+                drawBox = textbox.Substring(movedTo, boxSize);
             }
-            else if ((drawBox.Length >= boxSize) && (boxVector.X < realBoxSize))
+            else
             {
-                boxSize++;
-
+                drawBox = textbox;
             }
+
             //}
             //else if (drawBox.Length < (boxSize - 1))
             //{
@@ -200,7 +185,9 @@ namespace RubikCube
             //    }
 
             //}
-            if (textbox.Length > boxSize)
+            CheckForDeviation(font);
+
+            if (textbox.Length > boxSize && (movedTo + boxSize + MovedToRight()) == textbox.Length)
             {
                 drawBox = textbox.Substring(movedTo, boxSize);
             }
@@ -208,7 +195,6 @@ namespace RubikCube
             {
                 drawBox = textbox;
             }
-
             if (tabTimer < 500)
             {
                 physTab = "|";
@@ -223,11 +209,39 @@ namespace RubikCube
             }
             oldState = state;
 
+            //END OF UPDATE
         }
-        //private void SentBox(str)
-        //{
 
-        //}
+        private void CheckForDeviation(SpriteFont font)
+        {
+            Vector2 boxVector = (font.MeasureString(drawBox));
+            if (boxVector.X >= realBoxSize)
+            {
+                if (drawBox.Length > 0)
+                {
+                    if (drawBox.Last<char>() == 'M')
+                        Debug.WriteLine("");
+                }
+                int check = 1;
+                Debug.WriteLine((font.MeasureString(drawBox.Substring(0, drawBox.Length - check)).X));
+                while ((font.MeasureString(drawBox.Substring(0, drawBox.Length - check)).X) >= realBoxSize)
+                {
+                    Debug.WriteLine("size of string" + font.MeasureString(drawBox.Substring(0, drawBox.Length - check)).X);
+                    if (tabPlace >= boxSize)
+                    {
+                        tabPlace--;
+                    }
+                    boxSize--;
+                    movedTo++;
+                    check++;
+                }
+            }
+            else if ((drawBox.Length >= boxSize))
+            {
+                boxSize++;
+            }
+        }
+
         private int MovedToRight()
         {
             if ((textbox.Length - boxSize - movedTo) <= 0)
@@ -274,7 +288,7 @@ namespace RubikCube
         }
         private bool CheakForKeyChange(KeyboardState keyboardState, KeyboardState oldKeyboardState, Keys key)
         {
-            if ((keyboardState.IsKeyUp(key)) && (oldKeyboardState.IsKeyDown(key)))
+            if (((keyboardState.IsKeyUp(key)) && (oldKeyboardState.IsKeyDown(key))) || (keyboardState.IsKeyDown(key) && oldKeyboardState.IsKeyUp(key)))
             {
                 return true;
             }
