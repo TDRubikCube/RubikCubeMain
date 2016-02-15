@@ -40,6 +40,7 @@ namespace RubikCube
         Texture2D Xtex;
         Texture2D Vtex;
         List<string> allSides = new List<string> { "Up", "Down", "Left", "Right", "Forward", "Backwards" };
+        private bool areKeysWorking;
 
         public Tutorial(GraphicsDevice GraphicsDevice, SpriteFont Font, SwitchGameState _gameState, ContentManager Content, GraphicsDeviceManager graphicsManager)
         {
@@ -94,16 +95,29 @@ namespace RubikCube
                             isKeyboardWorikng = true;
                             shouldCheckKeyboard = false;
                         }
-                        if (keyboard.IsKeyDown(Keys.J) && oldKeyboardState.IsKeyUp(Keys.J))
+                        if (isKeyboardWorikng)
                         {
-                            currentStage = TutorialStage.Keyboard;
+                            button.BtnContinue.Update(false,gameTime);
+                            if (button.BtnContinue.IsClicked)
+                            {
+                                currentStage = TutorialStage.Keyboard;
+                            }
                         }
+
                     }
                     break;
                 case TutorialStage.Keyboard:
                     gameState.IsUsingKeyboard = true;
                     gameState.CurrentGameState = GameState.FreePlay;
                     gameState.Update(gameTime, graphicsDeviceManager);
+                    int countBools = 0;
+                    foreach (string side in allSides)
+                    {
+                        if (gameState.CheckKeysTTR[side])
+                            countBools++;
+                    }
+                    if (countBools == 6)
+                        areKeysWorking = true;
                     break;
                 case TutorialStage.Mouse:
                     gameState.IsUsingKeyboard = false;
@@ -161,13 +175,22 @@ namespace RubikCube
                     {
                         spriteBatch.DrawString(font, "Nice! Looks like the keyboard is working as well",
                             new Vector2(graphicsDevice.Viewport.Width / 3f, 50), Color.Black);
+                        button.BtnContinue.Draw(spriteBatch);
                     }
                     break;
                 case TutorialStage.Keyboard:
-                    for (int i = 0; i < allSides.Count; i++)
+                    if (!areKeysWorking)
                     {
-                        spriteBatch.DrawString(font, allSides[i], new Vector2(0, 50 + Xtex.Height / 5 * i), Color.Black);
-                        DrawXV(spriteBatch, allSides[i], 50 + Xtex.Height / 5 * i);
+                        for (int i = 0; i < allSides.Count; i++)
+                        {
+                            spriteBatch.DrawString(font, allSides[i], new Vector2(0, 50 + Xtex.Height/5*i), Color.Black);
+                            DrawXV(spriteBatch, allSides[i], 50 + Xtex.Height/5*i);
+                        }
+                    }
+                    else
+                    {
+                        spriteBatch.DrawString(font, "Seems you mastered the art of pressing buttons",
+                            new Vector2(graphicsDevice.Viewport.Width / 3f, 50), Color.Black);
                     }
                     break;
                 case TutorialStage.CodeLine:
