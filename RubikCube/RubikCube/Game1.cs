@@ -114,7 +114,7 @@ namespace RubikCube
                 // checks if the loading & the timer are done
                 if (justFinshed && timer.CallTimer(gameTime))
                 {
-                    MediaPlayer.Resume();
+                    //MediaPlayer.Resume();
                     if (isFirstTime)
                     {
                         popup.Show();

@@ -468,6 +468,10 @@ namespace RubikCube
                         DebugBorders("Reset!");
                     }
                     cube.Update(gameTime, shouldRotate, cube.ScramblingVectors, false);
+<<<<<<< HEAD
+=======
+                    textbox.Update(keyboardState, oldKeyboardState,gameTime, font);
+>>>>>>> origin/Denis'-branch
                     if (cube.ScrambleIndex >= 25)
                     {
                         shouldRotate = false;
