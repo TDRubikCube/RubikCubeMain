@@ -11,7 +11,8 @@ using Microsoft.Xna.Framework.Media;
 using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
-using Keys = Microsoft.Xna.Framework.Input.Keys;
+using Keys = Microsoft.Xna.Framework.Input.Keys; /*
+using System.Of[A].Down; */
 
 namespace RubikCube
 {
@@ -29,6 +30,7 @@ namespace RubikCube
         readonly Matrix world;
         private Camera camera;
         Matrix view;
+        TextBox textbox;
         readonly Matrix projection;
         private Vector3 cameraPos;
         KeyboardState oldKeyboardState;
@@ -63,6 +65,7 @@ namespace RubikCube
             cube = new Cube();
             lang = new Text();
             camera = new Camera();
+            textbox = new TextBox();
             button = new ButtonSetUp(graphics, graphicsDevice, content)
             {
                 ClassicBound =
@@ -468,10 +471,7 @@ namespace RubikCube
                         DebugBorders("Reset!");
                     }
                     cube.Update(gameTime, shouldRotate, cube.ScramblingVectors, false);
-<<<<<<< HEAD
-=======
                     textbox.Update(keyboardState, oldKeyboardState,gameTime, font);
->>>>>>> origin/Denis'-branch
                     if (cube.ScrambleIndex >= 25)
                     {
                         shouldRotate = false;
@@ -514,6 +514,7 @@ namespace RubikCube
                     button.BtnScramble.Draw(spriteBatch);
                     button.BtnSolve.Draw(spriteBatch);
                     spriteBatch.End();
+                    textbox.Draw(spriteBatch, font);
                     DrawModel(cube, world, view, projection, graphicsDevice);
                     break;
                 case GameState.Options:
