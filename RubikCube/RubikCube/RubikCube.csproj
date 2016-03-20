@@ -86,6 +86,7 @@
     <Compile Include="Cube.cs" />
     <Compile Include="CubeDictionaty.cs" />
     <Compile Include="CubeState.cs" />
+    <Compile Include="FaceColor.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="LoadingScreen.cs" />
     <Compile Include="Music.cs" />
@@ -93,6 +94,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="save.cs" />
     <Compile Include="SaveGame.cs" />
+    <Compile Include="SelfSolve.cs" />
     <Compile Include="SwitchGameState.cs" />
     <Compile Include="Text.cs" />
     <Compile Include="Clocks.cs" />
