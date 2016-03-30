@@ -19,6 +19,7 @@ namespace RubikCube
         Model model;
         Save save;
         Clocks clocks = new Clocks();
+        private FaceColor faceColors;
         Matrix[] meshTransforms;
         readonly CubeState cubeState = new CubeState();
         readonly Random rand = new Random();
@@ -31,6 +32,7 @@ namespace RubikCube
         public int RotationSpeed = 10;
         int howManyTurns;
         public bool ShouldAddScrambleToOrder { get; set; }
+        private bool hasChangedColors = false;
         #endregion
 
         #region constructor
@@ -42,6 +44,7 @@ namespace RubikCube
             ScramblingVectors = new List<Vector3>();
             save = new Save();
             model = null;
+            faceColors = new FaceColor();
         }
 
         #endregion
@@ -50,15 +53,15 @@ namespace RubikCube
         public void Scramble()
         {
             List<char> temp = new List<char>();
-            List<char> possibleTurns = new List<char> { 'R','L','U','D','F','B','I'};
+            List<char> possibleTurns = new List<char> { 'R', 'L', 'U', 'D', 'F', 'B', 'I' };
             for (int i = 0; i < 50; i++)
             {
                 char currentChar = possibleTurns[rand.Next(0, 6)];
                 if (temp.Count >= 3)
                 {
-                    if (currentChar == temp[temp.Count - 1] && temp[temp.Count - 2] == temp[temp.Count - 3] && currentChar == temp[temp.Count-2])
+                    if (currentChar == temp[temp.Count - 1] && temp[temp.Count - 2] == temp[temp.Count - 3] && currentChar == temp[temp.Count - 2])
                     {
-                        while (currentChar == temp[temp.Count-1])
+                        while (currentChar == temp[temp.Count - 1])
                         {
                             currentChar = possibleTurns[rand.Next(0, 6)];
                         }
@@ -84,7 +87,7 @@ namespace RubikCube
             }
         }
 
-        public void Rotate(Vector3 side, bool isClockWise,string algOrder)
+        public void Rotate(Vector3 side, bool isClockWise, string algOrder)
         {
             Angle -= RotationSpeed;
             float sidePosition = Main.CubieSize;
@@ -184,8 +187,11 @@ namespace RubikCube
                     }
                 }
             }
-            if (howManyTurns == (110-RotationSpeed)/10)
+            if (howManyTurns == (110 - RotationSpeed) / 10)
             {
+                faceColors.debug();
+                faceColors.Rotate(side,isClockWise);
+                faceColors.debug();
                 cubeState.Rotate(side, isClockWise);
                 howManyTurns = 0;
             }
@@ -232,4 +238,3 @@ namespace RubikCube
         public string ScrambleResult { get; set; }
     }
 }
- 
