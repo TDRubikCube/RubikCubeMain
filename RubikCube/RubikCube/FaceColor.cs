@@ -35,8 +35,8 @@ namespace RubikCube
                 for (int j = 0; j < 3; j++)
                 {
                     temp++;
-                    Debug.Write(Up[j, i]);
-                    if(temp == 3)
+                    Debug.Write(Front[j, i]);
+                    if (temp == 3)
                         Debug.WriteLine("");
                 }
                 temp = 0;
@@ -46,34 +46,20 @@ namespace RubikCube
 
         public void Rotate(Vector3 side, bool isClockWise)
         {
-            //Debug.WriteLine(Front[2,0]);
             if (side == Vector3.Right)
-                RightTurn(isClockWise, 2, ref Front, ref Up, ref Back, ref Down,ref Right);
-            if (side == Vector3.Left)
-                RightTurn(isClockWise, 0, ref Front, ref Down, ref Back, ref Up,ref Left);
+                RightTurn(isClockWise);
             //this is forward!!
             if (side == Vector3.Backward)
-                RightTurn(isClockWise, 2, ref Left, ref Up, ref Right, ref Down,ref Front);
-            //this is backward!!
-            if (side == Vector3.Forward)
-                RightTurn(isClockWise, 0, ref Left, ref Down, ref Right, ref Up,ref Back);
+                FrontTurn(isClockWise);
         }
 
-        public void RightTurn(bool isClockWise, int b, ref string[,] relFront, ref string[,] relUp, ref string[,] relBack, ref string[,] relDown,ref string[,] axis)
+        public void RightTurn(bool isClockWise)
         {
-            Debug.WriteLine(" ");
-            Debug.WriteLine("Before");
-            for (int i = 0; i < 3; i++)
-            {
-                Debug.Write(relFront[b, i] + " ");
-            }
-            Debug.WriteLine(" ");
-
             //four sides turn
-            string[] first = new string[3];
-            string[] second = new string[3];
-            string[] third = new string[3];
-            string[] fourth = new string[3];
+            string[] curFront = new string[3];
+            string[] curUp = new string[3];
+            string[] curBack = new string[3];
+            string[] curDown = new string[3];
 
             //axis turn
             string[] axisUp = new string[3];
@@ -84,59 +70,110 @@ namespace RubikCube
             for (int i = 0; i < 3; i++)
             {
                 //sides init
-                first[i] = relFront[b, i];
-                second[i] = relUp[b, i];
-                third[i] = relBack[b, i];
-                fourth[i] = relDown[b, i];
+                curFront[i] = Front[2, i];
+                curUp[i] = Up[2, i];
+                curBack[i] = Back[2, i];
+                curDown[i] = Down[2, i];
 
                 //axis init
-                axisUp[i] = axis[i, 0];
-                axisRight[i] = axis[2, i];
-                axisDown[i] = axis[i, 2];
-                axisLeft[i] = axis[0, i];
+                axisUp[i] = Right[i, 0];
+                axisRight[i] = Right[2, i];
+                axisDown[i] = Right[i, 2];
+                axisLeft[i] = Right[0, i];
 
+            }
+            for (int i = 0; i < 3; i++)
+            {
                 if (isClockWise)
                 {
                     //sides turn
-                    relFront[b, i] = fourth[i];
-                    relUp[b, i] = first[i];
-                    relBack[b, i] = second[i];
-                    relDown[b, i] = third[i];
+                    Front[2, i] = curDown[i];
+                    Up[2, i] = curFront[i];
+                    Back[2, i] = curUp[i];
+                    Down[2, i] = curBack[i];
 
                     //axis turn
-                    if (i < 2)
-                    {
-                        axis[i, 0] = axisLeft[i];
-                        axis[2, i] = axisUp[i];
-                        axis[i, 2] = axisRight[i];
-                        axis[0, i] = axisDown[i];
-                    }
+                    Right[i, 0] = axisLeft[2-i];
+                    Right[2, i] = axisUp[i];
+                    Right[i, 2] = axisRight[2-i];
+                    Right[0, i] = axisDown[i];
                 }
                 else
                 {
                     //sides turn
-                    relFront[b, i] = second[i];
-                    relUp[b, i] = third[i];
-                    relBack[b, i] = fourth[i];
-                    relDown[b, i] = first[i];
+                    Front[2, i] = curUp[i];
+                    Up[2, i] = curBack[i];
+                    Back[2, i] = curDown[i];
+                    Down[2, i] = curFront[i];
 
                     //axis turn
-                    if (i < 2)
-                    {
-                        axis[i, 0] = axisRight[i];
-                        axis[2, i] = axisDown[i];
-                        axis[i, 2] = axisLeft[i];
-                        axis[0, i] = axisUp[i];
-                    }
+                    Right[i, 0] = axisRight[i];
+                    Right[2, i] = axisDown[2-i];
+                    Right[i, 2] = axisLeft[i];
+                    Right[0, i] = axisUp[2-i];
                 }
             }
-            Debug.WriteLine("After");
+        }
+
+        public void FrontTurn(bool isClockWise)
+        {
+            //sides declare
+            string[] curLeft = new string[3];
+            string[] curRight = new string[3];
+            string[] curUp = new string[3];
+            string[] curDown = new string[3];
+
+            //axis declare
+            string[] axisUp = new string[3];
+            string[] axisRight = new string[3];
+            string[] axisDown = new string[3];
+            string[] axisLeft = new string[3];
+
             for (int i = 0; i < 3; i++)
             {
-                Debug.Write(relFront[b, i] + " ");
-            }
-            Debug.WriteLine("");
+                //sides init
+                curLeft[i] = Left[2, 2 - i];
+                curRight[i] = Right[0, 2 - i];
+                curUp[i] = Up[i, 2];
+                curDown[i] = Down[i, 0];
 
+                //axis init 
+                axisUp[i] = Front[i, 0];
+                axisRight[i] = Front[2, i];
+                axisDown[i] = Front[i, 2];
+                axisLeft[i] = Front[0, i];
+            }
+            for (int i = 0; i < 3; i++)
+            {
+                if (isClockWise)
+                {
+                    //sides turn
+                    Left[2, i] = curDown[i];
+                    Down[i, 0] = curRight[i];
+                    Right[0, i] = curUp[i];
+                    Up[i, 2] = curLeft[i];
+
+                    //axis turn
+                    Front[i, 0] = axisLeft[2-i];
+                    Front[2, i] = axisUp[i];
+                    Front[i, 2] = axisRight[2-i];
+                    Front[0, i] = axisDown[i];
+                }
+                else
+                {
+                    //sides turn
+                    Left[2, i] = curUp[i];
+                    Down[i, 0] = curLeft[i];
+                    Right[0, i] = curDown[i];
+                    Up[i, 2] = curRight[i];
+
+                    //axis turn
+                    Front[i, 0] = axisRight[i];
+                    Front[2, i] = axisDown[2-i];
+                    Front[i, 2] = axisLeft[i];
+                    Front[0, i] = axisUp[2-i];
+                }
+            }
         }
 
         void Initialize()
