@@ -923,7 +923,7 @@ namespace RubikCube
                         closestMesh = new Tuple<ModelMesh, float, Vector3>(mesh, distance, meshCenter);
                 }
             }
-            Debug.WriteLine(faceClosestToRay + " here2");
+            //Debug.WriteLine(faceClosestToRay + " here2");
             if (closestMesh == null)
                 return null;
             previousDistanceToMesh = closestMesh.Item2;
