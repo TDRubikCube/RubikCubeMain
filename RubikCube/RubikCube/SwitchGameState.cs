@@ -35,6 +35,7 @@ namespace RubikCube
         private Vector3 cameraPos;
         KeyboardState oldKeyboardState;
         readonly SpriteFont font;
+        readonly SpriteFont mono;
         //String firstText;
         //String typedText;
         Point mousePos;
@@ -77,6 +78,7 @@ namespace RubikCube
 
             //text
             font = content.Load<SpriteFont>("font");
+            mono = content.Load<SpriteFont>("mono");
 
             //matrixes
             world = Matrix.CreateTranslation(new Vector3(0, 0, 0));
@@ -185,7 +187,7 @@ namespace RubikCube
                         AlgOrder += (VectorToChar(camera.RealRight));
                         AlgOrder += ("I");
                         AllTimeAlgOrder += (VectorToChar(camera.RealRight));
-                        AllTimeAlgOrder +=("I");
+                        AllTimeAlgOrder += ("I");
                     }
                 }
                 else
@@ -206,7 +208,7 @@ namespace RubikCube
                 Debug.WriteLine("AlgOrder is: " + AlgOrder);
                 Debug.WriteLine("AllTimeAlgOrder is: " + AllTimeAlgOrder);
                 Debug.WriteLine("YAlgOrder is: " + YAlgOrder);
-                Debug.WriteLine("cameraPos.X is: "+cameraPos.X);
+                Debug.WriteLine("cameraPos.X is: " + cameraPos.X);
                 Debug.WriteLine("cameraPos.Y is: " + cameraPos.Y);
                 Debug.WriteLine("cameraPos.Z is: " + cameraPos.Z);
                 Debug.WriteLine("Angle is: " + cube.Angle);
@@ -261,7 +263,7 @@ namespace RubikCube
                         else
                         {
                             AlgOrder.Substring(1);
-                            Console.Beep(1,100);
+                            Console.Beep(1, 100);
                             Console.Beep(5, 100);
                         }
                     }
@@ -471,7 +473,7 @@ namespace RubikCube
                         DebugBorders("Reset!");
                     }
                     cube.Update(gameTime, shouldRotate, cube.ScramblingVectors, false);
-                    textbox.Update(keyboardState, oldKeyboardState,gameTime, font);
+                    textbox.Update(keyboardState, oldKeyboardState, gameTime, mono);
                     if (cube.ScrambleIndex >= 25)
                     {
                         shouldRotate = false;
@@ -514,7 +516,7 @@ namespace RubikCube
                     button.BtnScramble.Draw(spriteBatch);
                     button.BtnSolve.Draw(spriteBatch);
                     spriteBatch.End();
-                    textbox.Draw(spriteBatch, font);
+                    textbox.Draw(spriteBatch, mono, font);
                     DrawModel(cube, world, view, projection, graphicsDevice);
                     break;
                 case GameState.Options:
@@ -709,7 +711,7 @@ namespace RubikCube
                     b += a + b;
                 }
                 Debug.WriteLine(b);
-              //Debug.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                //Debug.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             }
             else
             {
@@ -745,6 +747,8 @@ namespace RubikCube
             {
                 camera.Update();
                 RotateWhichSide(keyboardState, oldKeyboardState, cameraPos);
+                if (textbox.EnterPressed)
+                    AlgOrder += textbox.GetTextBox;
             }
             mousePos = new Point(mouseState.X, mouseState.Y);
             if (!Application.OpenForms.OfType<FirstPopup>().Any())

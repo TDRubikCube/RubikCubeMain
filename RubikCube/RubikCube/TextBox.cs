@@ -11,8 +11,8 @@ using Microsoft.Xna.Framework.Media;
 using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
-using Keys = Microsoft.Xna.Framework.Input.Keys; /*
-using System.Of[A].Down; */
+using Keys = Microsoft.Xna.Framework.Input.Keys;                      /*
+using System.Of[A].Down;                                            */
 
 namespace RubikCube
 {
@@ -34,13 +34,13 @@ namespace RubikCube
         public TextBox()
         {
         }
-        public void Update(KeyboardState state, KeyboardState oldState, GameTime gameTime, SpriteFont font)
+        public void Update(KeyboardState state, KeyboardState oldState, GameTime gameTime, SpriteFont mono)
         {
             if (state.IsKeyDown(Keys.D1) && oldState.IsKeyUp(Keys.D1))
                 Debug.WriteLine("");
             //34
-            uselessWordSize = (int)(font.MeasureString("Text: ")).X;
-            CheckForDeviation(font);
+            uselessWordSize = (int)(mono.MeasureString("Text: ")).X;
+            CheckForDeviation(mono);
             tabTimer += gameTime.ElapsedGameTime.Milliseconds % 1000;
             //(Keys)(Enum.Parse(typeof(Keys), "A"));
             string usedKeys = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -50,10 +50,21 @@ namespace RubikCube
             }
             CheckForClick(ref state, ref oldState, gameTime, Keys.Space);
             CheckForClick(ref state, ref oldState, gameTime, Keys.OemSemicolon); //nope
-            if ((state.IsKeyDown(Keys.Enter)) && (oldState.IsKeyUp(Keys.Enter)))
+            
+            if (state.IsKeyDown(Keys.Enter) && oldState.IsKeyUp(Keys.Enter))
             {
-                textbox = textbox.Insert(movedTo + tabPlace, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+                EnterPressed = true;
+                //textbox = textbox.Insert(movedTo + tabPlace, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
             }
+            if (state.IsKeyDown(Keys.P) && oldState.IsKeyUp(Keys.P))
+            {
+                StartAlgo();
+            }
+            else
+            {
+                EnterPressed = false;
+            }
+            GetTextBox = textbox;
             //checks if one of the keys that count how much time has passed since you pressed them have been...um...Un-pressed?
             if ((CheakForKeyChange(state, oldState, Keys.Right)) || (CheakForKeyChange(state, oldState, Keys.Left)) || (CheakForKeyChange(state, oldState, Keys.Back)) || (CheakForKeyChange(state, oldState, Keys.Space)))
             {
@@ -179,13 +190,13 @@ namespace RubikCube
             //}
             //else if (drawBox.Length < (boxSize - 1))
             //{
-            //    if (font.MeasureString(textbox.Substring(movedTo, drawBox.Length + 1)).X <= realBoxSize)
+            //    if (mono.MeasureString(textbox.Substring(movedTo, drawBox.Length + 1)).X <= realBoxSize)
             //    {
             //        boxSize++;
             //    }
 
             //}
-            CheckForDeviation(font);
+            CheckForDeviation(mono);
 
             if (textbox.Length > boxSize && (movedTo + boxSize + MovedToRight()) == textbox.Length)
             {
@@ -211,10 +222,16 @@ namespace RubikCube
 
             //END OF UPDATE
         }
-
-        private void CheckForDeviation(SpriteFont font)
+        private void StartAlgo()
         {
-            Vector2 boxVector = (font.MeasureString(drawBox));
+            textbox = textbox.Replace("a", "");
+            Debug.WriteLine("Somthing's in the way");
+        }
+        public string GetTextBox { get; set; }
+        public bool EnterPressed { get; set; }
+        private void CheckForDeviation(SpriteFont mono)
+        {
+            Vector2 boxVector = (mono.MeasureString(drawBox));
             if (boxVector.X >= realBoxSize)
             {
                 if (drawBox.Length > 0)
@@ -223,10 +240,10 @@ namespace RubikCube
                         Debug.WriteLine("");
                 }
                 int check = 1;
-                Debug.WriteLine((font.MeasureString(drawBox.Substring(0, drawBox.Length - check)).X));
-                while ((font.MeasureString(drawBox.Substring(0, drawBox.Length - check)).X) >= realBoxSize)
+                Debug.WriteLine((mono.MeasureString(drawBox.Substring(0, drawBox.Length - check)).X));
+                while ((mono.MeasureString(drawBox.Substring(0, drawBox.Length - check)).X) >= realBoxSize)
                 {
-                    Debug.WriteLine("size of string" + font.MeasureString(drawBox.Substring(0, drawBox.Length - check)).X);
+                    Debug.WriteLine("size of string" + mono.MeasureString(drawBox.Substring(0, drawBox.Length - check)).X);
                     if (tabPlace >= boxSize)
                     {
                         tabPlace--;
@@ -295,14 +312,14 @@ namespace RubikCube
             return false;
         }
 
-        public void Draw(SpriteBatch spriteBatch, SpriteFont font)
+        public void Draw(SpriteBatch spriteBatch, SpriteFont mono, SpriteFont font)
         {
             //265
             // should it get to the if before this error
-            Vector2 tabVector = (font.MeasureString("Text: " + drawBox.Substring(0, tabPlace)));
+            Vector2 tabVector = (mono.MeasureString("Text: " + drawBox.Substring(0, tabPlace)));
             tabVector = new Vector2((tabVector.X + 295), (375));
             spriteBatch.Begin();
-            spriteBatch.DrawString(font, "DraBoxSize.X " + font.MeasureString(drawBox).X, new Vector2(300, 325), Color.Black);
+            spriteBatch.DrawString(font, "DraBoxSize.X " + mono.MeasureString(drawBox).X, new Vector2(300, 325), Color.Black);
             spriteBatch.DrawString(font, "BoxMax.X " + realBoxSize, new Vector2(475, 325), Color.Black);
             spriteBatch.DrawString(font, ("TabX: " + (tabVector.X - uselessWordSize)), new Vector2(300, 350), Color.Black);
             if (drawBox.Length > 0)
@@ -310,7 +327,7 @@ namespace RubikCube
                 if (drawBox.Last<char>() == 'M')
                     Debug.WriteLine("");
             }
-            spriteBatch.DrawString(font, ("Text: " + drawBox), new Vector2(300, 375), Color.Black);
+            spriteBatch.DrawString(mono, ("Text: " + drawBox), new Vector2(300, 375), Color.Black);
             spriteBatch.DrawString(font, ("|"), new Vector2(300 + realBoxSize + uselessWordSize, 375), Color.Red);
             spriteBatch.DrawString(font, (physTab), tabVector, Color.Black);
             spriteBatch.DrawString(font, ("Length: " + textbox.Length), new Vector2(300, 400), Color.Black);
@@ -320,6 +337,7 @@ namespace RubikCube
             spriteBatch.DrawString(font, ("TabPlace: " + tabPlace), new Vector2(300, 450), Color.Black);
             spriteBatch.End();
         }
+
         public string KeyToChar(Keys key, KeyboardState state, KeyboardState oldstate)
         {
 
