@@ -19,7 +19,7 @@ namespace RubikCube
         Model model;
         Save save;
         Clocks clocks = new Clocks();
-        private FaceColor faceColors;
+        private CubeConfig faceColors;
         Matrix[] meshTransforms;
         readonly CubeState cubeState = new CubeState();
         readonly Random rand = new Random();
@@ -44,7 +44,7 @@ namespace RubikCube
             ScramblingVectors = new List<Vector3>();
             save = new Save();
             model = null;
-            faceColors = new FaceColor();
+            faceColors = new CubeConfig();
         }
 
         #endregion

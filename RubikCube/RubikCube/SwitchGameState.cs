@@ -27,6 +27,7 @@ namespace RubikCube
         readonly Cube cube;
         readonly ButtonSetUp button;
         readonly Text lang;
+        SelfSolve solve;
         readonly Matrix world;
         private Camera camera;
         Matrix view;
@@ -79,6 +80,7 @@ namespace RubikCube
             lang = new Text();
             camera = new Camera();
             clocks = new Clocks();
+            solve = new SelfSolve(cube);
             button = new ButtonSetUp(graphics, graphicsDevice, content)
             {
                 ClassicBound =
@@ -473,11 +475,12 @@ namespace RubikCube
                         cube.Solve();
                         DebugBorders("Reset!");
                     }
-                    if (shouldRotate)
+                    if (shouldRotate || solve.ShouldScramble)
                     {
                         cube.Scramble();
                         AlgOrder += cube.ScrambleResult;
                         shouldRotate = false;
+                        solve.ShouldScramble = false;
                     }
                     clocks.UpdateStoper(gameTime);
                     clocks.StartStoper();
@@ -745,6 +748,7 @@ namespace RubikCube
             cameraPos = Matrix.Invert(view).Translation;
             if (CurrentGameState == GameState.FreePlay)
             {
+                solve.Update();
                 SetCurrentFace();
                 if (keyboardState.IsKeyDown(Keys.C) && oldKeyboardState.IsKeyUp(Keys.C))
                     shouldAllowCameraMovement = !shouldAllowCameraMovement;
@@ -755,8 +759,6 @@ namespace RubikCube
                 camera.Update();
                 RotateWhichSide(keyboardState, oldKeyboardState, cameraPos);
             }
-            if (keyboardState.IsKeyDown(Keys.A) && oldKeyboardState.IsKeyUp(Keys.A))
-                Debug.WriteLine(AlgOrder);
             mousePos = new Point(mouseState.X, mouseState.Y);
             SwitchUpdate(mouseState, keyboardState, gameTime);
             OldState(ref mouseState, ref keyboardState);

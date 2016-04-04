@@ -13,7 +13,7 @@ using System.Runtime.InteropServices;
 
 namespace RubikCube
 {
-    class FaceColor
+    class CubeConfig
     {
         string[,] Right = new string[3, 3];
         string[,] Left = new string[3, 3];
@@ -21,7 +21,7 @@ namespace RubikCube
         string[,] Down = new string[3, 3];
         string[,] Front = new string[3, 3];
         string[,] Back = new string[3, 3];
-        public FaceColor()
+        public CubeConfig()
         {
             Initialize();
         }
@@ -62,7 +62,27 @@ namespace RubikCube
                 DownTurn(isClockWise);
         }
 
-        public void RightTurn(bool isClockWise)
+        public void Rotate(string move)
+        {
+            Vector3 side = CharToVector(move).Item1;
+            bool isClockWise = CharToVector(move).Item2;
+            if (side == Vector3.Right)
+                RightTurn(isClockWise);
+            if (side == Vector3.Left)
+                LeftTurn(isClockWise);
+            //this is forward!!
+            if (side == Vector3.Backward)
+                FrontTurn(isClockWise);
+            //this is backward!
+            if (side == Vector3.Forward)
+                BackTurn(isClockWise);
+            if (side == Vector3.Up)
+                UpTurn(isClockWise);
+            if (side == Vector3.Down)
+                DownTurn(isClockWise);
+        }
+
+        private void RightTurn(bool isClockWise)
         {
             TurnAxis(ref Right, isClockWise);
 
@@ -101,7 +121,7 @@ namespace RubikCube
             }
         }
 
-        public void LeftTurn(bool isClockWise)
+        private void LeftTurn(bool isClockWise)
         {
             TurnAxis(ref Left, isClockWise);
 
@@ -140,7 +160,7 @@ namespace RubikCube
             }
         }
 
-        public void FrontTurn(bool isClockWise)
+        private void FrontTurn(bool isClockWise)
         {
             TurnAxis(ref Front, isClockWise);
 
@@ -179,7 +199,7 @@ namespace RubikCube
             }
         }
 
-        public void BackTurn(bool isClockWise)
+        private void BackTurn(bool isClockWise)
         {
             TurnAxis(ref Back, isClockWise);
 
@@ -218,7 +238,7 @@ namespace RubikCube
             }
         }
 
-        public void UpTurn(bool isClockWise)
+        private void UpTurn(bool isClockWise)
         {
             TurnAxis(ref Up, isClockWise);
 
@@ -257,7 +277,7 @@ namespace RubikCube
             }
         }
 
-        public void DownTurn(bool isClockWise)
+        private void DownTurn(bool isClockWise)
         {
             TurnAxis(ref Down, !isClockWise);
 
@@ -351,6 +371,63 @@ namespace RubikCube
                     Left[i, j] = "White";
                 }
             }
+        }
+
+        public List<string[,]> GetCubeState()
+        {
+            return new List<string[,]> { Right, Left, Up, Down, Front, Back };
+        }
+
+        public Tuple<Vector3, bool> CharToVector(string real)
+        {
+            bool isClockWise = true;
+            if ((real == "l") || (real == "L"))
+            {
+                if (real.Contains('I'))
+                    isClockWise = false;
+                return new Tuple<Vector3, bool>(Vector3.Left, isClockWise);
+            }
+            if ((real == "r") || (real == "R"))
+            {
+                if (real.Contains('I'))
+                    isClockWise = false;
+                return new Tuple<Vector3, bool>(Vector3.Right, isClockWise);
+            }
+            if ((real == "b") || (real == "B"))
+            {
+                if (real.Contains('I'))
+                    isClockWise = false;
+                return new Tuple<Vector3, bool>(Vector3.Backward, isClockWise);
+            }
+            if ((real == "f") || (real == "F"))
+            {
+                if (real.Contains('I'))
+                    isClockWise = false;
+                return new Tuple<Vector3, bool>(Vector3.Forward, isClockWise);
+            }
+            if ((real == "u") || (real == "U"))
+            {
+                if (real.Contains('I'))
+                    isClockWise = false;
+                return new Tuple<Vector3, bool>(Vector3.Up, isClockWise);
+            }
+            if ((real == "d") || (real == "D"))
+            {
+                if (real.Contains('I'))
+                    isClockWise = false;
+                return new Tuple<Vector3, bool>(Vector3.Down, isClockWise);
+            }
+            return Vector3.Zero;
+        }
+
+        public void SetStates(List<string[,]> state)
+        {
+            Right = state[0];
+            Left = state[1];
+            Up = state[2];
+            Down = state[3];
+            Front = state[4];
+            Back = state[5];
         }
     }
 }
