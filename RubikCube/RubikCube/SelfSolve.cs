@@ -17,34 +17,26 @@ namespace RubikCube
     class SelfSolve
     {
         CubeConfig CubeState;
-        CubeConfig VirtualState;
         Cube cube;
         List<string[,]> currentState;
         List<string[,]> randomState;
         List<string[,]> oldState;
-        const List<string> AllMoves = new List<string> { "R", "L", "U", "D", "F", "B", "RI", "LI", "UI", "DI", "FI", "BI" };
+        private static readonly List<string> AllMoves = new List<string> { "R", "L", "U", "D", "F", "B", "RI", "LI", "UI", "DI", "FI", "BI" };
         KeyboardState oldKeyboardState;
+        public Queue<CubeConfig> StatesToCheck = new Queue<CubeConfig>();
 
         public SelfSolve(Cube _cube)
         {
-            CubeState = new CubeConfig();
             cube = _cube;
+            CubeState = cube.cubeConfig;
         }
 
         public void Update()
         {
             currentState = CubeState.GetCubeState();
             KeyboardState keyboardState = Keyboard.GetState();
-            if (keyboardState.IsKeyUp(Keys.A) && oldKeyboardState.IsKeyDown(Keys.A))
-            {
-                ShouldScramble = true;
-                oldState = CubeState.GetCubeState();
-            }
-            if (keyboardState.IsKeyUp(Keys.B) && oldKeyboardState.IsKeyDown(Keys.B))
-            {
-                randomState = CubeState.GetCubeState();
-                AreSame(oldState, randomState);
-            }
+            if (keyboardState.IsKeyDown(Keys.A) && oldKeyboardState.IsKeyUp(Keys.A))
+                RunTree();
             oldKeyboardState = keyboardState;
         }
 
@@ -72,11 +64,25 @@ namespace RubikCube
 
         public void RunTree()
         {
-            VirtualState.SetStates(currentState);
+            var temp = currentState;
             foreach (string move in AllMoves)
             {
-
+                bool shouldAddToList = true;
+                CubeConfig tempState = new CubeConfig();
+                tempState.SetStates(currentState);
+                tempState.Rotate(move);
+                foreach (var state in StatesToCheck)
+                {
+                    if (AreSame(state.GetCubeState(), tempState.GetCubeState()))
+                    {
+                        shouldAddToList = false;
+                        break;
+                    }
+                }
+                if (shouldAddToList)
+                    StatesToCheck.Enqueue(tempState);
             }
+            CubeState.SetStates(temp);
         }
     }
 }

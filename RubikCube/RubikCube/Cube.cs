@@ -17,9 +17,8 @@ namespace RubikCube
     {
         #region class vars
         Model model;
-        Save save;
         Clocks clocks = new Clocks();
-        private CubeConfig faceColors;
+        public CubeConfig cubeConfig;
         Matrix[] meshTransforms;
         readonly CubeState cubeState = new CubeState();
         readonly Random rand = new Random();
@@ -42,9 +41,8 @@ namespace RubikCube
             meshTransforms = new Matrix[26];
             OriginalCubeDraw();
             ScramblingVectors = new List<Vector3>();
-            save = new Save();
             model = null;
-            faceColors = new CubeConfig();
+            cubeConfig = new CubeConfig();
         }
 
         #endregion
@@ -189,9 +187,9 @@ namespace RubikCube
             }
             if (howManyTurns == (110 - RotationSpeed) / 10)
             {
-                faceColors.CheckFaceColor();
-                faceColors.Rotate(side,isClockWise);
-                faceColors.CheckFaceColor();
+                //cubeConfig.CheckFaceColor();
+                cubeConfig.Rotate(side,isClockWise);
+                //cubeConfig.CheckFaceColor();
                 cubeState.Rotate(side, isClockWise);
                 howManyTurns = 0;
             }

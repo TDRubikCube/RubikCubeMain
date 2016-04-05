@@ -13,7 +13,7 @@ using System.Runtime.InteropServices;
 
 namespace RubikCube
 {
-    class CubeConfig
+    public class CubeConfig
     {
         string[,] Right = new string[3, 3];
         string[,] Left = new string[3, 3];
@@ -417,7 +417,7 @@ namespace RubikCube
                     isClockWise = false;
                 return new Tuple<Vector3, bool>(Vector3.Down, isClockWise);
             }
-            return Vector3.Zero;
+            return new Tuple<Vector3, bool>(Vector3.Zero, false);
         }
 
         public void SetStates(List<string[,]> state)
