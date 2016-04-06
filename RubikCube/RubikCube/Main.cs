@@ -59,6 +59,7 @@ namespace RubikCube
         /// </summary>
         protected override void Initialize()
         {
+            this.IsFixedTimeStep = false;
             this.IsMouseVisible = true;
             Window.AllowUserResizing = true;
             this.IsFixedTimeStep = false;

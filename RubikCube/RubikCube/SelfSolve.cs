@@ -18,11 +18,12 @@ namespace RubikCube
     {
         CubeConfig CubeState;
         Cube cube;
-        List<string[,]> currentState;
+        List<string[,]> userState;
         List<string[,]> targetState;
         private static readonly List<string> AllMoves = new List<string> { "R", "L", "U", "D", "F", "B", "RI", "LI", "UI", "DI", "FI", "BI" };
         KeyboardState oldKeyboardState;
-        public List<KeyValuePair<int, CubeConfig>> StatesToCheck = new List<KeyValuePair<int, CubeConfig>>();
+        public List<Tuple<string,KeyValuePair<int, CubeConfig>>> StatesToCheck = new List<Tuple<string, KeyValuePair<int, CubeConfig>>>();
+        public List<KeyValuePair<int, CubeConfig>> StatesChecked = new List<KeyValuePair<int, CubeConfig>>();
 
         public SelfSolve(Cube _cube)
         {
@@ -35,8 +36,13 @@ namespace RubikCube
         {
             KeyboardState keyboardState = Keyboard.GetState();
             if (keyboardState.IsKeyDown(Keys.D1) && oldKeyboardState.IsKeyUp(Keys.D1))
+            {
+                isFirstTime = true;
+                StatesChecked.Clear();
+                StatesToCheck.Clear();
                 RunTree();
-            currentState = CubeState.GetCubeState();
+            }
+            userState = CubeState.GetCubeState();
             oldKeyboardState = keyboardState;
         }
 
@@ -64,24 +70,28 @@ namespace RubikCube
 
         public void RunTree()
         {
-            List<string[,]> stateToCheck = new List<string[,]>();
+            string lastMove = "";
+            List<string[,]> currentBaseState = new List<string[,]>();
+            if (StatesToCheck.Count != 0)
+                currentBaseState = StatesToCheck[0].Item2.Value.GetCubeState();
+            Shuffle(AllMoves);
             foreach (string move in AllMoves)
             {
-                currentState = CubeState.GetCubeState();
-                if (StatesToCheck.Count != 0)
-                    stateToCheck = StatesToCheck[0].Value.GetCubeState();
+                userState = CubeState.GetCubeState();
                 bool shouldAddToList = true;
                 CubeConfig tempState = new CubeConfig();
-                if (StatesToCheck.Count == 0)
+                if (isFirstTime)
                 {
-                    tempState.SetStates(currentState);
+                    currentBaseState = userState;
+                    tempState.SetStates(currentBaseState);
                 }
                 else
                 {
-                    tempState.SetStates(stateToCheck);
+                    currentBaseState = StatesToCheck[0].Item2.Value.GetCubeState();
+                    tempState.SetStates(currentBaseState);
                 }
                 tempState.Rotate(move);
-                foreach (var state in StatesToCheck)
+                foreach (var state in StatesChecked)
                 {
                     if (AreSame(state.Value, tempState))
                     {
@@ -90,10 +100,39 @@ namespace RubikCube
                     }
                 }
                 if (shouldAddToList)
-                    StatesToCheck.Add(new KeyValuePair<int, CubeConfig>(GetCubeValue(tempState), (CubeConfig)tempState.Clone()));
+                {
+                    string prvMoves = "";
+                    if (!isFirstTime)
+                    {
+                        prvMoves = StatesToCheck[0].Item1;
+                    }
+                    StatesToCheck.Add(new Tuple<string,KeyValuePair<int, CubeConfig>>(prvMoves+move,new KeyValuePair<int, CubeConfig>(GetCubeValue(tempState),
+                        (CubeConfig)tempState.Clone())));
+                }
+                lastMove = move;
             }
+
+
+            //add to checked list
+            CubeConfig stateChecked = new CubeConfig();
+            stateChecked.SetStates(currentBaseState);
+            if(lastMove.Contains("I"))
+                stateChecked.Rotate(lastMove[0].ToString());
+            else
+                stateChecked.Rotate(lastMove + "I");
+            StatesChecked.Add(new KeyValuePair<int, CubeConfig>(GetCubeValue(stateChecked), (CubeConfig)stateChecked.Clone()));
+
+            //remove from need to check list
+            if (!isFirstTime)
+                StatesToCheck.RemoveAt(0);
+
+            //sort by value
             OrganizeTree();
-            if (StatesToCheck[0].Key != 0)
+
+            isFirstTime = false;
+
+            //run again if needed
+            if (StatesToCheck[0].Item2.Key != 0 && StatesToCheck.Count < 5000)
                 RunTree();
         }
 
@@ -102,9 +141,9 @@ namespace RubikCube
             StatesToCheck.Sort(Compare1);
         }
 
-        static int Compare1(KeyValuePair<int, CubeConfig> a, KeyValuePair<int, CubeConfig> b)
+        static int Compare1(Tuple<string,KeyValuePair<int, CubeConfig>> a, Tuple<string,KeyValuePair<int, CubeConfig>> b)
         {
-            return a.Key.CompareTo(b.Key);
+            return a.Item2.Key.CompareTo(b.Item2.Key);
         }
 
         public int GetCubeValue(CubeConfig cubeState)
@@ -125,6 +164,22 @@ namespace RubikCube
                 }
             }
             return value;
+        }
+
+        private static Random rng = new Random();
+        private bool isFirstTime;
+
+        public static void Shuffle(List<string> list)
+        {
+            int n = list.Count;
+            while (n > 1)
+            {
+                n--;
+                int k = rng.Next(n + 1);
+                var value = list[k];
+                list[k] = list[n];
+                list[n] = value;
+            }
         }
     }
 }
