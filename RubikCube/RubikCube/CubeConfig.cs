@@ -13,7 +13,7 @@ using System.Runtime.InteropServices;
 
 namespace RubikCube
 {
-    public class CubeConfig
+    public class CubeConfig : ICloneable
     {
         string[,] Right = new string[3, 3];
         string[,] Left = new string[3, 3];
@@ -375,43 +375,44 @@ namespace RubikCube
 
         public List<string[,]> GetCubeState()
         {
-            return new List<string[,]> { Right, Left, Up, Down, Front, Back };
+            return new List<string[,]> { (string[,]) Right.Clone(), (string[,]) Left.Clone(), (string[,]) Up.Clone(),
+                (string[,]) Down.Clone(), (string[,]) Front.Clone(), (string[,]) Back.Clone() };
         }
 
         public Tuple<Vector3, bool> CharToVector(string real)
         {
             bool isClockWise = true;
-            if ((real == "l") || (real == "L"))
+            if ((real.Contains("l")) || (real.Contains("L")))
             {
                 if (real.Contains('I'))
                     isClockWise = false;
                 return new Tuple<Vector3, bool>(Vector3.Left, isClockWise);
             }
-            if ((real == "r") || (real == "R"))
+            if ((real.Contains("r")) || (real.Contains("R")))
             {
                 if (real.Contains('I'))
                     isClockWise = false;
                 return new Tuple<Vector3, bool>(Vector3.Right, isClockWise);
             }
-            if ((real == "b") || (real == "B"))
+            if ((real.Contains("b")) || (real.Contains("B")))
             {
                 if (real.Contains('I'))
                     isClockWise = false;
                 return new Tuple<Vector3, bool>(Vector3.Backward, isClockWise);
             }
-            if ((real == "f") || (real == "F"))
+            if ((real.Contains("f")) || (real.Contains("F")))
             {
                 if (real.Contains('I'))
                     isClockWise = false;
                 return new Tuple<Vector3, bool>(Vector3.Forward, isClockWise);
             }
-            if ((real == "u") || (real == "U"))
+            if ((real.Contains("u")) || (real.Contains("U")))
             {
                 if (real.Contains('I'))
                     isClockWise = false;
                 return new Tuple<Vector3, bool>(Vector3.Up, isClockWise);
             }
-            if ((real == "d") || (real == "D"))
+            if ((real.Contains("d")) || (real.Contains("D")))
             {
                 if (real.Contains('I'))
                     isClockWise = false;
@@ -428,6 +429,11 @@ namespace RubikCube
             Down = state[3];
             Front = state[4];
             Back = state[5];
+        }
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
         }
     }
 }
