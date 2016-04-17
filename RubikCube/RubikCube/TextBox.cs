@@ -31,40 +31,63 @@ namespace RubikCube
         public int boxSize = 20; //the boxsize in letters, not in vector.x!!! this size changes depending on the string vector.x size!
         public const int realBoxSize = 266; //the real box size in vectors.x, const!
         public int tabPlace = 0; //the logical place of the tab in the string
-        public TextBox()
+        Cube cube;
+        Camera camera;
+        Texture2D white;
+        string algOrder;
+        bool startedRot;
+        string realVectorBox = "";
+        int orderLength;
+        bool didStart = false;
+
+        public TextBox(Cube _cube, ContentManager content)
         {
+            cube = _cube;
+            white = content.Load<Texture2D>("pics/White");
         }
-        public void Update(KeyboardState state, KeyboardState oldState, GameTime gameTime, SpriteFont mono)
+        public void Update(KeyboardState state, KeyboardState oldState, GameTime gameTime, SpriteFont mono, string _algorder, Camera _camera)
         {
+            camera = _camera;
+            algOrder = _algorder;
             if (state.IsKeyDown(Keys.D1) && oldState.IsKeyUp(Keys.D1))
                 Debug.WriteLine("");
+            if (drawBox.Count() == 0)
+                startedRot = false;
+            if (algOrder.Length != orderLength && (EnterPressed || didStart))
+            {
+                didStart = true;
+                textbox = textbox.Substring(1, textbox.Length - 2);
+                orderLength = algOrder.Length;
+            }
             //34
             uselessWordSize = (int)(mono.MeasureString("Text: ")).X;
             CheckForDeviation(mono);
             tabTimer += gameTime.ElapsedGameTime.Milliseconds % 1000;
             //(Keys)(Enum.Parse(typeof(Keys), "A"));
             string usedKeys = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            if (state.IsKeyDown(Keys.P) && oldState.IsKeyUp(Keys.P))
+            {
+                StartAlgo();
+            }
+
             for (int i = 0; i < usedKeys.Length; i++)
             {
                 CheckForClick(ref state, ref oldState, gameTime, (Keys)(Enum.Parse(typeof(Keys), usedKeys.Substring(i, 1)))); //converts string letter from usedKeys to Keys, and send to cheak.
             }
             CheckForClick(ref state, ref oldState, gameTime, Keys.Space);
             CheckForClick(ref state, ref oldState, gameTime, Keys.OemSemicolon); //nope
-            
+
             if (state.IsKeyDown(Keys.Enter) && oldState.IsKeyUp(Keys.Enter))
             {
-                EnterPressed = true;
-                //textbox = textbox.Insert(movedTo + tabPlace, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-            }
-            if (state.IsKeyDown(Keys.P) && oldState.IsKeyUp(Keys.P))
-            {
+
                 StartAlgo();
+                //textbox = textbox.Insert(movedTo + tabPlace, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
             }
             else
             {
                 EnterPressed = false;
             }
-            GetTextBox = textbox;
+            GetRealVectorBox = realVectorBox;
             //checks if one of the keys that count how much time has passed since you pressed them have been...um...Un-pressed?
             if ((CheakForKeyChange(state, oldState, Keys.Right)) || (CheakForKeyChange(state, oldState, Keys.Left)) || (CheakForKeyChange(state, oldState, Keys.Back)) || (CheakForKeyChange(state, oldState, Keys.Space)))
             {
@@ -224,10 +247,47 @@ namespace RubikCube
         }
         private void StartAlgo()
         {
-            textbox = textbox.Replace("a", "");
+            didStart = false;
+            orderLength = algOrder.Length;
+            realVectorBox = "";
+            string nono = " ACEGHJKMNOPQSTVWXYZ";
+            tabPlace = 0;
+            for (int i = 0; i < nono.Length; i++)
+            {
+                textbox = textbox.Replace(nono[i].ToString(), "");
+            }
+            tabPlace = 0;
+            foreach (var s in textbox)
+            {
+                if (s == 'F')
+                {
+                    realVectorBox += VectorToChar(camera.RealForward);
+                }
+                else if (s == 'B')
+                {
+                    realVectorBox += VectorToChar(camera.RealBackward);
+                }
+                else if (s == 'L')
+                {
+                    realVectorBox += VectorToChar(camera.RealLeft);
+                }
+                else if (s == 'R')
+                {
+                    realVectorBox += VectorToChar(camera.RealRight);
+                }
+                else if (s == 'I')
+                {
+                    realVectorBox += "I";
+                }
+            }
+            if (algOrder.Length == 0)
+            {
+                EnterPressed = true;
+                startedRot = true;
+            }
             Debug.WriteLine("Somthing's in the way");
         }
-        public string GetTextBox { get; set; }
+        public string GetRealVectorBox { get; set; }
         public bool EnterPressed { get; set; }
         private void CheckForDeviation(SpriteFont mono)
         {
@@ -258,7 +318,6 @@ namespace RubikCube
                 boxSize++;
             }
         }
-
         private int MovedToRight()
         {
             if ((textbox.Length - boxSize - movedTo) <= 0)
@@ -312,22 +371,94 @@ namespace RubikCube
             return false;
         }
 
-        public void Draw(SpriteBatch spriteBatch, SpriteFont mono, SpriteFont font)
+        public string VectorToChar(Vector3 real)
+        {
+            if (real == Vector3.Left)
+            {
+                return "l";
+            }
+            if (real == Vector3.Right)
+            {
+                return "r";
+            }
+            if (real == Vector3.Backward)
+            {
+                return "b";
+            }
+            if (real == Vector3.Forward)
+            {
+                return "f";
+            }
+            if (real == Vector3.Up)
+            {
+                return "u";
+            }
+            if (real == Vector3.Down)
+            {
+                return "d";
+            }
+            Debug.WriteLine("VectorToChar returned null");
+            return "";
+
+        }
+        public Vector3 CharToVector(string real)
+        {
+            if ((real == "l") || (real == "L"))
+            {
+                return Vector3.Left;
+            }
+            if ((real == "r") || (real == "R"))
+            {
+                return Vector3.Right;
+            }
+            if ((real == "b") || (real == "B"))
+            {
+                return Vector3.Backward;
+            }
+            if ((real == "f") || (real == "F"))
+            {
+                return Vector3.Forward;
+            }
+            if ((real == "u") || (real == "U"))
+            {
+                return Vector3.Up;
+            }
+            if ((real == "d") || (real == "D"))
+            {
+                return Vector3.Down;
+            }
+            Debug.WriteLine("CharToVector returned null");
+            return Vector3.Zero;
+        }
+
+        public void Draw(SpriteBatch spriteBatch, SpriteFont mono, SpriteFont font, Texture2D tex)
         {
             //265
             // should it get to the if before this error
             Vector2 tabVector = (mono.MeasureString("Text: " + drawBox.Substring(0, tabPlace)));
             tabVector = new Vector2((tabVector.X + 295), (375));
-            spriteBatch.Begin();
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+            spriteBatch.DrawString(mono, ("~BTW Press P to send the textbox~"), new Vector2(300, 300), Color.Black);
             spriteBatch.DrawString(font, "DraBoxSize.X " + mono.MeasureString(drawBox).X, new Vector2(300, 325), Color.Black);
             spriteBatch.DrawString(font, "BoxMax.X " + realBoxSize, new Vector2(475, 325), Color.Black);
             spriteBatch.DrawString(font, ("TabX: " + (tabVector.X - uselessWordSize)), new Vector2(300, 350), Color.Black);
-            if (drawBox.Length > 0)
+            if (startedRot)
             {
-                if (drawBox.Last<char>() == 'M')
-                    Debug.WriteLine("");
+                for (int i = 0; i < drawBox.Count(); i++)
+                {
+                    if (i == 0)
+                    {
+                        spriteBatch.Draw(white, new Rectangle(300 + (int)mono.MeasureString("Text: ").X, 375, 11, (int)mono.MeasureString(drawBox[i].ToString()).Y), null,
+                            Color.LimeGreen * (float)(1 - (cube.Angle / 10) * (-1 / 10)), 0f, new Vector2(0, 0), SpriteEffects.None, 0.3f);
+                    }
+                    else
+                    {
+                        spriteBatch.Draw(white, new Rectangle(300 + (int)mono.MeasureString("Text: ").X + (i) * 11, 375, 11, (int)mono.MeasureString(drawBox[i].ToString()).Y), null,
+                             Color.Gray * (float)(1 - (cube.Angle / 10) * (-1 / 10)), 0f, new Vector2(0, 0), SpriteEffects.None, 0.3f);
+                    }
+                }
             }
-            spriteBatch.DrawString(mono, ("Text: " + drawBox), new Vector2(300, 375), Color.Black);
+            spriteBatch.DrawString(mono, ("Text: " + drawBox), new Vector2(300, 375), Color.Black, 0f, new Vector2(0, 0), 1f, SpriteEffects.None, 0.5f);
             spriteBatch.DrawString(font, ("|"), new Vector2(300 + realBoxSize + uselessWordSize, 375), Color.Red);
             spriteBatch.DrawString(font, (physTab), tabVector, Color.Black);
             spriteBatch.DrawString(font, ("Length: " + textbox.Length), new Vector2(300, 400), Color.Black);
