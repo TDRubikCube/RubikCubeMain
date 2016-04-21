@@ -36,6 +36,12 @@ namespace RubikCube
             EndingProt();
         }
 
+        public void SaveLogialCubeState(int[,,] state)
+        {
+            doc.Load(fileName);
+            XmlElement intElement = doc.CreateElement("");
+        }
+
         public List<Tuple<string, string>> LoadBools()
         {
             doc.Load(fileName);

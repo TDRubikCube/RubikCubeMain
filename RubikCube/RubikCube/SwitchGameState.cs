@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -68,13 +69,17 @@ namespace RubikCube
         private Point mousePosOnClick;
         private Vector3 direction;
         private List<string> allCubeColors;
+        private bool shouldShowStopper;
+        private bool shouldRunStopper;
 
         #endregion
 
         public SwitchGameState(GraphicsDevice graphicsDeviceFromMain, GraphicsDeviceManager graphics, ContentManager content)
         {
+            shouldRunStopper = true;
+            shouldShowStopper = true;
             graphicsDevice = graphicsDeviceFromMain;
-            allCubeColors = new List<string>(){"white","yellow","green","blue"};
+            allCubeColors = new List<string> { "white", "yellow", "green", "blue" };
             //class initialize
             cube = new Cube();
             lang = new Text();
@@ -482,13 +487,58 @@ namespace RubikCube
                         shouldRotate = false;
                         solve.ShouldScramble = false;
                     }
+                    CheckClickOnStopper();
                     clocks.UpdateStoper(gameTime);
-                    clocks.StartStoper();
+                    if (shouldRunStopper)
+                        clocks.StartStoper();
                     button.BtnScramble.Update(false, gameTime);
                     button.BtnSolve.Update(false, gameTime);
 
                     break;
 
+            }
+        }
+
+        private void CheckClickOnStopper()
+        {
+            MouseState mouse = Mouse.GetState();
+            Point mousePoint = new Point(mouse.X, mouse.Y);
+            int locX = (int)(graphicsDevice.Viewport.Width / 1.31);
+            int locY = (int)(graphicsDevice.Viewport.Height / 2f);
+            Rectangle showStopperRect = new Rectangle(locX, locY, (int)font.MeasureString(lang.FreePlayStopperShow).X, (int)font.MeasureString(lang.FreePlayStopperShow).Y);
+            Rectangle pauseStopperRect = new Rectangle(locX, 50 + locY, (int)font.MeasureString(lang.FreePlayStopperPause).X, (int)font.MeasureString(lang.FreePlayStopperPause).Y);
+            Rectangle resumeStopperRect = new Rectangle(locX, 100 + locY, (int)font.MeasureString(lang.FreePlayStopperResume).X, (int)font.MeasureString(lang.FreePlayStopperResume).Y);
+            Rectangle resetStopperRect = new Rectangle(locX, 150 + locY, (int)font.MeasureString(lang.FreePlayStopperReset).X, (int)font.MeasureString(lang.FreePlayStopperReset).Y);
+            if (mouse.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released)
+            {
+                if (showStopperRect.Contains(mousePoint))
+                {
+                    shouldShowStopper = !shouldShowStopper;
+                    if (shouldRunStopper)
+                    {
+                        shouldRunStopper = false;
+                        clocks.PauseStoper();
+                    }
+                    else
+                    {
+                        shouldRunStopper = true;
+                        clocks.ResumeStoper();
+                    }
+                }
+                else if (pauseStopperRect.Contains(mousePoint) && shouldRunStopper)
+                {
+                    shouldRunStopper = false;
+                    clocks.PauseStoper();
+                }
+                else if (resumeStopperRect.Contains(mousePoint) && !shouldRunStopper)
+                {
+                    shouldRunStopper = true;
+                    clocks.ResumeStoper();
+                }
+                else if (resetStopperRect.Contains(mousePoint))
+                {
+                    clocks.StopStoper();
+                }
             }
         }
 
@@ -514,7 +564,13 @@ namespace RubikCube
                     spriteBatch.DrawString(font, lang.FreePlayTitle, new Vector2(graphicsDevice.Viewport.Width / 3f, 10), Color.Black);
                     spriteBatch.DrawString(font, lang.FreePlayScramble, new Vector2(graphicsDevice.Viewport.Width / 13f, graphicsDevice.Viewport.Height / 1.4f), Color.Black);
                     spriteBatch.DrawString(font, lang.FreePlaySolve, new Vector2(graphicsDevice.Viewport.Width / 4f, graphicsDevice.Viewport.Height / 1.4f), Color.Black);
-                    clocks.DrawStoper(spriteBatch, font, new Vector2(graphicsDevice.Viewport.Width / 3f, 30));
+
+                    spriteBatch.DrawString(font, lang.FreePlayStopperShow, new Vector2(graphicsDevice.Viewport.Width / 1.31f, graphicsDevice.Viewport.Height / 2f), Color.Black);
+                    spriteBatch.DrawString(font, lang.FreePlayStopperPause, new Vector2(graphicsDevice.Viewport.Width / 1.31f, 50 + graphicsDevice.Viewport.Height / 2f), Color.Black);
+                    spriteBatch.DrawString(font, lang.FreePlayStopperResume, new Vector2(graphicsDevice.Viewport.Width / 1.31f, 100 + graphicsDevice.Viewport.Height / 2f), Color.Black);
+                    spriteBatch.DrawString(font, lang.FreePlayStopperReset, new Vector2(graphicsDevice.Viewport.Width / 1.31f, 150 + graphicsDevice.Viewport.Height / 2f), Color.Black);
+                    if (shouldShowStopper)
+                        clocks.DrawStoper(spriteBatch, font, new Vector2(graphicsDevice.Viewport.Width / 3f, 30));
                     spriteBatch.DrawString(font, lang.FreePlaySolve, new Vector2(graphicsDevice.Viewport.Width / 4f, graphicsDevice.Viewport.Height / 1.4f), Color.Black);
                     button.BtnScramble.Draw(spriteBatch);
                     button.BtnSolve.Draw(spriteBatch);
