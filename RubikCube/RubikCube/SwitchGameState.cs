@@ -57,16 +57,17 @@ namespace RubikCube
         //bool lockScreen = true;
         //string whichGenre = "default";
         public GameState CurrentGameState;
+        Texture2D textTex;
 
         #endregion
 
         public SwitchGameState(GraphicsDevice graphicsDevice, GraphicsDeviceManager graphics, ContentManager content)
         {
             //class initialize
-            cube = new Cube();
             lang = new Text();
+            cube = new Cube();
             camera = new Camera();
-            textbox = new TextBox();
+            textbox = new TextBox(cube, content);
             button = new ButtonSetUp(graphics, graphicsDevice, content)
             {
                 ClassicBound =
@@ -75,6 +76,7 @@ namespace RubikCube
                     new Rectangle((int)(graphicsDevice.Viewport.Width / 1.55f), graphicsDevice.Viewport.Height / 3, 50, 40)
             };
             cube.Model = content.Load<Model>("rubik");
+            textTex = content.Load<Texture2D>("pics/TextSquere");
 
             //text
             font = content.Load<SpriteFont>("font");
@@ -174,34 +176,7 @@ namespace RubikCube
             {
                 DebugBorders("");
             }
-            if (keyboardState.IsKeyDown(Keys.T) && oldKeyboardState.IsKeyUp(Keys.T))//T is 4 tests!
-            {
 
-                if (keyboardState.IsKeyDown(Keys.LeftShift) || keyboardState.IsKeyDown(Keys.RightShift))
-                {
-                    DebugBorders("");
-                    Debug.WriteLine("T was pressed, stating rotating R 30 times counter-clockWise for tests");
-                    DebugBorders("");
-                    for (int i = 0; i < 15; i++)
-                    {
-                        AlgOrder += (VectorToChar(camera.RealRight));
-                        AlgOrder += ("I");
-                        AllTimeAlgOrder += (VectorToChar(camera.RealRight));
-                        AllTimeAlgOrder += ("I");
-                    }
-                }
-                else
-                {
-                    DebugBorders("");
-                    Debug.WriteLine("T was pressed, stating rotating R 30 times clockWise for tests");
-                    DebugBorders("");
-                    for (int i = 0; i < 15; i++)
-                    {
-                        AlgOrder += (VectorToChar(camera.RealRight));
-                        AllTimeAlgOrder += (VectorToChar(camera.RealRight));
-                    }
-                }
-            }
             if (keyboardState.IsKeyDown(Keys.W) && oldKeyboardState.IsKeyUp(Keys.W))
             {
                 DebugBorders("w");
@@ -214,12 +189,6 @@ namespace RubikCube
                 Debug.WriteLine("Angle is: " + cube.Angle);
                 DebugBorders("w");
             }
-            CheckForClick(ref keyboardState, ref oldKeyboardState, Keys.R, camera.RealRight);
-            CheckForClick(ref keyboardState, ref oldKeyboardState, Keys.L, camera.RealLeft);
-            CheckForClick(ref keyboardState, ref oldKeyboardState, Keys.U, Vector3.Up);
-            CheckForClick(ref keyboardState, ref oldKeyboardState, Keys.D, Vector3.Down);
-            CheckForClick(ref keyboardState, ref oldKeyboardState, Keys.F, camera.RealForward);
-            CheckForClick(ref keyboardState, ref oldKeyboardState, Keys.B, camera.RealBackward);
             if ((keyboardState.IsKeyDown(Keys.LeftControl) || keyboardState.IsKeyDown(Keys.RightControl)) && keyboardState.IsKeyUp(Keys.Z) && oldKeyboardState.IsKeyDown(Keys.Z))
             {
                 if (AllTimeAlgOrder.Length > 0)
@@ -473,7 +442,7 @@ namespace RubikCube
                         DebugBorders("Reset!");
                     }
                     cube.Update(gameTime, shouldRotate, cube.ScramblingVectors, false);
-                    textbox.Update(keyboardState, oldKeyboardState, gameTime, mono);
+                    textbox.Update(keyboardState, oldKeyboardState, gameTime, mono, AlgOrder, camera, cube);
                     if (cube.ScrambleIndex >= 25)
                     {
                         shouldRotate = false;
@@ -516,7 +485,7 @@ namespace RubikCube
                     button.BtnScramble.Draw(spriteBatch);
                     button.BtnSolve.Draw(spriteBatch);
                     spriteBatch.End();
-                    textbox.Draw(spriteBatch, mono, font);
+                    textbox.Draw(spriteBatch, mono, font, textTex);
                     DrawModel(cube, world, view, projection, graphicsDevice);
                     break;
                 case GameState.Options:
@@ -559,27 +528,27 @@ namespace RubikCube
                     counterClockWise = true;
                 }
 
-                if (AllTimeAlgOrder[length - num] == 'l')
+                if (AllTimeAlgOrder[length - num] == 'L')
                 {
                     cube.Rotate(Vector3.Left, counterClockWise, AlgOrder);
                 }
-                else if (AllTimeAlgOrder[length - num] == 'r')
+                else if (AllTimeAlgOrder[length - num] == 'R')
                 {
                     cube.Rotate(Vector3.Right, counterClockWise, AlgOrder);
                 }
-                else if (AllTimeAlgOrder[length - num] == 'u')
+                else if (AllTimeAlgOrder[length - num] == 'U')
                 {
                     cube.Rotate(Vector3.Up, counterClockWise, AlgOrder);
                 }
-                else if (AllTimeAlgOrder[length - num] == 'd')
+                else if (AllTimeAlgOrder[length - num] == 'D')
                 {
                     cube.Rotate(Vector3.Down, counterClockWise, AlgOrder);
                 }
-                else if (AllTimeAlgOrder[length - num] == 'f')
+                else if (AllTimeAlgOrder[length - num] == 'F')
                 {
                     cube.Rotate(Vector3.Forward, counterClockWise, AlgOrder);
                 }
-                else if (AllTimeAlgOrder[length - num] == 'b')
+                else if (AllTimeAlgOrder[length - num] == 'B')
                 {
                     cube.Rotate(Vector3.Backward, counterClockWise, AlgOrder);
                 }
@@ -748,7 +717,10 @@ namespace RubikCube
                 camera.Update();
                 RotateWhichSide(keyboardState, oldKeyboardState, cameraPos);
                 if (textbox.EnterPressed)
-                    AlgOrder += textbox.GetTextBox;
+                {
+                    AlgOrder += textbox.GetRealVectorBox;
+                    AllTimeAlgOrder += textbox.GetRealVectorBox;
+                }
             }
             mousePos = new Point(mouseState.X, mouseState.Y);
             if (!Application.OpenForms.OfType<FirstPopup>().Any())
