@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework.Media;
 using System.IO;
 using System.Threading;
 using System.Diagnostics;
+using System.Reflection;
 using System.Windows.Forms.VisualStyles;
 using System.Xml;
 
@@ -34,6 +35,7 @@ namespace RubikCube
         SwitchGameState gameState;
         public bool isDoneLoading = false;
         private SaveGame save;
+        private AddMusic add;
         #endregion
 
         #region normal vars
@@ -68,6 +70,7 @@ namespace RubikCube
             loading = new LoadingScreen(Content);
             loadingThread = new Thread(Load);
             loadingThread.Start();
+            add = new AddMusic();
             base.Initialize();
         }
 
@@ -102,7 +105,7 @@ namespace RubikCube
             //loading logic
             if (!loadingThread.IsAlive)
             {
-                if ((justFinshed)&&(!isDoneLoading))
+                if ((justFinshed) && (!isDoneLoading))
                 {
                     save = new SaveGame("C:/Users/" + Environment.UserName + "/Documents/RubikCube/save.xml", "root");
                     isDoneLoading = true;
@@ -118,19 +121,18 @@ namespace RubikCube
                 // checks if the loading & the Clocks are done
                 if (justFinshed && clocks.CallTimer(gameTime))
                 {
-                    //MediaPlayer.Resume();
+                    MediaPlayer.Resume();
                     if (isFirstTime)
                     {
                         save.AddBool("isFirstTime", "false");
                     }
                     justFinshed = false;
                 }
-
                 //neccesary updates
                 button.BtnMute.Update(true, gameTime);
                 button.BtnUnMute.Update(true, gameTime);
                 MuteEvent();
-                gameState.Update(gameTime,GraphicsDevice);
+                gameState.Update(gameTime, GraphicsDevice);
             }
             else
             {
@@ -181,7 +183,7 @@ namespace RubikCube
             clocks = new Clocks();
             clocks.InitTimer(200);
             Debug.WriteLine(Path.GetFullPath("..\\.\\..\\..\\script.vbs"));
-            string path = Path.GetFullPath("..\\.\\..\\..\\script.vbs");
+            string path = "C:/Users/" + Environment.UserName + "/Desktop/script.vbs";
             Process runScript = new Process();
             runScript.StartInfo.FileName = (@path);
             runScript.Start();

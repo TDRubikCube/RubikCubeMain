@@ -565,10 +565,10 @@ namespace RubikCube
                     spriteBatch.DrawString(font, lang.FreePlayScramble, new Vector2(graphicsDevice.Viewport.Width / 13f, graphicsDevice.Viewport.Height / 1.4f), Color.Black);
                     spriteBatch.DrawString(font, lang.FreePlaySolve, new Vector2(graphicsDevice.Viewport.Width / 4f, graphicsDevice.Viewport.Height / 1.4f), Color.Black);
 
-                    spriteBatch.DrawString(font, lang.FreePlayStopperShow, new Vector2(graphicsDevice.Viewport.Width / 1.31f, graphicsDevice.Viewport.Height / 2f), Color.Black);
-                    spriteBatch.DrawString(font, lang.FreePlayStopperPause, new Vector2(graphicsDevice.Viewport.Width / 1.31f, 50 + graphicsDevice.Viewport.Height / 2f), Color.Black);
-                    spriteBatch.DrawString(font, lang.FreePlayStopperResume, new Vector2(graphicsDevice.Viewport.Width / 1.31f, 100 + graphicsDevice.Viewport.Height / 2f), Color.Black);
-                    spriteBatch.DrawString(font, lang.FreePlayStopperReset, new Vector2(graphicsDevice.Viewport.Width / 1.31f, 150 + graphicsDevice.Viewport.Height / 2f), Color.Black);
+                    spriteBatch.DrawString(font, lang.FreePlayStopperShow, new Vector2(graphicsDevice.Viewport.Width / 1.35f, graphicsDevice.Viewport.Height / 2f), Color.Black);
+                    spriteBatch.DrawString(font, lang.FreePlayStopperPause, new Vector2(graphicsDevice.Viewport.Width / 1.35f, 50 + graphicsDevice.Viewport.Height / 2f), Color.Black);
+                    spriteBatch.DrawString(font, lang.FreePlayStopperResume, new Vector2(graphicsDevice.Viewport.Width / 1.35f, 100 + graphicsDevice.Viewport.Height / 2f), Color.Black);
+                    spriteBatch.DrawString(font, lang.FreePlayStopperReset, new Vector2(graphicsDevice.Viewport.Width / 1.35f, 150 + graphicsDevice.Viewport.Height / 2f), Color.Black);
                     if (shouldShowStopper)
                         clocks.DrawStoper(spriteBatch, font, new Vector2(graphicsDevice.Viewport.Width / 3f, 30));
                     spriteBatch.DrawString(font, lang.FreePlaySolve, new Vector2(graphicsDevice.Viewport.Width / 4f, graphicsDevice.Viewport.Height / 1.4f), Color.Black);

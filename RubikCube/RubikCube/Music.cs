@@ -9,59 +9,111 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using System.Diagnostics;
+using System.IO;
+using System.Reflection;
 
 namespace RubikCube
 {
     class Music
     {
-        //public Song[] classic;
-        //public Song[] rock;
         private readonly Song defaultSong;
         public bool IsMuted = false;
         public int MusicIndexClassic = 0;
         public int MusicIndexRock = 0;
         public string WhichGenre;
-        //private bool isFirstTimeRock = true;
-        //private bool isFirstTimeClassic = true;
+        private AddMusic add;
+        private Song currSong;
+        private MediaState oldState;
 
         public Music(GraphicsDeviceManager graphics, GraphicsDevice graphicsDevice, ContentManager content)
         {
             WhichGenre = "default";
+            add = new AddMusic();
             defaultSong = content.Load<Song>("music/bg-music");
-            MediaPlayer.Play(defaultSong);
+            if (Directory.Exists("c:/users/" + Environment.UserName + "/Documents/RubikCube/Songs"))
+            {
+                string[] files = Directory.GetFiles("c:/users/" + Environment.UserName + "/Documents/RubikCube/Songs",
+                    "*", SearchOption.TopDirectoryOnly);
+                int fCount = files.Length;
+                if (fCount > 0)
+                {
+                    string name = files[0].Substring(36 + Environment.UserName.Length,
+                        files[0].Length - (36 + Environment.UserName.Length));
+                    var ctor = typeof(Song).GetConstructor(
+                             BindingFlags.NonPublic | BindingFlags.Instance, null,
+                             new[] { typeof(string), typeof(string), typeof(int) }, null);
+                    Song currSong1 =
+                        (Song)
+                            ctor.Invoke(new object[]
+                                {
+                                    add.currentSong,
+                                    @"c:/users/" + Environment.UserName + "/Documents/RubikCube/Songs/" +
+                                    name,
+                                    0
+                                });
+                    MediaPlayer.Play(currSong1);
+                }
+                else
+                {
+                    currSong = defaultSong;
+                }
+            }
+            else
+            {
+                currSong = defaultSong;
+            }
+            //MediaPlayer.Play(currSong);
         }
 
         public void Update(MouseState mouseState, string whichGenre, bool justSwitched)
         {
             ChangeSongs(whichGenre, justSwitched);
+            if (add.ShouldPlay)
+            {
+                try
+                {
+                    var ctor = typeof(Song).GetConstructor(
+                        BindingFlags.NonPublic | BindingFlags.Instance, null,
+                        new[] { typeof(string), typeof(string), typeof(int) }, null);
+                    Song currSong =
+                        (Song)
+                            ctor.Invoke(new object[]
+                                {
+                                    add.currentSong,
+                                    @"c:/users/" + Environment.UserName + "/Documents/RubikCube/Songs/" +
+                                    add.currentSong,
+                                    0
+                                });
+                    Debug.WriteLineIf(MediaPlayer.State == MediaState.Playing, "here 1");
+                    MediaPlayer.Play(currSong);
+                    Debug.WriteLineIf(MediaPlayer.State == MediaState.Playing, "here 2");
+
+                }
+                catch (Exception)
+                { }
+                add.ShouldPlay = false;
+            }
+            oldState = MediaPlayer.State;
+        }
+
+        public void AddMusic()
+        {
+            if (!add.Visible)
+                add.Show();
         }
 
         private void ChangeSongs(string whichGenre, bool justSwitched)
         {
             if (MediaPlayer.State != MediaState.Playing && MediaPlayer.State != MediaState.Paused)
             {
-                //if (whichGenre == "classic")
-                //{
-                //    isFirstTimeClassic = true;
-                //    if (isFirstTimeClassic && !justSwitched)
-                //        musicIndexClassic++;
-                //    if (musicIndexClassic >= 6) musicIndexClassic = 0;
-                //    MediaPlayer.Play(classic[musicIndexClassic]);
-                //    isFirstTimeRock = false;
-                //}
-                //else if (whichGenre == "rock")
-                //{
-                //    isFirstTimeRock = true;
-                //    if (isFirstTimeRock && !justSwitched)
-                //        musicIndexRock++;
-                //    if (musicIndexRock >= 6) musicIndexRock = 0;
-                //    MediaPlayer.Play(rock[musicIndexRock]);
-                //    isFirstTimeClassic = false;
-                //}
                 if (whichGenre == "default")
                 {
                     MediaPlayer.Play(defaultSong);
                 }
+            }
+            if (MediaPlayer.State == MediaState.Stopped && oldState == MediaState.Playing)
+            {
+
             }
         }
     }
