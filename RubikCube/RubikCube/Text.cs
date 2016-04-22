@@ -16,18 +16,15 @@ namespace RubikCube
         public string TutorialFreeText2;
         public string FreePlayScramble;
         public string FreePlaySolve;
+        public string FreePlayStopperShow;
+        public string FreePlayStopperPause;
+        public string FreePlayStopperResume;
+        public string FreePlayStopperReset;
+
 
         public Text()
         {
-            MainTitle = "Rubik's Cube -  Main Menu";
-            FreePlayTitle = "Rubik's Cube -  Free Play";
-            OptionsTitle = "Rubik's Cube -  Options";
-            TutorialTitle = "Rubik's Cube -  Tutorial";
-            OptionsFreeText = "Press the right key to change songs";
-            TutorialFreeText = "Use the L,R,U,D,F,B keys to turn the cube";
-            TutorialFreeText2 = "Hold Shift to turn the cube counter-clockwise";
-            FreePlayScramble = "Scramble";
-            FreePlaySolve = "Reset!";
+            English();
         }
 
         public void English()
@@ -41,6 +38,10 @@ namespace RubikCube
             TutorialFreeText2 = "Hold Shift to turn the cube counter-clockwise";
             FreePlayScramble = "Scramble";
             FreePlaySolve = "Reset!";
+            FreePlayStopperShow = "Show/Hide Stopper";
+            FreePlayStopperPause = "Pause Stopper";
+            FreePlayStopperResume = "Resume Stopper";
+            FreePlayStopperReset = "Reset Stopper";
         }
 
         public void Hebrew()
@@ -54,6 +55,10 @@ namespace RubikCube
             TutorialFreeText2 = "ן ו ע ש ה  ן ו ו כ  ד ג נ  ה י ב ו ק ה  ת א  ב ב ו ס ל  י ד כ  Shift ת א  ק ז ח ה";
             FreePlayScramble = "ב ב ר ע";
             FreePlaySolve = "! ס פ א";
+            FreePlayStopperShow = "ר פ ו ט ס  ה א ר ה / ר ת ס ה";
+            FreePlayStopperPause = "ר פ ו ט ס  ק ס פ ה";
+            FreePlayStopperResume = "ר פ ו ט ס  ך ש מ ה";
+            FreePlayStopperReset = "ר פ ו ט ס  ס פ א";
         }
 
         public void Russian()
@@ -67,6 +72,10 @@ namespace RubikCube
             TutorialFreeText2 = "Д е р ж а т ь  Shift  ч т о б ы  п о в е р н у т ь  к у б и к а  п р о т и в  ч а с о в о й  с т р е л к и";
             FreePlayScramble = "М и ш а т ь";
             FreePlaySolve = "О ч и с т и т ь!";
+            FreePlayStopperShow = "П о к а з а т ь / у б р а т ь  ч а с ы";
+            FreePlayStopperPause = "О с т а н о в и т ь  ч а с ы";
+            FreePlayStopperResume = "В к л ю ч и т ь  ч а с ы";
+            FreePlayStopperReset = "А н у л и р о в а т ь  ч а с ы";
         }
     }
 }

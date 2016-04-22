@@ -1,1 +1,144 @@
- 
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="RubikCube.Button" Collapsed="true">
+    <Position X="10.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQCAAAACAAAggJAAAAAICAAAAAAAgAAAAAAAAIAAAA=</HashCode>
+      <FileName>Button.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RubikCube.Tutorial" Collapsed="true">
+    <Position X="14" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYAAAAAAAAAAgAAAAAAAAAAAAAAAAQAAAAAAAQAAAA=</HashCode>
+      <FileName>Tutorial.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RubikCube.ButtonSetUp" Collapsed="true">
+    <Position X="12.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAACA0IAAAAIAAAAAAAAAAAABCAAAAAAAgMA=</HashCode>
+      <FileName>ButtonSetUp.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RubikCube.Camera" Collapsed="true">
+    <Position X="14" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQEA0EACgAAEAAAIAAAAAACAAABCAAAAQIoQBABABA=</HashCode>
+      <FileName>Camera.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RubikCube.Clocks" Collapsed="true">
+    <Position X="15.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgQAiBAAAABAIACEQAAAAAAAAQAAAgAIAAAIQACIASA=</HashCode>
+      <FileName>Clocks.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RubikCube.Cube" Collapsed="true">
+    <Position X="17.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AiAAAIAAAOCBCCAAAAEQgAAZEAAAAAAAAEgCAAAIQIA=</HashCode>
+      <FileName>Cube.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RubikCube.CubeDictionary" Collapsed="true">
+    <Position X="10.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>kggIgAYFDEAYAAgUFBgSAAQIBAMyQB0KRCAAAACAiEw=</HashCode>
+      <FileName>CubeDictionaty.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RubikCube.CubeState" Collapsed="true">
+    <Position X="12.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>RBCgAgATRkAKSgQIAbYCEjAIEBANNC0AgUIQAQgxAEE=</HashCode>
+      <FileName>CubeState.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RubikCube.FaceColor" Collapsed="true">
+    <Position X="14" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAQEAIAAIAAAQgAACAAAAAAEgAAAAABCQCAABAAAAI=</HashCode>
+      <FileName>FaceColor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RubikCube.LoadingScreen" Collapsed="true">
+    <Position X="15.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYAAgAAAAAAAgAAAAAAAAAAAACAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>LoadingScreen.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RubikCube.Main" Collapsed="true">
+    <Position X="17.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AASgkEBAAACBBwIAAAAAAAAAAACAAAgIAAAiQAAAAAQ=</HashCode>
+      <FileName>Main.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RubikCube.Music" Collapsed="true">
+    <Position X="10.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAIAAAAAQAAgAAAIAAAAAAAAAAAEAAAAE=</HashCode>
+      <FileName>Music.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RubikCube.Program" Collapsed="true">
+    <Position X="12.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RubikCube.Save" Collapsed="true">
+    <Position X="14" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAACEAAAQAAAABAAAAQAAAAAAAAABAAACAABACA=</HashCode>
+      <FileName>save.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RubikCube.SaveGame" Collapsed="true">
+    <Position X="15.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAAAAAAAAAJAAAAQAAAAAAAAEACAAAAAAA=</HashCode>
+      <FileName>SaveGame.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RubikCube.SelfSolve" Collapsed="true">
+    <Position X="17.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACQAAAAAAAAAAAAAIABAQAAAAAAAAAAABAAAAAAAAAA=</HashCode>
+      <FileName>SelfSolve.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RubikCube.SwitchGameState" Collapsed="true">
+    <Position X="10.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CTYClAJAApBBNggJAAQsgAChAQAICAQABTACgAUQCAg=</HashCode>
+      <FileName>SwitchGameState.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RubikCube.Text" Collapsed="true">
+    <Position X="12.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAAKAACAAAAAEAIAIDCAAQAAAAAAAAAQAAAA=</HashCode>
+      <FileName>Text.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RubikCube.Welcome" Collapsed="true">
+    <Position X="15.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAACAAABAAAACAAAACAAAIAAAAAEAAAAEAAAA=</HashCode>
+      <FileName>Welcome.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="RubikCube.GameState" Collapsed="true">
+    <Position X="10.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAgQAAgAAAAAAAAAAABAAAA=</HashCode>
+      <FileName>SwitchGameState.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

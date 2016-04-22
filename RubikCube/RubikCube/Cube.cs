@@ -17,8 +17,8 @@ namespace RubikCube
     {
         #region class vars
         Model model;
-        Save save;
         Clocks clocks = new Clocks();
+        public CubeConfig cubeConfig;
         Matrix[] meshTransforms;
         readonly CubeState cubeState = new CubeState();
         readonly Random rand = new Random();
@@ -31,6 +31,7 @@ namespace RubikCube
         public int RotationSpeed = 10;
         int howManyTurns;
         public bool ShouldAddScrambleToOrder { get; set; }
+        private bool hasChangedColors = false;
         #endregion
 
         #region constructor
@@ -40,8 +41,8 @@ namespace RubikCube
             meshTransforms = new Matrix[26];
             OriginalCubeDraw();
             ScramblingVectors = new List<Vector3>();
-            save = new Save();
             model = null;
+            cubeConfig = new CubeConfig();
         }
 
         #endregion
@@ -50,15 +51,15 @@ namespace RubikCube
         public void Scramble()
         {
             List<char> temp = new List<char>();
-            List<char> possibleTurns = new List<char> { 'R','L','U','D','F','B','I'};
+            List<char> possibleTurns = new List<char> { 'R', 'L', 'U', 'D', 'F', 'B', 'I' };
             for (int i = 0; i < 50; i++)
             {
                 char currentChar = possibleTurns[rand.Next(0, 6)];
                 if (temp.Count >= 3)
                 {
-                    if (currentChar == temp[temp.Count - 1] && temp[temp.Count - 2] == temp[temp.Count - 3] && currentChar == temp[temp.Count-2])
+                    if (currentChar == temp[temp.Count - 1] && temp[temp.Count - 2] == temp[temp.Count - 3] && currentChar == temp[temp.Count - 2])
                     {
-                        while (currentChar == temp[temp.Count-1])
+                        while (currentChar == temp[temp.Count - 1])
                         {
                             currentChar = possibleTurns[rand.Next(0, 6)];
                         }
@@ -84,14 +85,14 @@ namespace RubikCube
             }
         }
 
-        public void Rotate(Vector3 side, bool isClockWise,string algOrder)
+        public void Rotate(Vector3 side, bool isClockWise, string algOrder)
         {
             Angle -= RotationSpeed;
             float sidePosition = Main.CubieSize;
             //Debug.WriteLine("animAngle=     " + Angle);
             //Debug.WriteLine("Angle " + MathHelper.ToRadians(Angle));
             float partOfRotation = (float)(100f / RotationSpeed);
-            Debug.WriteLine(partOfRotation + " = part");
+            //Debug.WriteLine(partOfRotation + " = part");
             if (side == Vector3.Left)
             {
                 howManyTurns++;
@@ -184,8 +185,11 @@ namespace RubikCube
                     }
                 }
             }
-            if (howManyTurns == (110-RotationSpeed)/10)
+            if (howManyTurns == (110 - RotationSpeed) / 10)
             {
+                //cubeConfig.CheckFaceColor();
+                cubeConfig.Rotate(side,isClockWise);
+                //cubeConfig.CheckFaceColor();
                 cubeState.Rotate(side, isClockWise);
                 howManyTurns = 0;
             }
@@ -232,4 +236,3 @@ namespace RubikCube
         public string ScrambleResult { get; set; }
     }
 }
- 

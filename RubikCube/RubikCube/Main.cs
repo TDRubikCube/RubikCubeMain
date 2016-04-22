@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework.Media;
 using System.IO;
 using System.Threading;
 using System.Diagnostics;
+using System.Windows.Forms.VisualStyles;
 using System.Xml;
 
 namespace RubikCube
@@ -59,8 +60,10 @@ namespace RubikCube
         /// </summary>
         protected override void Initialize()
         {
+            this.IsFixedTimeStep = false;
             this.IsMouseVisible = true;
-            Window.AllowUserResizing = true;
+            Window.AllowUserResizing = false;
+            Window.Title = "Best Rubik's Cube Game";
             this.IsFixedTimeStep = false;
             loading = new LoadingScreen(Content);
             loadingThread = new Thread(Load);
@@ -74,7 +77,6 @@ namespace RubikCube
         /// </summary>
         protected override void LoadContent()
         {
-
             spriteBatch = new SpriteBatch(GraphicsDevice);
         }
 
@@ -102,6 +104,7 @@ namespace RubikCube
             {
                 if ((justFinshed)&&(!isDoneLoading))
                 {
+                    save = new SaveGame("C:/Users/" + Environment.UserName + "/Documents/RubikCube/save.xml", "root");
                     isDoneLoading = true;
                     Debug.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~"); //should upgrade to DebbugBorders (~~~) but too afraid to StuckOverflow the game.
                 }
@@ -177,7 +180,13 @@ namespace RubikCube
             button = new ButtonSetUp(graphics, GraphicsDevice, Content);
             clocks = new Clocks();
             clocks.InitTimer(200);
-            save = new SaveGame("..\\..\\..\\save.xml", "root");
+            Debug.WriteLine(Path.GetFullPath("..\\.\\..\\..\\script.vbs"));
+            string path = Path.GetFullPath("..\\.\\..\\..\\script.vbs");
+            Process runScript = new Process();
+            runScript.StartInfo.FileName = (@path);
+            runScript.Start();
+            runScript.WaitForExit();
+            runScript.Close();
             justFinshed = true;
         }
 
