@@ -12,13 +12,8 @@ using Microsoft.Xna.Framework.Media;
 using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
-<<<<<<< HEAD
 using ButtonState = Microsoft.Xna.Framework.Input.ButtonState;
 using Keys = Microsoft.Xna.Framework.Input.Keys;
-=======
-using Keys = Microsoft.Xna.Framework.Input.Keys; /*
-using System.Of[A].Down; */
->>>>>>> refs/remotes/origin/Denis'-branch
 
 namespace RubikCube
 {
@@ -38,20 +33,13 @@ namespace RubikCube
         readonly Matrix world;
         private Camera camera;
         Matrix view;
-        TextBox textbox;
         readonly Matrix projection;
         private Vector3 cameraPos;
         KeyboardState oldKeyboardState;
         MouseState oldMouseState;
         Ray currentRay;
         readonly SpriteFont font;
-<<<<<<< HEAD
         private Clocks clocks;
-=======
-        readonly SpriteFont mono;
-        //String firstText;
-        //String typedText;
->>>>>>> refs/remotes/origin/Denis'-branch
         Point mousePos;
         Vector3 centerOfClickedMesh = Vector3.Zero;
         string currentFace = "";
@@ -66,10 +54,7 @@ namespace RubikCube
         private float currentScale;
         public bool JustSwitched = false;
         public string AlgOrder = "";
-<<<<<<< HEAD
         bool shouldAllowCameraMovement = true;
-=======
->>>>>>> refs/remotes/origin/Denis'-branch
         public string AllTimeAlgOrder = "";
         public string YAlgOrder = "";
         //bool stopAnim = false;
@@ -81,16 +66,12 @@ namespace RubikCube
         //bool lockScreen = true;
         //string whichGenre = "default";
         public GameState CurrentGameState;
-<<<<<<< HEAD
         private bool changeDetected;
         private Point mousePosOnClick;
         private Vector3 direction;
         private List<string> allCubeColors;
         private bool shouldShowStopper;
         private bool shouldRunStopper;
-=======
-        Texture2D textTex;
->>>>>>> refs/remotes/origin/Denis'-branch
 
         #endregion
 
@@ -101,16 +82,12 @@ namespace RubikCube
             graphicsDevice = graphicsDeviceFromMain;
             allCubeColors = new List<string> { "white", "yellow", "green", "blue" };
             //class initialize
-            lang = new Text();
             cube = new Cube();
+            lang = new Text();
             camera = new Camera();
-<<<<<<< HEAD
             clocks = new Clocks();
             solve = new SelfSolve(cube);
             music = _music;
-=======
-            textbox = new TextBox(cube, content);
->>>>>>> refs/remotes/origin/Denis'-branch
             button = new ButtonSetUp(graphics, graphicsDevice, content)
             {
                 ClassicBound =
@@ -119,11 +96,9 @@ namespace RubikCube
                     new Rectangle((int)(graphicsDevice.Viewport.Width / 1.55f), graphicsDevice.Viewport.Height / 3, 50, 40)
             };
             cube.Model = content.Load<Model>("rubik");
-            textTex = content.Load<Texture2D>("pics/TextSquere");
 
             //text
             font = content.Load<SpriteFont>("font");
-            mono = content.Load<SpriteFont>("mono");
 
             //matrixes
             world = Matrix.CreateTranslation(new Vector3(0, 0, 0));
@@ -220,7 +195,6 @@ namespace RubikCube
             {
                 DebugBorders("");
             }
-<<<<<<< HEAD
             if (keyboardState.IsKeyDown(Keys.T) && oldKeyboardState.IsKeyUp(Keys.T))//T is 4 tests!
             {
 
@@ -249,9 +223,6 @@ namespace RubikCube
                     }
                 }
             }
-=======
-
->>>>>>> refs/remotes/origin/Denis'-branch
             if (keyboardState.IsKeyDown(Keys.W) && oldKeyboardState.IsKeyUp(Keys.W))
             {
                 DebugBorders("w");
@@ -264,15 +235,12 @@ namespace RubikCube
                 Debug.WriteLine("Angle is: " + cube.Angle);
                 DebugBorders("w");
             }
-<<<<<<< HEAD
             CheckForClick(ref keyboardState, ref oldKeyboardState, Keys.R, camera.RealRight);
             CheckForClick(ref keyboardState, ref oldKeyboardState, Keys.L, camera.RealLeft);
             CheckForClick(ref keyboardState, ref oldKeyboardState, Keys.U, Vector3.Up);
             CheckForClick(ref keyboardState, ref oldKeyboardState, Keys.D, Vector3.Down);
             CheckForClick(ref keyboardState, ref oldKeyboardState, Keys.F, camera.RealForward);
             CheckForClick(ref keyboardState, ref oldKeyboardState, Keys.B, camera.RealBackward);
-=======
->>>>>>> refs/remotes/origin/Denis'-branch
             if ((keyboardState.IsKeyDown(Keys.LeftControl) || keyboardState.IsKeyDown(Keys.RightControl)) && keyboardState.IsKeyUp(Keys.Z) && oldKeyboardState.IsKeyDown(Keys.Z))
             {
                 if (AllTimeAlgOrder.Length > 0)
@@ -299,11 +267,7 @@ namespace RubikCube
                     {
                         if (AllTimeAlgOrder.Length > 0)
                         {
-<<<<<<< HEAD
                             UnDo();
-=======
-                            ControlZ();
->>>>>>> refs/remotes/origin/Denis'-branch
                         }
                         else
                         {
@@ -315,11 +279,7 @@ namespace RubikCube
                     {
                         if (YAlgOrder.Length > 0)
                         {
-<<<<<<< HEAD
                             ReDo();
-=======
-                            ControlY();
->>>>>>> refs/remotes/origin/Denis'-branch
                         }
                         else
                         {
@@ -495,21 +455,15 @@ namespace RubikCube
                     break;
                 case GameState.Options:
                     if (keyboardState.IsKeyDown(Keys.Right) && oldKeyboardState.IsKeyUp(Keys.Right)) MediaPlayer.Stop();
-<<<<<<< HEAD
                     if (keyboardState.IsKeyDown(Keys.OemPlus) && oldKeyboardState.IsKeyUp(Keys.OemPlus)) cube.IncreaseRotationSpeed();
-=======
->>>>>>> refs/remotes/origin/Denis'-branch
                     if (button.BtnRussian.IsClicked) lang.Russian();
                     if (button.BtnHebrew.IsClicked) lang.Hebrew();
                     if (button.BtnEnglish.IsClicked) lang.English();
                     button.BtnEnglish.Update(false, gameTime);
                     button.BtnHebrew.Update(false, gameTime);
                     button.BtnRussian.Update(false, gameTime);
-<<<<<<< HEAD
                     CheckClickOnAddMusic();
                     music.Update();
-=======
->>>>>>> refs/remotes/origin/Denis'-branch
                     if (keyboardState.IsKeyDown(Keys.Escape)) CurrentGameState = GameState.MainMenu;
                     break;
                 case GameState.FreePlay:
@@ -521,10 +475,7 @@ namespace RubikCube
                     if (button.BtnScramble.IsClicked) shouldRotate = true;
                     if (button.BtnSolve.IsClicked)
                     {
-<<<<<<< HEAD
                         clocks.StopStoper();
-=======
->>>>>>> refs/remotes/origin/Denis'-branch
                         cube.Angle = 0;
                         shouldRotate = false;
                         AlgOrder = "";
@@ -533,13 +484,7 @@ namespace RubikCube
                         cube.Solve();
                         DebugBorders("Reset!");
                     }
-<<<<<<< HEAD
                     if (shouldRotate || solve.ShouldScramble)
-=======
-                    cube.Update(gameTime, shouldRotate, cube.ScramblingVectors, false);
-                    textbox.Update(keyboardState, oldKeyboardState, gameTime, mono, AlgOrder, camera, cube);
-                    if (cube.ScrambleIndex >= 25)
->>>>>>> refs/remotes/origin/Denis'-branch
                     {
                         cube.Scramble();
                         AlgOrder += cube.ScrambleResult;
@@ -635,7 +580,6 @@ namespace RubikCube
                     spriteBatch.Begin();
                     spriteBatch.DrawString(font, lang.FreePlayTitle, new Vector2(graphicsDevice.Viewport.Width / 3f, 10), Color.Black);
                     spriteBatch.DrawString(font, lang.FreePlayScramble, new Vector2(graphicsDevice.Viewport.Width / 13f, graphicsDevice.Viewport.Height / 1.4f), Color.Black);
-<<<<<<< HEAD
                     spriteBatch.DrawString(font, lang.FreePlaySolve, new Vector2(graphicsDevice.Viewport.Width / 4f, graphicsDevice.Viewport.Height / 1.4f), Color.Black);
 
                     spriteBatch.DrawString(font, lang.FreePlayStopperShow, new Vector2(graphicsDevice.Viewport.Width / 1.35f, graphicsDevice.Viewport.Height / 2f), Color.Black);
@@ -649,14 +593,6 @@ namespace RubikCube
                     button.BtnSolve.Draw(spriteBatch);
                     spriteBatch.End();
                     DrawModel(cube, world, view, projection);
-=======
-                    spriteBatch.DrawString(font, lang.FreePlayReset, new Vector2(graphicsDevice.Viewport.Width / 4f, graphicsDevice.Viewport.Height / 1.4f), Color.Black);
-                    button.BtnScramble.Draw(spriteBatch);
-                    button.BtnSolve.Draw(spriteBatch);
-                    spriteBatch.End();
-                    textbox.Draw(spriteBatch, mono, font, textTex);
-                    DrawModel(cube, world, view, projection, graphicsDevice);
->>>>>>> refs/remotes/origin/Denis'-branch
                     break;
                 case GameState.Options:
                     spriteBatch.Begin();
@@ -770,98 +706,7 @@ namespace RubikCube
                 Debug.WriteLine("YAlgOrder is 0!!!");
             }
         }
-<<<<<<< HEAD
 
-=======
-        public void ControlZ()
-        {
-            if (AllTimeAlgOrder.Length > 0)
-            {
-                int num = 0;
-                int length = AllTimeAlgOrder.Length - 1;
-                bool counterClockWise = false;
-                if ((AllTimeAlgOrder[length - num] == 'I') || (AllTimeAlgOrder[length - num] == 'i'))
-                {
-                    num += 1;
-                    counterClockWise = true;
-                }
-
-                if (AllTimeAlgOrder[length - num] == 'L')
-                {
-                    cube.Rotate(Vector3.Left, counterClockWise, AlgOrder);
-                }
-                else if (AllTimeAlgOrder[length - num] == 'R')
-                {
-                    cube.Rotate(Vector3.Right, counterClockWise, AlgOrder);
-                }
-                else if (AllTimeAlgOrder[length - num] == 'U')
-                {
-                    cube.Rotate(Vector3.Up, counterClockWise, AlgOrder);
-                }
-                else if (AllTimeAlgOrder[length - num] == 'D')
-                {
-                    cube.Rotate(Vector3.Down, counterClockWise, AlgOrder);
-                }
-                else if (AllTimeAlgOrder[length - num] == 'F')
-                {
-                    cube.Rotate(Vector3.Forward, counterClockWise, AlgOrder);
-                }
-                else if (AllTimeAlgOrder[length - num] == 'B')
-                {
-                    cube.Rotate(Vector3.Backward, counterClockWise, AlgOrder);
-                }
-            }
-            else
-            {
-                Debug.WriteLine("AllTimeAlgOrder is 0!!!");
-            }
-        }
-        public void ControlY()
-        {
-            if (YAlgOrder.Length > 0)
-            {
-                int num = 0;
-                int length = YAlgOrder.Length - 1;
-                bool counterClockWise = true;
-                if (YAlgOrder.Length > 1)
-                {
-                    if ((YAlgOrder[1] == 'I') || (YAlgOrder[1] == 'i'))
-                    {
-                        num += 1;
-                        counterClockWise = false;
-                    }
-                }
-                if (YAlgOrder[num] == 'l')
-                {
-                    cube.Rotate(Vector3.Left, counterClockWise, AlgOrder);
-                }
-                else if (YAlgOrder[num] == 'r')
-                {
-                    cube.Rotate(Vector3.Right, counterClockWise, AlgOrder);
-                }
-                else if (YAlgOrder[num] == 'u')
-                {
-                    cube.Rotate(Vector3.Up, counterClockWise, AlgOrder);
-                }
-                else if (YAlgOrder[num] == 'd')
-                {
-                    cube.Rotate(Vector3.Down, counterClockWise, AlgOrder);
-                }
-                else if (YAlgOrder[num] == 'f')
-                {
-                    cube.Rotate(Vector3.Forward, counterClockWise, AlgOrder);
-                }
-                else if (YAlgOrder[num] == 'b')
-                {
-                    cube.Rotate(Vector3.Backward, counterClockWise, AlgOrder);
-                }
-            }
-            else
-            {
-                Debug.WriteLine("YAlgOrder is 0!!!");
-            }
-        }
->>>>>>> refs/remotes/origin/Denis'-branch
         public string VectorToChar(Vector3 real)
         {
             if (real == Vector3.Left)
@@ -892,10 +737,7 @@ namespace RubikCube
             return "";
 
         }
-<<<<<<< HEAD
 
-=======
->>>>>>> refs/remotes/origin/Denis'-branch
         public Vector3 CharToVector(string real)
         {
             if ((real == "l") || (real == "L"))
@@ -925,10 +767,7 @@ namespace RubikCube
             Debug.WriteLine("CharToVector returned null");
             return Vector3.Zero;
         }
-<<<<<<< HEAD
 
-=======
->>>>>>> refs/remotes/origin/Denis'-branch
         public void DebugBorders(string a)
         {
             string b = "~~~~~~~~~~~~~~";
@@ -954,10 +793,7 @@ namespace RubikCube
                 Debug.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             }
         }
-<<<<<<< HEAD
 
-=======
->>>>>>> refs/remotes/origin/Denis'-branch
         #endregion
 
         #region public methods
@@ -997,11 +833,6 @@ namespace RubikCube
                     MainRayControl(mouseState);
                 camera.Update();
                 RotateWhichSide(keyboardState, oldKeyboardState, cameraPos);
-                if (textbox.EnterPressed)
-                {
-                    AlgOrder += textbox.GetRealVectorBox;
-                    AllTimeAlgOrder += textbox.GetRealVectorBox;
-                }
             }
             mousePos = new Point(mouseState.X, mouseState.Y);
             SwitchUpdate(keyboardState, gameTime);

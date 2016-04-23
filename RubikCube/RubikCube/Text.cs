@@ -15,7 +15,6 @@ namespace RubikCube
         public string TutorialFreeText;
         public string TutorialFreeText2;
         public string FreePlayScramble;
-<<<<<<< HEAD
         public string FreePlaySolve;
         public string FreePlayStopperShow;
         public string FreePlayStopperPause;
@@ -27,21 +26,6 @@ namespace RubikCube
         public Text()
         {
             English();
-=======
-        public string FreePlayReset;
-
-        public Text()
-        {
-            MainTitle = "Rubik's Cube -  Main Menu";
-            FreePlayTitle = "Rubik's Cube -  Free Play";
-            OptionsTitle = "Rubik's Cube -  Options";
-            TutorialTitle = "Rubik's Cube -  Tutorial";
-            OptionsFreeText = "Press the right key to change songs";
-            TutorialFreeText = "Use the L,R,U,D,F,B keys to turn the cube";
-            TutorialFreeText2 = "Hold Shift to turn the cube counter-clockwise";
-            FreePlayScramble = "Scramble";
-            FreePlayReset = "Reset!";
->>>>>>> refs/remotes/origin/Denis'-branch
         }
 
 
@@ -56,15 +40,11 @@ namespace RubikCube
             TutorialFreeText = "Use the L,R,U,D,F,B keys to turn the cube";
             TutorialFreeText2 = "Hold Shift to turn the cube counter-clockwise";
             FreePlayScramble = "Scramble";
-<<<<<<< HEAD
             FreePlaySolve = "Reset!";
             FreePlayStopperShow = "Show/Hide Stopper";
             FreePlayStopperPause = "Pause Stopper";
             FreePlayStopperResume = "Resume Stopper";
             FreePlayStopperReset = "Reset Stopper";
-=======
-            FreePlayReset = "Reset!";
->>>>>>> refs/remotes/origin/Denis'-branch
         }
 
         public void Hebrew()
@@ -78,7 +58,6 @@ namespace RubikCube
             TutorialFreeText = "ה י ב ו ק ה  ת א  ז י ז ה ל  י ד כ  L,R,U,D,F,B  ם י ש ק מ ה  ל ע  ץ ח ל";
             TutorialFreeText2 = "ן ו ע ש ה  ן ו ו כ  ד ג נ  ה י ב ו ק ה  ת א  ב ב ו ס ל  י ד כ  Shift ת א  ק ז ח ה";
             FreePlayScramble = "ב ב ר ע";
-<<<<<<< HEAD
             FreePlaySolve = "! ס פ א";
             FreePlayStopperShow = "ר פ ו ט ס  ה א ר ה / ר ת ס ה";
             FreePlayStopperPause = "ר פ ו ט ס  ק ס פ ה";
@@ -102,22 +81,6 @@ namespace RubikCube
             FreePlayStopperPause = "О с т а н о в и т ь  ч а с ы";
             FreePlayStopperResume = "В к л ю ч и т ь  ч а с ы";
             FreePlayStopperReset = "А н у л и р о в а т ь  ч а с ы";
-=======
-            FreePlayReset = "! ס פ א";
-        }
-
-        public void Russian() //not 100% done yet
-        {
-            MainTitle = "Кубик Рубика -  Главное Mеню";
-            FreePlayTitle = "Кубик Рубика -  Свободная Игра";
-            OptionsTitle = "Кубик Рубика -  Настройки";
-            TutorialTitle = "Кубик Рубика -  Учебник";
-            OptionsFreeText = "Нажимайте правую клавишу чтобы изменить песни";
-            TutorialFreeText = "Использовать L,R,U,D,F,B клавиши чтобы повернуть кубика";
-            TutorialFreeText2 = "Держать Shift чтобы повернуть кубика против часовой стрелки";
-            FreePlayScramble = "Мишать";
-            FreePlayReset = "Очистить!";
->>>>>>> refs/remotes/origin/Denis'-branch
         }
     }
 }
