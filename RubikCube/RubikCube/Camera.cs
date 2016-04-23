@@ -1,17 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using System.Diagnostics;
-using System.Threading;
-using System.Windows.Forms;
-using Keys = Microsoft.Xna.Framework.Input.Keys;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace RubikCube
 {
@@ -47,14 +37,7 @@ namespace RubikCube
         /// <param name="cameraPos">the camera position as a vector3</param>
         public void RealRotate(Vector3 cameraPos)
         {
-<<<<<<< HEAD
             if ((IsFaceGreen(cameraPos)))
-=======
-          //  Debug.WriteLine("cameraPos.X is: "+cameraPos.X);
-           // Debug.WriteLine("cameraPos.Y is: " + cameraPos.Y);
-         //   Debug.WriteLine("cameraPos.Z is: " + cameraPos.Z);
-            if (cameraPos.X >= -radius / 1.61f && cameraPos.X <= radius / 1.61f && cameraPos.Z > radius / 1.438f && cameraPos.Z <= radius * 1.012f)
->>>>>>> refs/remotes/origin/Denis'-branch
             {
                 RealLeft = Vector3.Left;
                 RealRight = Vector3.Right;

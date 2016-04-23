@@ -1,26 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
-using System.IO;
-using System.Threading;
 using System.Diagnostics;
+using Microsoft.Xna.Framework.Input;
 
 namespace RubikCube
 {
     class SelfSolve
     {
-        CubeConfig CubeState;
-        Cube cube;
+        readonly CubeConfig cubeState;
+        readonly Cube cube;
         List<string[,]> userState;
-        List<string[,]> targetState;
-        private static Random rng = new Random();
+        readonly List<string[,]> targetState;
+        private static readonly Random Rng = new Random();
         private bool isFirstTime;
         private static readonly List<string> AllMoves = new List<string> { "R", "L", "U", "D", "F", "B", "RI", "LI", "UI", "DI", "FI", "BI" };
         KeyboardState oldKeyboardState;
@@ -31,8 +22,8 @@ namespace RubikCube
         public SelfSolve(Cube _cube)
         {
             cube = _cube;
-            CubeState = cube.cubeConfig;
-            targetState = CubeState.GetCubeState();
+            cubeState = cube.CubeConfig;
+            targetState = cubeState.GetCubeState();
         }
 
         public void Update()
@@ -47,9 +38,9 @@ namespace RubikCube
             }
             if (keyboardState.IsKeyDown(Keys.D2) && oldKeyboardState.IsKeyUp(Keys.D2))
             {
-                Debug.WriteLine(GetCubeValue(CubeState));
+                Debug.WriteLine(GetCubeValue(cubeState));
             }
-            userState = CubeState.GetCubeState();
+            userState = cubeState.GetCubeState();
             oldKeyboardState = keyboardState;
         }
 
@@ -89,7 +80,7 @@ namespace RubikCube
             //start tree
             foreach (string move in AllMoves)
             {
-                userState = CubeState.GetCubeState();
+                userState = cubeState.GetCubeState();
                 bool shouldAddToList = true;
                 CubeConfig tempState = new CubeConfig();
 
@@ -231,7 +222,7 @@ namespace RubikCube
             while (n > 1)
             {
                 n--;
-                int k = rng.Next(n + 1);
+                int k = Rng.Next(n + 1);
                 var value = list[k];
                 list[k] = list[n];
                 list[n] = value;

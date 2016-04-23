@@ -1,11 +1,14 @@
-﻿namespace RubikCube
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace RubikCube
 {
     partial class AddMusic
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -86,7 +89,7 @@
 
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.ComboBox comboBox1;
-        private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private ComboBox comboBox1;
+        private OpenFileDialog openFileDialog1;
     }
 }

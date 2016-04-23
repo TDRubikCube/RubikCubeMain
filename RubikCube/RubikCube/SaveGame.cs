@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 using System.Xml;
 
@@ -9,10 +7,10 @@ namespace RubikCube
 {
     class SaveGame
     {
-        private XmlDocument doc;
-        private string fileName;
-        private string grandFather;
-        private bool didFail;
+        private readonly XmlDocument doc;
+        private readonly string fileName;
+        private readonly string grandFather;
+        private readonly bool didFail;
         public SaveGame(string FileName,string GrandFather)
         {
             try

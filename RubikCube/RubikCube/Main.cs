@@ -1,26 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics;
+using System.Threading;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
-using System.IO;
-using System.Threading;
-using System.Diagnostics;
-using System.Reflection;
-using System.Windows.Forms.VisualStyles;
-using System.Xml;
 
 namespace RubikCube
 {
     /// <summary>
     /// This is the main type for your game
     /// </summary>
-    public class Main : Microsoft.Xna.Framework.Game
+    public class Main : Game
     {
         #region classes & xna.vars declaration
 
@@ -33,7 +24,7 @@ namespace RubikCube
         Thread loadingThread;
         ButtonSetUp button;
         SwitchGameState gameState;
-        public bool isDoneLoading = false;
+        public bool IsDoneLoading;
         private SaveGame save;
         private AddMusic add;
         #endregion
@@ -62,14 +53,11 @@ namespace RubikCube
         /// </summary>
         protected override void Initialize()
         {
-            this.IsFixedTimeStep = false;
-            this.IsMouseVisible = true;
-<<<<<<< HEAD:RubikCube/RubikCube/Main.cs
+            IsFixedTimeStep = false;
+            IsMouseVisible = true;
             Window.AllowUserResizing = false;
             Window.Title = "Best Rubik's Cube Game";
-=======
->>>>>>> refs/remotes/origin/Denis'-branch:RubikCube/RubikCube/Game1.cs
-            this.IsFixedTimeStep = false;
+            IsFixedTimeStep = false;
             loading = new LoadingScreen(Content);
             loadingThread = new Thread(Load);
             loadingThread.Start();
@@ -108,15 +96,10 @@ namespace RubikCube
             //loading logic
             if (!loadingThread.IsAlive)
             {
-<<<<<<< HEAD:RubikCube/RubikCube/Main.cs
-                if ((justFinshed) && (!isDoneLoading))
+                if ((justFinshed) && (!IsDoneLoading))
                 {
                     save = new SaveGame("C:/Users/" + Environment.UserName + "/Documents/RubikCube/save.xml", "root");
-=======
-                if ((justFinshed)&&(!isDoneLoading))
-                {
->>>>>>> refs/remotes/origin/Denis'-branch:RubikCube/RubikCube/Game1.cs
-                    isDoneLoading = true;
+                    IsDoneLoading = true;
                     Debug.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~"); //should upgrade to DebbugBorders (~~~) but too afraid to StuckOverflow the game.
                 }
                 //load bools from save file
@@ -129,7 +112,7 @@ namespace RubikCube
                 // checks if the loading & the Clocks are done
                 if (justFinshed && clocks.CallTimer(gameTime))
                 {
-                    //MediaPlayer.Resume();
+                    MediaPlayer.Resume();
                     if (isFirstTime)
                     {
                         save.AddBool("isFirstTime", "false");

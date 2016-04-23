@@ -1,26 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
 
 namespace RubikCube
 {
     public class CubeConfig : ICloneable
     {
-        string[,] Right = new string[3, 3];
-        string[,] Left = new string[3, 3];
-        string[,] Up = new string[3, 3];
-        string[,] Down = new string[3, 3];
-        string[,] Front = new string[3, 3];
-        string[,] Back = new string[3, 3];
+        string[,] right = new string[3, 3];
+        string[,] left = new string[3, 3];
+        string[,] up = new string[3, 3];
+        string[,] down = new string[3, 3];
+        string[,] front = new string[3, 3];
+        string[,] back = new string[3, 3];
         public CubeConfig()
         {
             Initialize();
@@ -35,7 +28,7 @@ namespace RubikCube
                 for (int j = 0; j < 3; j++)
                 {
                     temp++;
-                    Debug.Write(Front[j, i]);
+                    Debug.Write(front[j, i]);
                     if (temp == 3)
                         Debug.WriteLine("");
                 }
@@ -84,7 +77,7 @@ namespace RubikCube
 
         private void RightTurn(bool isClockWise)
         {
-            TurnAxis(ref Right, isClockWise);
+            TurnAxis(ref right, isClockWise);
 
             //four sides turn
             string[] curFront = new string[3];
@@ -95,35 +88,35 @@ namespace RubikCube
             for (int i = 0; i < 3; i++)
             {
                 //sides init
-                curFront[i] = Front[2, i];
-                curUp[i] = Up[2, i];
-                curBack[i] = Back[2, i];
-                curDown[i] = Down[2, i];
+                curFront[i] = front[2, i];
+                curUp[i] = up[2, i];
+                curBack[i] = back[2, i];
+                curDown[i] = down[2, i];
             }
             for (int i = 0; i < 3; i++)
             {
                 if (isClockWise)
                 {
                     //sides turn
-                    Front[2, i] = curDown[i];
-                    Up[2, i] = curFront[i];
-                    Back[2, i] = curUp[i];
-                    Down[2, i] = curBack[i];
+                    front[2, i] = curDown[i];
+                    up[2, i] = curFront[i];
+                    back[2, i] = curUp[i];
+                    down[2, i] = curBack[i];
                 }
                 else
                 {
                     //sides turn
-                    Front[2, i] = curUp[i];
-                    Up[2, i] = curBack[i];
-                    Back[2, i] = curDown[i];
-                    Down[2, i] = curFront[i];
+                    front[2, i] = curUp[i];
+                    up[2, i] = curBack[i];
+                    back[2, i] = curDown[i];
+                    down[2, i] = curFront[i];
                 }
             }
         }
 
         private void LeftTurn(bool isClockWise)
         {
-            TurnAxis(ref Left, isClockWise);
+            TurnAxis(ref left, isClockWise);
 
             //four sides turn
             string[] curFront = new string[3];
@@ -134,35 +127,35 @@ namespace RubikCube
             for (int i = 0; i < 3; i++)
             {
                 //sides init
-                curFront[i] = Front[0, i];
-                curUp[i] = Up[0, i];
-                curBack[i] = Back[0, i];
-                curDown[i] = Down[0, i];
+                curFront[i] = front[0, i];
+                curUp[i] = up[0, i];
+                curBack[i] = back[0, i];
+                curDown[i] = down[0, i];
             }
             for (int i = 0; i < 3; i++)
             {
                 if (!isClockWise)
                 {
                     //sides turn
-                    Front[0, i] = curDown[i];
-                    Up[0, i] = curFront[i];
-                    Back[0, i] = curUp[i];
-                    Down[0, i] = curBack[i];
+                    front[0, i] = curDown[i];
+                    up[0, i] = curFront[i];
+                    back[0, i] = curUp[i];
+                    down[0, i] = curBack[i];
                 }
                 else
                 {
                     //sides turn
-                    Front[0, i] = curUp[i];
-                    Up[0, i] = curBack[i];
-                    Back[0, i] = curDown[i];
-                    Down[0, i] = curFront[i];
+                    front[0, i] = curUp[i];
+                    up[0, i] = curBack[i];
+                    back[0, i] = curDown[i];
+                    down[0, i] = curFront[i];
                 }
             }
         }
 
         private void FrontTurn(bool isClockWise)
         {
-            TurnAxis(ref Front, isClockWise);
+            TurnAxis(ref front, isClockWise);
 
             //sides declare
             string[] curLeft = new string[3];
@@ -173,35 +166,35 @@ namespace RubikCube
             for (int i = 0; i < 3; i++)
             {
                 //sides init
-                curLeft[i] = Left[2, 2 - i];
-                curRight[i] = Right[0, 2 - i];
-                curUp[i] = Up[i, 2];
-                curDown[i] = Down[i, 0];
+                curLeft[i] = left[2, 2 - i];
+                curRight[i] = right[0, 2 - i];
+                curUp[i] = up[i, 2];
+                curDown[i] = down[i, 0];
             }
             for (int i = 0; i < 3; i++)
             {
                 if (isClockWise)
                 {
                     //sides turn
-                    Left[2, i] = curDown[i];
-                    Down[i, 0] = curRight[i];
-                    Right[0, i] = curUp[i];
-                    Up[i, 2] = curLeft[i];
+                    left[2, i] = curDown[i];
+                    down[i, 0] = curRight[i];
+                    right[0, i] = curUp[i];
+                    up[i, 2] = curLeft[i];
                 }
                 else
                 {
                     //sides turn
-                    Left[2, i] = curUp[2 - i];
-                    Down[i, 0] = curLeft[2 - i];
-                    Right[0, i] = curDown[2 - i];
-                    Up[i, 2] = curRight[2 - i];
+                    left[2, i] = curUp[2 - i];
+                    down[i, 0] = curLeft[2 - i];
+                    right[0, i] = curDown[2 - i];
+                    up[i, 2] = curRight[2 - i];
                 }
             }
         }
 
         private void BackTurn(bool isClockWise)
         {
-            TurnAxis(ref Back, isClockWise);
+            TurnAxis(ref back, isClockWise);
 
             //sides declare
             string[] curLeft = new string[3];
@@ -212,35 +205,35 @@ namespace RubikCube
             for (int i = 0; i < 3; i++)
             {
                 //sides init
-                curLeft[i] = Left[0, 2 - i];
-                curRight[i] = Right[2, 2 - i];
-                curUp[i] = Up[i, 0];
-                curDown[i] = Down[i, 2];
+                curLeft[i] = left[0, 2 - i];
+                curRight[i] = right[2, 2 - i];
+                curUp[i] = up[i, 0];
+                curDown[i] = down[i, 2];
             }
             for (int i = 0; i < 3; i++)
             {
                 if (!isClockWise)
                 {
                     //sides turn
-                    Left[0, i] = curDown[i];
-                    Down[i, 2] = curRight[i];
-                    Right[2, i] = curUp[i];
-                    Up[i, 0] = curLeft[i];
+                    left[0, i] = curDown[i];
+                    down[i, 2] = curRight[i];
+                    right[2, i] = curUp[i];
+                    up[i, 0] = curLeft[i];
                 }
                 else
                 {
                     //sides turn
-                    Left[0, i] = curUp[2 - i];
-                    Down[i, 2] = curLeft[2 - i];
-                    Right[2, i] = curDown[2 - i];
-                    Up[i, 0] = curRight[2 - i];
+                    left[0, i] = curUp[2 - i];
+                    down[i, 2] = curLeft[2 - i];
+                    right[2, i] = curDown[2 - i];
+                    up[i, 0] = curRight[2 - i];
                 }
             }
         }
 
         private void UpTurn(bool isClockWise)
         {
-            TurnAxis(ref Up, isClockWise);
+            TurnAxis(ref up, isClockWise);
 
             //four sides turn
             string[] curFront = new string[3];
@@ -251,35 +244,35 @@ namespace RubikCube
             for (int i = 0; i < 3; i++)
             {
                 //sides init
-                curFront[i] = Front[i, 0];
-                curLeft[i] = Left[i, 0];
-                curBack[i] = Back[i, 2];
-                curRight[i] = Right[i, 0];
+                curFront[i] = front[i, 0];
+                curLeft[i] = left[i, 0];
+                curBack[i] = back[i, 2];
+                curRight[i] = right[i, 0];
             }
             for (int i = 0; i < 3; i++)
             {
                 if (isClockWise)
                 {
                     //sides turn
-                    Front[i, 0] = curRight[i];
-                    Left[i, 0] = curFront[i];
-                    Back[i, 2] = curLeft[2 - i];
-                    Right[i, 0] = curBack[2 - i];
+                    front[i, 0] = curRight[i];
+                    left[i, 0] = curFront[i];
+                    back[i, 2] = curLeft[2 - i];
+                    right[i, 0] = curBack[2 - i];
                 }
                 else
                 {
                     //sides turn
-                    Front[i, 0] = curLeft[i];
-                    Left[i, 0] = curBack[2 - i];
-                    Back[i, 2] = curRight[2 - i];
-                    Right[i, 0] = curFront[i];
+                    front[i, 0] = curLeft[i];
+                    left[i, 0] = curBack[2 - i];
+                    back[i, 2] = curRight[2 - i];
+                    right[i, 0] = curFront[i];
                 }
             }
         }
 
         private void DownTurn(bool isClockWise)
         {
-            TurnAxis(ref Down, !isClockWise);
+            TurnAxis(ref down, !isClockWise);
 
             //four sides turn
             string[] curFront = new string[3];
@@ -290,28 +283,28 @@ namespace RubikCube
             for (int i = 0; i < 3; i++)
             {
                 //sides init
-                curFront[i] = Front[i, 2];
-                curLeft[i] = Left[i, 2];
-                curBack[i] = Back[i, 0];
-                curRight[i] = Right[i, 2];
+                curFront[i] = front[i, 2];
+                curLeft[i] = left[i, 2];
+                curBack[i] = back[i, 0];
+                curRight[i] = right[i, 2];
             }
             for (int i = 0; i < 3; i++)
             {
                 if (isClockWise)
                 {
                     //sides turn
-                    Front[i, 2] = curRight[i];
-                    Left[i, 2] = curFront[i];
-                    Back[i, 0] = curLeft[2 - i];
-                    Right[i, 2] = curBack[2 - i];
+                    front[i, 2] = curRight[i];
+                    left[i, 2] = curFront[i];
+                    back[i, 0] = curLeft[2 - i];
+                    right[i, 2] = curBack[2 - i];
                 }
                 else
                 {
                     //sides turn
-                    Front[i, 2] = curLeft[i];
-                    Left[i, 2] = curBack[2 - i];
-                    Back[i, 0] = curRight[2 - i];
-                    Right[i, 2] = curFront[i];
+                    front[i, 2] = curLeft[i];
+                    left[i, 2] = curBack[2 - i];
+                    back[i, 0] = curRight[2 - i];
+                    right[i, 2] = curFront[i];
                 }
             }
         }
@@ -363,20 +356,20 @@ namespace RubikCube
             {
                 for (int j = 0; j < 3; j++)
                 {
-                    Up[i, j] = "Red";
-                    Down[i, j] = "Orange";
-                    Front[i, j] = "Green";
-                    Back[i, j] = "Blue";
-                    Right[i, j] = "Yellow";
-                    Left[i, j] = "White";
+                    up[i, j] = "Red";
+                    down[i, j] = "Orange";
+                    front[i, j] = "Green";
+                    back[i, j] = "Blue";
+                    right[i, j] = "Yellow";
+                    left[i, j] = "White";
                 }
             }
         }
 
         public List<string[,]> GetCubeState()
         {
-            return new List<string[,]> { (string[,]) Right.Clone(), (string[,]) Left.Clone(), (string[,]) Up.Clone(),
-                (string[,]) Down.Clone(), (string[,]) Front.Clone(), (string[,]) Back.Clone() };
+            return new List<string[,]> { (string[,]) right.Clone(), (string[,]) left.Clone(), (string[,]) up.Clone(),
+                (string[,]) down.Clone(), (string[,]) front.Clone(), (string[,]) back.Clone() };
         }
 
         public Tuple<Vector3, bool> CharToVector(string real)
@@ -423,17 +416,17 @@ namespace RubikCube
 
         public void SetStates(List<string[,]> state)
         {
-            Right = state[0];
-            Left = state[1];
-            Up = state[2];
-            Down = state[3];
-            Front = state[4];
-            Back = state[5];
+            right = state[0];
+            left = state[1];
+            up = state[2];
+            down = state[3];
+            front = state[4];
+            back = state[5];
         }
 
         public object Clone()
         {
-            return this.MemberwiseClone();
+            return MemberwiseClone();
         }
     }
 }

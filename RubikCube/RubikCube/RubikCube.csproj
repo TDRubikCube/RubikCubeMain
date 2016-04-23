@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <ProjectGuid>{E3360728-05BB-4256-886F-C7895D79922E}</ProjectGuid>
+    <ProjectGuid>{7C84D010-35FA-49DB-B946-54245C6C9994}</ProjectGuid>
     <ProjectTypeGuids>{6D335F3A-9D43-41b4-9D22-F6F17C4BE596};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
@@ -14,12 +14,12 @@
     <XnaFrameworkVersion>v4.0</XnaFrameworkVersion>
     <XnaPlatform>Windows</XnaPlatform>
     <XnaProfile>Reach</XnaProfile>
-    <XnaCrossPlatformGroupID>c612a45b-699a-4309-957d-2d28ff3ac504</XnaCrossPlatformGroupID>
+    <XnaCrossPlatformGroupID>fce25a4d-3854-448a-b8ca-fef93fab0e9a</XnaCrossPlatformGroupID>
     <XnaOutputType>Game</XnaOutputType>
     <ApplicationIcon>Game.ico</ApplicationIcon>
     <Thumbnail>Game.png</Thumbnail>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>C:\Users\User\Desktop\</PublishUrl>
+    <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
@@ -29,10 +29,9 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>4</ApplicationRevision>
+    <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
-    <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -60,28 +59,11 @@
     <PlatformTarget>x86</PlatformTarget>
     <XnaCompressContent>true</XnaCompressContent>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject>
-    </StartupObject>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ManifestCertificateThumbprint>6E47BD1934173F8F29116E177853B2FDEA3D0C67</ManifestCertificateThumbprint>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ManifestKeyFile>RubikCube_TemporaryKey.pfx</ManifestKeyFile>
-  </PropertyGroup>
-  <PropertyGroup>
-    <GenerateManifests>true</GenerateManifests>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignManifests>true</SignManifests>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="Microsoft.Xna.Framework.Game, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="Microsoft.Xna.Framework.Graphics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="Microsoft.Xna.Framework.GamerServices, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
-    <Reference Include="Microsoft.Xna.Framework.Storage, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=MSIL" />
     <Reference Include="mscorlib" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -96,19 +78,17 @@
     <Compile Include="AddMusic.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="AddMusic.Designer.cs">
-      <DependentUpon>AddMusic.cs</DependentUpon>
-    </Compile>
+    <Compile Include="AddMusic.Designer.cs" />
     <Compile Include="Button.cs" />
     <Compile Include="ButtonSetUp.cs" />
     <Compile Include="Camera.cs" />
-    <Compile Include="TextBox.cs" />
+    <Compile Include="Clocks.cs" />
     <Compile Include="Cube.cs" />
+    <Compile Include="CubeConfig.cs" />
     <Compile Include="CubeDictionaty.cs" />
     <Compile Include="CubeState.cs" />
-    <Compile Include="CubeConfig.cs" />
-    <Compile Include="Main.cs" />
     <Compile Include="LoadingScreen.cs" />
+    <Compile Include="Main.cs" />
     <Compile Include="Music.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
@@ -116,24 +96,27 @@
     <Compile Include="SelfSolve.cs" />
     <Compile Include="SwitchGameState.cs" />
     <Compile Include="Text.cs" />
-    <Compile Include="Clocks.cs" />
+    <Compile Include="TextBox.cs" />
     <Compile Include="Tutorial.cs" />
     <Compile Include="Welcome.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Welcome.Designer.cs">
-      <DependentUpon>Welcome.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Welcome.Designer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />
     <Content Include="Game.png" />
+    <Content Include="Rubik%27s Cube.jpg" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RubikCubeContent\RubikCubeContent.contentproj">
       <Name>RubikCubeContent</Name>
       <XnaReferenceType>Content</XnaReferenceType>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="AddMusic.resx" />
+    <EmbeddedResource Include="Welcome.resx" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
@@ -156,27 +139,6 @@
       <ProductName>Windows Installer 4.5</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-<<<<<<< HEAD
-    <None Include="ClassDiagram1.cd" />
-    <None Include="RubikCube_TemporaryKey.pfx" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="AddMusic.resx">
-      <DependentUpon>AddMusic.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Welcome.resx">
-      <DependentUpon>Welcome.cs</DependentUpon>
-    </EmbeddedResource>
-=======
-    <EmbeddedResource Include="firstPopup.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ClassDiagram1.cd" />
->>>>>>> refs/remotes/origin/Denis'-branch
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />

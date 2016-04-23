@@ -1,71 +1,66 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace RubikCube
+﻿namespace RubikCube
 {
     class CubeDictionary
     {   //WHITE
-        public const int WHITE_TOP_LEFT = 12;
-        public const int WHITE_TOP_MID = 16;
-        public const int WHITE_TOP_RIGHT = 4;
-        public const int WHITE_MID_LEFT = 0;
-        public const int WHITE_MID_MID = 13;
-        public const int WHITE_MID_RIGHT = 2;
-        public const int WHITE_BOTTOM_LEFT = 19;
-        public const int WHITE_BOTTOM_MID = 5;
-        public const int WHITE_BOTTOM_RIGHT = 14;
+        public const int WhiteTopLeft = 12;
+        public const int WhiteTopMid = 16;
+        public const int WhiteTopRight = 4;
+        public const int WhiteMidLeft = 0;
+        public const int WhiteMidMid = 13;
+        public const int WhiteMidRight = 2;
+        public const int WhiteBottomLeft = 19;
+        public const int WhiteBottomMid = 5;
+        public const int WhiteBottomRight = 14;
         //BLUE
-        public const int BLUE_TOP_LEFT = 12;
-        public const int BLUE_TOP_MID = 0;
-        public const int BLUE_TOP_RIGHT = 19;
-        public const int BLUE_MID_LEFT = 9;
-        public const int BLUE_MID_MID = 3;
-        public const int BLUE_MID_RIGHT = 24;
-        public const int BLUE_BOTTOM_LEFT = 23;
-        public const int BLUE_BOTTOM_MID = 11;
-        public const int BLUE_BOTTOM_RIGHT = 22;
+        public const int BlueTopLeft = 12;
+        public const int BlueTopMid = 0;
+        public const int BlueTopRight = 19;
+        public const int BlueMidLeft = 9;
+        public const int BlueMidMid = 3;
+        public const int BlueMidRight = 24;
+        public const int BlueBottomLeft = 23;
+        public const int BlueBottomMid = 11;
+        public const int BlueBottomRight = 22;
         //RED
-        public const int RED_TOP_LEFT = 23;
-        public const int RED_TOP_MID = 20;
-        public const int RED_TOP_RIGHT = 17;
-        public const int RED_MID_LEFT = 9;
-        public const int RED_MID_MID = 25;
-        public const int RED_MID_RIGHT = 7;
-        public const int RED_BOTTOM_LEFT = 12;
-        public const int RED_BOTTOM_MID = 16;
-        public const int RED_BOTTOM_RIGHT = 4;
+        public const int RedTopLeft = 23;
+        public const int RedTopMid = 20;
+        public const int RedTopRight = 17;
+        public const int RedMidLeft = 9;
+        public const int RedMidMid = 25;
+        public const int RedMidRight = 7;
+        public const int RedBottomLeft = 12;
+        public const int RedBottomMid = 16;
+        public const int RedBottomRight = 4;
         //ORANGE
-        public const int ORANGE_TOP_LEFT = 19;
-        public const int ORANGE_TOP_MID = 5;
-        public const int ORANGE_TOP_RIGHT = 14;
-        public const int ORANGE_MID_LEFT = 24;
-        public const int ORANGE_MID_MID = 10;
-        public const int ORANGE_MID_RIGHT = 15;
-        public const int ORANGE_BOTTOM_LEFT = 22;
-        public const int ORANGE_BOTTOM_MID = 8;
-        public const int ORANGE_BOTTOM_RIGHT = 6;
+        public const int OrangeTopLeft = 19;
+        public const int OrangeTopMid = 5;
+        public const int OrangeTopRight = 14;
+        public const int OrangeMidLeft = 24;
+        public const int OrangeMidMid = 10;
+        public const int OrangeMidRight = 15;
+        public const int OrangeBottomLeft = 22;
+        public const int OrangeBottomMid = 8;
+        public const int OrangeBottomRight = 6;
         //GREEN
-        public const int GREEN_TOP_LEFT = 4;
-        public const int GREEN_TOP_MID = 2;
-        public const int GREEN_TOP_RIGHT = 14;
-        public const int GREEN_MID_LEFT = 15;
-        public const int GREEN_MID_MID = 1;
-        public const int GREEN_MID_RIGHT = 7;
-        public const int GREEN_BOTTOM_LEFT = 6;
-        public const int GREEN_BOTTOM_MID = 18;
-        public const int GREEN_BOTTOM_RIGHT = 17;
+        public const int GreenTopLeft = 4;
+        public const int GreenTopMid = 2;
+        public const int GreenTopRight = 14;
+        public const int GreenMidLeft = 15;
+        public const int GreenMidMid = 1;
+        public const int GreenMidRight = 7;
+        public const int GreenBottomLeft = 6;
+        public const int GreenBottomMid = 18;
+        public const int GreenBottomRight = 17;
         //YELLOW
-        public const int YELLOW_TOP_LEFT = 22;
-        public const int YELLOW_TOP_MID = 8;
-        public const int YELLOW_TOP_RIGHT = 6;
-        public const int YELLOW_MID_LEFT = 11;
-        public const int YELLOW_MID_MID = 21;
-        public const int YELLOW_MID_RIGHT = 18;
-        public const int YELLOW_BOTTOM_LEFT = 23;
-        public const int YELLOW_BOTTOM_MID = 20;
-        public const int YELLOW_BOTTOM_RIGHT = 17;
+        public const int YellowTopLeft = 22;
+        public const int YellowTopMid = 8;
+        public const int YellowTopRight = 6;
+        public const int YellowMidLeft = 11;
+        public const int YellowMidMid = 21;
+        public const int YellowMidRight = 18;
+        public const int YellowBottomLeft = 23;
+        public const int YellowBottomMid = 20;
+        public const int YellowBottomRight = 17;
         
         // dictionary acording to index (location in array)
         //

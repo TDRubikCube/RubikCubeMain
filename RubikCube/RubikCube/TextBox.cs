@@ -1,38 +1,33 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
-using System.Diagnostics;
-using System.Threading;
-using System.Windows.Forms;
-using Keys = Microsoft.Xna.Framework.Input.Keys;                      /*
+
+/*
 using System.Of[A].Down;                                            */
 
 namespace RubikCube
 {
     class TextBox
     {
-        public string textbox = ""; // the entirety of what u wrote
-        public string drawBox = ""; // what u see on screen
+        public string Textbox = ""; // the entirety of what u wrote
+        public string DrawBox = ""; // what u see on screen
         int drawTab = 0; // physical place of tab in vector.x
         string physTab = ""; // the flashing tab
-        public int movedTo = 0; // how much u moved to the right
-        int timeSincePress = 0; // time passed since last click
-        int timeSinceLetterPress = 0;//time passed since you started pressing a letter
-        int tabTimer = 0; //timer of the tab
+        public int MovedTo; // how much u moved to the right
+        int timeSincePress; // time passed since last click
+        int timeSinceLetterPress;//time passed since you started pressing a letter
+        int tabTimer; //timer of the tab
         Keys oldKey = Keys.F24; //old key last pressed
-        public int boxSize = 20; //the boxsize in letters, not in vector.x!!! this size changes depending on the string vector.x size!
-        public const int realBoxSize = 266; //the real box size in vectors.x, const!
-        public int tabPlace = 0; //the logical place of the tab in the string
-        public bool FocusTextBox = false;
-        public Rectangle textBoxRect;
-        public Texture2D graphicBox;
+        public int BoxSize = 20; //the boxsize in letters, not in vector.x!!! this size changes depending on the string vector.x size!
+        public const int RealBoxSize = 266; //the real box size in vectors.x, const!
+        public int TabPlace; //the logical place of the tab in the string
+        public bool FocusTextBox;
+        public Rectangle TextBoxRect;
+        public Texture2D GraphicBox;
         int alpha;
         Cube cube;
         Camera camera;
@@ -40,25 +35,25 @@ namespace RubikCube
         bool startedRot;
         string realVectorBox = "";
         int orderLength;
-        bool didStart = false;
+        bool didStart;
         MouseState oldMouseState;
 
         public TextBox(Cube _cube, ContentManager content)
         {
-            graphicBox = content.Load<Texture2D>("pics/box2");
-            textBoxRect = new Rectangle(300, 375, 266, 20);
+            GraphicBox = content.Load<Texture2D>("pics/box2");
+            TextBoxRect = new Rectangle(300, 375, 266, 20);
             cube = _cube;
         }
-        public void Update(KeyboardState state, KeyboardState oldState, GameTime gameTime, SpriteFont mono, string _algorder, Camera _camera, Cube _cube)
+        public void Update(KeyboardState state, KeyboardState oldState, GameTime gameTime, SpriteFont mono, string algorder, Camera _camera, Cube _cube)
         {
             //check
             cube = _cube;
             MouseState mouse = Mouse.GetState();
             Point mousePos = new Point(mouse.X, mouse.Y);
-            if (mouse.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed &&
-                oldMouseState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Released)
+            if (mouse.LeftButton == ButtonState.Pressed &&
+                oldMouseState.LeftButton == ButtonState.Released)
             {
-                if (textBoxRect.Contains(mousePos))
+                if (TextBoxRect.Contains(mousePos))
                 {
                     FocusTextBox = true;
                 }
@@ -66,25 +61,25 @@ namespace RubikCube
                     FocusTextBox = false;
             }
             camera = _camera;
-            algOrder = _algorder;
+            algOrder = algorder;
             if (state.IsKeyDown(Keys.D1) && oldState.IsKeyUp(Keys.D1))
                 Debug.WriteLine("");
-            if (drawBox.Count() == 0)
+            if (DrawBox.Count() == 0)
                 startedRot = false;
             if ((algOrder.Length != orderLength) && (EnterPressed || didStart))
             {
                 didStart = true;
-                if (textbox.Length == 1)
+                if (Textbox.Length == 1)
                 {
-                    textbox = "";
-                    tabPlace = 0;
+                    Textbox = "";
+                    TabPlace = 0;
                 }
-                else if (textbox.Length > 0)
+                else if (Textbox.Length > 0)
                 {
-                        textbox = textbox.Substring(1, textbox.Length - 2);
-                    tabPlace = 0;
+                        Textbox = Textbox.Substring(1, Textbox.Length - 2);
+                    TabPlace = 0;
                 }
-                if (textbox.Length == 0)
+                if (Textbox.Length == 0)
                     didStart = false;
                 orderLength = algOrder.Length;
             }
@@ -133,7 +128,7 @@ namespace RubikCube
                 tabTimer = 0;
             }
 
-            if ((state.IsKeyDown(Keys.Back)) && (textbox.Length > 0))
+            if ((state.IsKeyDown(Keys.Back)) && (Textbox.Length > 0))
             {
                 timeSincePress += gameTime.ElapsedGameTime.Milliseconds;
                 if ((oldState.IsKeyUp(Keys.Back) || (timeSincePress > 250)))
@@ -142,32 +137,32 @@ namespace RubikCube
                     {
                         timeSincePress = 225;
                     }
-                    if ((tabPlace + movedTo) > 0)
+                    if ((TabPlace + MovedTo) > 0)
                     {
-                        if (textbox.Length <= boxSize)
+                        if (Textbox.Length <= BoxSize)
                         {
-                            tabPlace--;
+                            TabPlace--;
                         }
-                        else if ((MovedToRight() > 0 && (movedTo > 0)))
+                        else if ((MovedToRight() > 0 && (MovedTo > 0)))
                         {
-                            if (tabPlace > 0)
+                            if (TabPlace > 0)
                             {
-                                tabPlace--;
+                                TabPlace--;
                             }
                             else
                             {
-                                movedTo--;
+                                MovedTo--;
                             }
                         }
-                        else if (MovedToRight() > 0 && (movedTo == 0))
+                        else if (MovedToRight() > 0 && (MovedTo == 0))
                         {
-                            tabPlace--;
+                            TabPlace--;
                         }
-                        else if ((MovedToRight() == 0) && (movedTo > 0))
+                        else if ((MovedToRight() == 0) && (MovedTo > 0))
                         {
-                            movedTo--;
+                            MovedTo--;
                         }
-                        textbox = textbox.Remove(movedTo + tabPlace, 1);
+                        Textbox = Textbox.Remove(MovedTo + TabPlace, 1);
                         tabTimer = 0;
                     }
                     else
@@ -182,19 +177,19 @@ namespace RubikCube
                 timeSincePress += gameTime.ElapsedGameTime.Milliseconds;
                 if ((oldState.IsKeyUp(Keys.Right) || (timeSincePress > 250)))
                 {
-                    if (!((tabPlace == boxSize) && (MovedToRight() == 0)))
+                    if (!((TabPlace == BoxSize) && (MovedToRight() == 0)))
                     {
                         if (timeSincePress > 250)
                         {
                             timeSincePress = 225;
                         }
-                        if ((tabPlace == boxSize) && (MovedToRight() > 0))
+                        if ((TabPlace == BoxSize) && (MovedToRight() > 0))
                         {
-                            movedTo++;
+                            MovedTo++;
                         }
-                        else if ((tabPlace < boxSize) && (textbox.Length - tabPlace > 0))
+                        else if ((TabPlace < BoxSize) && (Textbox.Length - TabPlace > 0))
                         {
-                            tabPlace++;
+                            TabPlace++;
                         }
                         tabTimer = 0;
                     }
@@ -209,19 +204,19 @@ namespace RubikCube
                 timeSincePress += gameTime.ElapsedGameTime.Milliseconds;
                 if ((oldState.IsKeyUp(Keys.Left) || (timeSincePress > 250)))
                 {
-                    if (movedTo + tabPlace > 0)
+                    if (MovedTo + TabPlace > 0)
                     {
                         if (timeSincePress > 250)
                         {
                             timeSincePress = 225;
                         }
-                        if (tabPlace > 0)
+                        if (TabPlace > 0)
                         {
-                            tabPlace--;
+                            TabPlace--;
                         }
-                        if ((tabPlace == 0) && (movedTo > 0))
+                        if ((TabPlace == 0) && (MovedTo > 0))
                         {
-                            movedTo--;
+                            MovedTo--;
                         }
                         tabTimer = 0;
                     }
@@ -232,13 +227,13 @@ namespace RubikCube
 
                 }
             }
-            if (textbox.Length > boxSize && (movedTo + boxSize + MovedToRight()) == textbox.Length)
+            if (Textbox.Length > BoxSize && (MovedTo + BoxSize + MovedToRight()) == Textbox.Length)
             {
-                drawBox = textbox.Substring(movedTo, boxSize);
+                DrawBox = Textbox.Substring(MovedTo, BoxSize);
             }
             else
             {
-                drawBox = textbox;
+                DrawBox = Textbox;
             }
 
             //}
@@ -252,13 +247,13 @@ namespace RubikCube
             //}
             CheckForDeviation(mono);
 
-            if (textbox.Length > boxSize && (movedTo + boxSize + MovedToRight()) == textbox.Length)
+            if (Textbox.Length > BoxSize && (MovedTo + BoxSize + MovedToRight()) == Textbox.Length)
             {
-                drawBox = textbox.Substring(movedTo, boxSize);
+                DrawBox = Textbox.Substring(MovedTo, BoxSize);
             }
             else
             {
-                drawBox = textbox;
+                DrawBox = Textbox;
             }
             if (FocusTextBox)
             {
@@ -289,15 +284,15 @@ namespace RubikCube
             orderLength = algOrder.Length;
             realVectorBox = "";
             string nono = " ACEGHJKMNOPQSTVWXYZ";
-            tabPlace = 0;
+            TabPlace = 0;
             for (int i = 0; i < nono.Length; i++)
             {
-                textbox = textbox.Replace(nono[i].ToString(), "");
+                Textbox = Textbox.Replace(nono[i].ToString(), "");
             }
-            movedTo = 0;
+            MovedTo = 0;
             MovedToRight();
-            tabPlace = 0;
-            foreach (var s in textbox)
+            TabPlace = 0;
+            foreach (var s in Textbox)
             {
 
                 if (s == 'F')
@@ -340,42 +335,41 @@ namespace RubikCube
         public bool EnterPressed { get; set; }
         private void CheckForDeviation(SpriteFont mono)
         {
-            Vector2 boxVector = (mono.MeasureString(drawBox));
-            if (boxVector.X >= realBoxSize)
+            Vector2 boxVector = (mono.MeasureString(DrawBox));
+            if (boxVector.X >= RealBoxSize)
             {
-                if (drawBox.Length > 0)
+                if (DrawBox.Length > 0)
                 {
-                    if (drawBox.Last<char>() == 'M')
+                    if (DrawBox.Last() == 'M')
                         Debug.WriteLine("");
                 }
                 int check = 1;
-                Debug.WriteLine((mono.MeasureString(drawBox.Substring(0, drawBox.Length - check)).X));
-                while ((mono.MeasureString(drawBox.Substring(0, drawBox.Length - check)).X) >= realBoxSize)
+                Debug.WriteLine((mono.MeasureString(DrawBox.Substring(0, DrawBox.Length - check)).X));
+                while ((mono.MeasureString(DrawBox.Substring(0, DrawBox.Length - check)).X) >= RealBoxSize)
                 {
-                    Debug.WriteLine("size of string" + mono.MeasureString(drawBox.Substring(0, drawBox.Length - check)).X);
-                    if (tabPlace >= boxSize)
+                    Debug.WriteLine("size of string" + mono.MeasureString(DrawBox.Substring(0, DrawBox.Length - check)).X);
+                    if (TabPlace >= BoxSize)
                     {
-                        tabPlace--;
+                        TabPlace--;
                     }
-                    boxSize--;
-                    movedTo++;
+                    BoxSize--;
+                    MovedTo++;
                     check++;
                 }
             }
-            else if ((drawBox.Length >= boxSize))
+            else if ((DrawBox.Length >= BoxSize))
             {
-                boxSize++;
+                BoxSize++;
             }
         }
         private int MovedToRight()
         {
-            if ((textbox.Length - boxSize - movedTo) <= 0)
+            if ((Textbox.Length - BoxSize - MovedTo) <= 0)
             {
                 return 0;
             }
-            else
-                Debug.Write("");
-            return textbox.Length - boxSize - movedTo;
+            Debug.Write("");
+            return Textbox.Length - BoxSize - MovedTo;
         }
         private void CheckForClick(ref KeyboardState keyboardState, ref KeyboardState oldKeyboardState, GameTime gameTime, Keys key)
         {
@@ -394,19 +388,19 @@ namespace RubikCube
                     {
                         timeSinceLetterPress = 225;
                     }
-                    textbox = textbox.Insert(movedTo + tabPlace, KeyToChar(key, keyboardState, oldKeyboardState));
-                    if (tabPlace < boxSize)
+                    Textbox = Textbox.Insert(MovedTo + TabPlace, KeyToChar(key, keyboardState, oldKeyboardState));
+                    if (TabPlace < BoxSize)
                     {
-                        if (tabPlace >= 52)
+                        if (TabPlace >= 52)
                             Debug.Write("");
-                        tabPlace++;
+                        TabPlace++;
                     }
                     else
                     {
-                        if (tabPlace >= 52)
+                        if (TabPlace >= 52)
                             Debug.Write("");
-                        tabPlace = boxSize;
-                        movedTo++;
+                        TabPlace = BoxSize;
+                        MovedTo++;
                     }
                 }
             }
@@ -424,27 +418,27 @@ namespace RubikCube
         {
             if (real == Vector3.Left)
             {
-                return "l";
+                return "L";
             }
             if (real == Vector3.Right)
             {
-                return "r";
+                return "R";
             }
             if (real == Vector3.Backward)
             {
-                return "b";
+                return "B";
             }
             if (real == Vector3.Forward)
             {
-                return "f";
+                return "F";
             }
             if (real == Vector3.Up)
             {
-                return "u";
+                return "U";
             }
             if (real == Vector3.Down)
             {
-                return "d";
+                return "D";
             }
             Debug.WriteLine("VectorToChar returned null");
             return "";
@@ -484,31 +478,31 @@ namespace RubikCube
         {
             //265
             // should it get to the if before this error
-            Vector2 tabVector = (mono.MeasureString(drawBox.Substring(0, tabPlace)));
+            Vector2 tabVector = (mono.MeasureString(DrawBox.Substring(0, TabPlace)));
             tabVector = new Vector2((tabVector.X + 295), (375));
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
             if (startedRot)
             {
                 bool shouldMakeBothGreen = false;
-                for (int i = 0; i < drawBox.Count(); i++)
+                for (int i = 0; i < DrawBox.Count(); i++)
                 {
                     if (i == 0)
                     {
-                        if (drawBox.Length > 1)
+                        if (DrawBox.Length > 1)
                         {
-                            if ((drawBox[1] == 'I' || drawBox[1] == '\'') && (drawBox[0] != 'I' && drawBox[0] != '\''))
+                            if ((DrawBox[1] == 'I' || DrawBox[1] == '\'') && (DrawBox[0] != 'I' && DrawBox[0] != '\''))
                             {
                                 shouldMakeBothGreen = true;
-                                spriteBatch.Draw(tex, new Rectangle(300 + 11, 375, 11, (int)mono.MeasureString(drawBox[1].ToString()).Y), null,
+                                spriteBatch.Draw(tex, new Rectangle(300 + 11, 375, 11, (int)mono.MeasureString(DrawBox[1].ToString()).Y), null,
                                Color.LimeGreen, 0f, new Vector2(0, 0), SpriteEffects.None, 0.3f);
                             }
                         }
-                        spriteBatch.Draw(tex, new Rectangle(300, 375, 11, (int)mono.MeasureString(drawBox[i].ToString()).Y), null,
+                        spriteBatch.Draw(tex, new Rectangle(300, 375, 11, (int)mono.MeasureString(DrawBox[i].ToString()).Y), null,
                            Color.LimeGreen, 0f, new Vector2(0, 0), SpriteEffects.None, 0.3f);
                     }
                     else if (!(i == 1 && shouldMakeBothGreen))
                     {
-                        spriteBatch.Draw(tex, new Rectangle(300 + (i) * 11, 375, 11, (int)mono.MeasureString(drawBox[i].ToString()).Y), null,
+                        spriteBatch.Draw(tex, new Rectangle(300 + (i) * 11, 375, 11, (int)mono.MeasureString(DrawBox[i].ToString()).Y), null,
                             Color.LightGray, 0f, new Vector2(0, 0), SpriteEffects.None, 0.3f);
                     }
                 }
@@ -518,10 +512,10 @@ namespace RubikCube
             else
                 alpha = 225;
             spriteBatch.DrawString(font, "Enter your algorithm here:", new Vector2(300, 350), Color.Black);
-            spriteBatch.DrawString(font, ("|"), new Vector2(300 + realBoxSize, 375), Color.Red);
-            spriteBatch.DrawString(mono, (drawBox), new Vector2(300, 375), Color.Black, 0f, new Vector2(0, 0), 1f, SpriteEffects.None, 0.5f);
+            spriteBatch.DrawString(font, ("|"), new Vector2(300 + RealBoxSize, 375), Color.Red);
+            spriteBatch.DrawString(mono, (DrawBox), new Vector2(300, 375), Color.Black, 0f, new Vector2(0, 0), 1f, SpriteEffects.None, 0.5f);
             spriteBatch.DrawString(font, (physTab), tabVector, Color.Black);
-            spriteBatch.Draw(graphicBox, new Rectangle(300 - 12, 375, 266 + 30, 30), new Color(255, 255, 255, alpha));
+            spriteBatch.Draw(GraphicBox, new Rectangle(300 - 12, 375, 266 + 30, 30), new Color(255, 255, 255, alpha));
 
             spriteBatch.End();
         }

@@ -1,15 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
-using System.Threading;
 using System.Diagnostics;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace RubikCube
 {
@@ -18,7 +11,7 @@ namespace RubikCube
         #region class vars
         Model model;
         Clocks clocks = new Clocks();
-        public CubeConfig cubeConfig;
+        public CubeConfig CubeConfig;
         Matrix[] meshTransforms;
         readonly CubeState cubeState = new CubeState();
         readonly Random rand = new Random();
@@ -42,7 +35,7 @@ namespace RubikCube
             OriginalCubeDraw();
             ScramblingVectors = new List<Vector3>();
             model = null;
-            cubeConfig = new CubeConfig();
+            CubeConfig = new CubeConfig();
         }
 
         #endregion
@@ -50,6 +43,7 @@ namespace RubikCube
         #region void
         public void Scramble()
         {
+            ScrambleResult = "";
             List<char> temp = new List<char>();
             List<char> possibleTurns = new List<char> { 'R', 'L', 'U', 'D', 'F', 'B', 'I' };
             for (int i = 0; i < 25; i++)
@@ -91,7 +85,7 @@ namespace RubikCube
             float sidePosition = Main.CubieSize;
             //Debug.WriteLine("animAngle=     " + Angle);
             //Debug.WriteLine("Angle " + MathHelper.ToRadians(Angle));
-            float partOfRotation = (float)(100f / RotationSpeed);
+            float partOfRotation = 100f / RotationSpeed;
             //Debug.WriteLine(partOfRotation + " = part");
             if (side == Vector3.Left)
             {
@@ -187,12 +181,9 @@ namespace RubikCube
             }
             if (howManyTurns == (110 - RotationSpeed) / 10)
             {
-<<<<<<< HEAD
                 //cubeConfig.CheckFaceColor();
-                cubeConfig.Rotate(side,isClockWise);
+                CubeConfig.Rotate(side,isClockWise);
                 //cubeConfig.CheckFaceColor();
-=======
->>>>>>> refs/remotes/origin/Denis'-branch
                 cubeState.Rotate(side, isClockWise);
                 howManyTurns = 0;
             }

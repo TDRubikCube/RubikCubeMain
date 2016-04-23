@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
-using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Media;
 
 namespace RubikCube
 {
@@ -46,7 +40,7 @@ namespace RubikCube
                         (Song)
                             ctor.Invoke(new object[]
                                 {
-                                    add.currentSong,
+                                    add.CurrentSong,
                                     @"c:/users/" + Environment.UserName + "/Documents/RubikCube/Songs/" +
                                     name,
                                     0
@@ -78,9 +72,9 @@ namespace RubikCube
                         (Song)
                             ctor.Invoke(new object[]
                                 {
-                                    add.currentSong,
+                                    add.CurrentSong,
                                     @"c:/users/" + Environment.UserName + "/Documents/RubikCube/Songs/" +
-                                    add.currentSong,
+                                    add.CurrentSong,
                                     0
                                 });
                     MediaPlayer.Play(currSong);
