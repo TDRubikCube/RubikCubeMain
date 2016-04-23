@@ -29,6 +29,7 @@ namespace RubikCube
         readonly ButtonSetUp button;
         readonly Text lang;
         SelfSolve solve;
+        private Music music;
         readonly Matrix world;
         private Camera camera;
         Matrix view;
@@ -74,7 +75,7 @@ namespace RubikCube
 
         #endregion
 
-        public SwitchGameState(GraphicsDevice graphicsDeviceFromMain, GraphicsDeviceManager graphics, ContentManager content)
+        public SwitchGameState(GraphicsDevice graphicsDeviceFromMain, GraphicsDeviceManager graphics, ContentManager content, Music _music)
         {
             shouldRunStopper = true;
             shouldShowStopper = true;
@@ -86,6 +87,7 @@ namespace RubikCube
             camera = new Camera();
             clocks = new Clocks();
             solve = new SelfSolve(cube);
+            music = _music;
             button = new ButtonSetUp(graphics, graphicsDevice, content)
             {
                 ClassicBound =
@@ -435,7 +437,7 @@ namespace RubikCube
         /// <param name="mouseState"></param>
         /// <param name="keyboardState"></param>
         /// <param name="gameTime"></param>
-        private void SwitchUpdate(MouseState mouseState, KeyboardState keyboardState, GameTime gameTime)
+        private void SwitchUpdate(KeyboardState keyboardState, GameTime gameTime)
         {
             switch (CurrentGameState)
             {
@@ -460,6 +462,8 @@ namespace RubikCube
                     button.BtnEnglish.Update(false, gameTime);
                     button.BtnHebrew.Update(false, gameTime);
                     button.BtnRussian.Update(false, gameTime);
+                    CheckClickOnAddMusic();
+                    music.Update();
                     if (keyboardState.IsKeyDown(Keys.Escape)) CurrentGameState = GameState.MainMenu;
                     break;
                 case GameState.FreePlay:
@@ -496,6 +500,19 @@ namespace RubikCube
 
                     break;
 
+            }
+        }
+
+        private void CheckClickOnAddMusic()
+        {
+            Rectangle rect = new Rectangle((int)(graphicsDevice.Viewport.Width / 2f - font.MeasureString(lang.OptionsAddMusic).X/2), 100, (int)font.MeasureString(lang.OptionsAddMusic).X, (int)font.MeasureString(lang.OptionsAddMusic).Y);
+            MouseState mouse = Mouse.GetState();
+            if (mouse.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released)
+            {
+                if (rect.Contains(mousePos))
+                {
+                    music.AddMusic();
+                }
             }
         }
 
@@ -565,10 +582,10 @@ namespace RubikCube
                     spriteBatch.DrawString(font, lang.FreePlayScramble, new Vector2(graphicsDevice.Viewport.Width / 13f, graphicsDevice.Viewport.Height / 1.4f), Color.Black);
                     spriteBatch.DrawString(font, lang.FreePlaySolve, new Vector2(graphicsDevice.Viewport.Width / 4f, graphicsDevice.Viewport.Height / 1.4f), Color.Black);
 
-                    spriteBatch.DrawString(font, lang.FreePlayStopperShow, new Vector2(graphicsDevice.Viewport.Width / 1.31f, graphicsDevice.Viewport.Height / 2f), Color.Black);
-                    spriteBatch.DrawString(font, lang.FreePlayStopperPause, new Vector2(graphicsDevice.Viewport.Width / 1.31f, 50 + graphicsDevice.Viewport.Height / 2f), Color.Black);
-                    spriteBatch.DrawString(font, lang.FreePlayStopperResume, new Vector2(graphicsDevice.Viewport.Width / 1.31f, 100 + graphicsDevice.Viewport.Height / 2f), Color.Black);
-                    spriteBatch.DrawString(font, lang.FreePlayStopperReset, new Vector2(graphicsDevice.Viewport.Width / 1.31f, 150 + graphicsDevice.Viewport.Height / 2f), Color.Black);
+                    spriteBatch.DrawString(font, lang.FreePlayStopperShow, new Vector2(graphicsDevice.Viewport.Width / 1.35f, graphicsDevice.Viewport.Height / 2f), Color.Black);
+                    spriteBatch.DrawString(font, lang.FreePlayStopperPause, new Vector2(graphicsDevice.Viewport.Width / 1.35f, 50 + graphicsDevice.Viewport.Height / 2f), Color.Black);
+                    spriteBatch.DrawString(font, lang.FreePlayStopperResume, new Vector2(graphicsDevice.Viewport.Width / 1.35f, 100 + graphicsDevice.Viewport.Height / 2f), Color.Black);
+                    spriteBatch.DrawString(font, lang.FreePlayStopperReset, new Vector2(graphicsDevice.Viewport.Width / 1.35f, 150 + graphicsDevice.Viewport.Height / 2f), Color.Black);
                     if (shouldShowStopper)
                         clocks.DrawStoper(spriteBatch, font, new Vector2(graphicsDevice.Viewport.Width / 3f, 30));
                     spriteBatch.DrawString(font, lang.FreePlaySolve, new Vector2(graphicsDevice.Viewport.Width / 4f, graphicsDevice.Viewport.Height / 1.4f), Color.Black);
@@ -584,6 +601,7 @@ namespace RubikCube
                     button.BtnEnglish.Draw(spriteBatch);
                     spriteBatch.DrawString(font, lang.OptionsTitle, new Vector2(graphicsDevice.Viewport.Width / 3f, 10), Color.Black);
                     spriteBatch.DrawString(font, lang.OptionsFreeText, new Vector2(graphicsDevice.Viewport.Width / 3f, 40), Color.Black);
+                    spriteBatch.DrawString(font, lang.OptionsAddMusic, new Vector2(graphicsDevice.Viewport.Width / 2f - font.MeasureString(lang.OptionsAddMusic).X/2, 100), Color.Black);
                     spriteBatch.DrawString(font, "English", new Vector2(graphicsDevice.Viewport.Width / 2.5f, 440), Color.Black);
                     spriteBatch.DrawString(font, "ת י ר ב ע", new Vector2(graphicsDevice.Viewport.Width / 1.85f, 440), Color.Black);
                     spriteBatch.DrawString(font, "Russian", new Vector2(graphicsDevice.Viewport.Width / 1.55f, 440), Color.Black);
@@ -795,9 +813,10 @@ namespace RubikCube
         /// </summary>
         /// <param name="gameTime"></param>
         /// <param name="graphics"></param>
-        public void Update(GameTime gameTime, GraphicsDevice graphicsDeviceFromMain)
+        public void Update(GameTime gameTime, GraphicsDevice graphicsDeviceFromMain, Music _music)
         {
             graphicsDevice = graphicsDeviceFromMain;
+            music = _music;
             KeyboardState keyboardState = Keyboard.GetState();
             MouseState mouseState = Mouse.GetState();
             view = camera.View;
@@ -816,7 +835,7 @@ namespace RubikCube
                 RotateWhichSide(keyboardState, oldKeyboardState, cameraPos);
             }
             mousePos = new Point(mouseState.X, mouseState.Y);
-            SwitchUpdate(mouseState, keyboardState, gameTime);
+            SwitchUpdate(keyboardState, gameTime);
             OldState(ref mouseState, ref keyboardState);
             currentScale = Main.CubieSize * 3 / graphicsDevice.Viewport.AspectRatio / Main.OriginalScale;
         }

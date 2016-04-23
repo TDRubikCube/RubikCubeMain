@@ -52,7 +52,7 @@ namespace RubikCube
         {
             List<char> temp = new List<char>();
             List<char> possibleTurns = new List<char> { 'R', 'L', 'U', 'D', 'F', 'B', 'I' };
-            for (int i = 0; i < 50; i++)
+            for (int i = 0; i < 25; i++)
             {
                 char currentChar = possibleTurns[rand.Next(0, 6)];
                 if (temp.Count >= 3)
