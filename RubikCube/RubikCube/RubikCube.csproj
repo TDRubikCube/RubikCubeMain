@@ -115,7 +115,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="AddMusic.resx" />
+    <EmbeddedResource Include="AddMusic.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Welcome.resx" />
   </ItemGroup>
   <ItemGroup>
