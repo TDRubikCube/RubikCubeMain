@@ -14,7 +14,7 @@ using System.Reflection;
 
 namespace RubikCube
 {
-    class Music
+    public class Music
     {
         private readonly Song defaultSong;
         public bool IsMuted = false;
@@ -65,9 +65,8 @@ namespace RubikCube
             //MediaPlayer.Play(currSong);
         }
 
-        public void Update(MouseState mouseState, string whichGenre, bool justSwitched)
+        public void Update()
         {
-            ChangeSongs(whichGenre, justSwitched);
             if (add.ShouldPlay)
             {
                 try
@@ -84,10 +83,7 @@ namespace RubikCube
                                     add.currentSong,
                                     0
                                 });
-                    Debug.WriteLineIf(MediaPlayer.State == MediaState.Playing, "here 1");
                     MediaPlayer.Play(currSong);
-                    Debug.WriteLineIf(MediaPlayer.State == MediaState.Playing, "here 2");
-
                 }
                 catch (Exception)
                 { }
@@ -98,19 +94,14 @@ namespace RubikCube
 
         public void AddMusic()
         {
+            add.Dispose();
+            add = new AddMusic();
             if (!add.Visible)
                 add.Show();
         }
 
-        private void ChangeSongs(string whichGenre, bool justSwitched)
+        private void ChangeSongs()
         {
-            if (MediaPlayer.State != MediaState.Playing && MediaPlayer.State != MediaState.Paused)
-            {
-                if (whichGenre == "default")
-                {
-                    MediaPlayer.Play(defaultSong);
-                }
-            }
             if (MediaPlayer.State == MediaState.Stopped && oldState == MediaState.Playing)
             {
 

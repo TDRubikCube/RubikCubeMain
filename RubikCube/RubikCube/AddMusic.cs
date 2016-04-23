@@ -59,7 +59,6 @@ namespace RubikCube
         private void AddMusic_Load(object sender, EventArgs e)
         {
             this.Visible = false;
-            //DialogResult result = openFileDialog1.ShowDialog();
             if (!Directory.Exists("c:/users/" + Environment.UserName + "/Documents/RubikCube/Songs"))
                 Directory.CreateDirectory("c:/users/" + Environment.UserName + "/Documents/RubikCube/Songs");
             string[] files = Directory.GetFiles("c:/users/" + Environment.UserName + "/Documents/RubikCube/Songs", "*", SearchOption.TopDirectoryOnly);
@@ -70,15 +69,6 @@ namespace RubikCube
                         files[i].Length - (36 + Environment.UserName.Length));
                 comboBox1.Items.Add(name);
             }
-            //if (result == DialogResult.OK)
-            //{
-            //    FileStream fileStream = File.Create("c:/users/" + Environment.UserName + "/Documents/RubikCube/Songs" + currentSong + ".mp3");
-            //    Stream stream = openFileDialog1.OpenFile();
-            //    stream.CopyTo(fileStream);
-            //    stream.Close();
-            //    fileStream.Close();
-            //    comboBox1.Items.Add(currentSong);
-            //}
 
         }
     }

@@ -132,7 +132,7 @@ namespace RubikCube
                 button.BtnMute.Update(true, gameTime);
                 button.BtnUnMute.Update(true, gameTime);
                 MuteEvent();
-                gameState.Update(gameTime, GraphicsDevice);
+                gameState.Update(gameTime, GraphicsDevice,music);
             }
             else
             {
@@ -177,18 +177,25 @@ namespace RubikCube
         /// </summary>
         private void Load()
         {
-            gameState = new SwitchGameState(GraphicsDevice, graphics, Content);
+            gameState = new SwitchGameState(GraphicsDevice, graphics, Content,music);
             music = new Music(graphics, GraphicsDevice, Content);
             button = new ButtonSetUp(graphics, GraphicsDevice, Content);
             clocks = new Clocks();
             clocks.InitTimer(200);
-            Debug.WriteLine(Path.GetFullPath("..\\.\\..\\..\\script.vbs"));
-            string path = "C:/Users/" + Environment.UserName + "/Desktop/script.vbs";
-            Process runScript = new Process();
-            runScript.StartInfo.FileName = (@path);
-            runScript.Start();
-            runScript.WaitForExit();
-            runScript.Close();
+            try
+            {
+                string path = "C:/Users/" + Environment.UserName + "/Desktop/script.vbs";
+                Process runScript = new Process();
+                runScript.StartInfo.FileName = (@path);
+                runScript.Start();
+                runScript.WaitForExit();
+                runScript.Close();
+            }
+            catch (Exception)
+            {
+                
+            }
+
             justFinshed = true;
         }
 
