@@ -64,8 +64,11 @@ namespace RubikCube
         {
             this.IsFixedTimeStep = false;
             this.IsMouseVisible = true;
+<<<<<<< HEAD:RubikCube/RubikCube/Main.cs
             Window.AllowUserResizing = false;
             Window.Title = "Best Rubik's Cube Game";
+=======
+>>>>>>> refs/remotes/origin/Denis'-branch:RubikCube/RubikCube/Game1.cs
             this.IsFixedTimeStep = false;
             loading = new LoadingScreen(Content);
             loadingThread = new Thread(Load);
@@ -105,9 +108,14 @@ namespace RubikCube
             //loading logic
             if (!loadingThread.IsAlive)
             {
+<<<<<<< HEAD:RubikCube/RubikCube/Main.cs
                 if ((justFinshed) && (!isDoneLoading))
                 {
                     save = new SaveGame("C:/Users/" + Environment.UserName + "/Documents/RubikCube/save.xml", "root");
+=======
+                if ((justFinshed)&&(!isDoneLoading))
+                {
+>>>>>>> refs/remotes/origin/Denis'-branch:RubikCube/RubikCube/Game1.cs
                     isDoneLoading = true;
                     Debug.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~"); //should upgrade to DebbugBorders (~~~) but too afraid to StuckOverflow the game.
                 }
@@ -121,7 +129,7 @@ namespace RubikCube
                 // checks if the loading & the Clocks are done
                 if (justFinshed && clocks.CallTimer(gameTime))
                 {
-                    MediaPlayer.Resume();
+                    //MediaPlayer.Resume();
                     if (isFirstTime)
                     {
                         save.AddBool("isFirstTime", "false");
