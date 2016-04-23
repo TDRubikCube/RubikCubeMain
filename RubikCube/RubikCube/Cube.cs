@@ -187,9 +187,12 @@ namespace RubikCube
             }
             if (howManyTurns == (110 - RotationSpeed) / 10)
             {
+<<<<<<< HEAD
                 //cubeConfig.CheckFaceColor();
                 cubeConfig.Rotate(side,isClockWise);
                 //cubeConfig.CheckFaceColor();
+=======
+>>>>>>> refs/remotes/origin/Denis'-branch
                 cubeState.Rotate(side, isClockWise);
                 howManyTurns = 0;
             }
