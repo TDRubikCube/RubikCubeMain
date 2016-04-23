@@ -60,7 +60,6 @@ namespace RubikCube
         protected override void Initialize()
         {
             this.IsMouseVisible = true;
-            Window.AllowUserResizing = true;
             this.IsFixedTimeStep = false;
             loading = new LoadingScreen(Content);
             loadingThread = new Thread(Load);
@@ -114,7 +113,7 @@ namespace RubikCube
                 // checks if the loading & the timer are done
                 if (justFinshed && timer.CallTimer(gameTime))
                 {
-                    MediaPlayer.Resume();
+                    //MediaPlayer.Resume();
                     if (isFirstTime)
                     {
                         popup.Show();
