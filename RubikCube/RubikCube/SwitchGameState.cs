@@ -31,6 +31,8 @@ namespace RubikCube
         //creates an instance of buttonSetUp
         readonly ButtonSetUp button;
 
+        private Tutorial tutorial;
+
         //creates an instance of Camera
         private readonly Camera camera;
 
@@ -172,7 +174,7 @@ namespace RubikCube
             solve = new SelfSolve(cube);
             music = _music;
             textbox = new TextBox(cube, content);
-            button = new ButtonSetUp(graphics, graphicsDevice, content);
+            button = new ButtonSetUp(graphicsDevice, content);
             //loads the cube model
             cube.Model = content.Load<Model>("rubik");
             //loads the texture for the background of the letters in the textbox
@@ -190,6 +192,9 @@ namespace RubikCube
             projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45f), graphicsDevice.Viewport.AspectRatio, 10f, 200f);
 
         }
+
+        public Dictionary<string, bool> CheckKeysTTR { get; set; }
+        public bool IsUsingKeyboard { get; set; }
 
         #region private methods
 
@@ -467,6 +472,7 @@ namespace RubikCube
                         //rotate clockWise
                         cube.Rotate(CharToVector(s), true, AlgOrder);
                     }
+                    YAlgOrder = "";
                 }
             }
         }
@@ -500,8 +506,7 @@ namespace RubikCube
                     break;
                 //if its the tutorial
                 case GameState.Tutorial:
-                    //check for click on the "escape" button which will return to the main menu
-                    if (keyboardState.IsKeyDown(Keys.Escape)) CurrentGameState = GameState.MainMenu;
+                    UpdateTutorial(keyboardState);
                     break;
                 //if its the options
                 case GameState.Options:
@@ -513,6 +518,17 @@ namespace RubikCube
             }
         }
 
+        private void UpdateTutorial(KeyboardState keyboardState)
+        {
+            //check for click on the "escape" button which will return to the main menu
+            if (keyboardState.IsKeyDown(Keys.Escape)) CurrentGameState = GameState.MainMenu;
+        }
+
+        /// <summary>
+        /// update of the freeplay state
+        /// </summary>
+        /// <param name="keyboardState"></param>
+        /// <param name="gameTime"></param>
         private void UpdateFreePlay(KeyboardState keyboardState, GameTime gameTime)
         {
             //check for click on the "escape" button which will return to the main menu
@@ -564,6 +580,11 @@ namespace RubikCube
             button.BtnSolve.Update(false, gameTime);
         }
 
+        /// <summary>
+        /// udpate of the options state
+        /// </summary>
+        /// <param name="keyboardState"></param>
+        /// <param name="gameTime"></param>
         private void UpdateOptions(KeyboardState keyboardState, GameTime gameTime)
         {
             //check for click on the russian button, and switch to russian if clicked
@@ -584,6 +605,10 @@ namespace RubikCube
             if (keyboardState.IsKeyDown(Keys.Escape)) CurrentGameState = GameState.MainMenu;
         }
 
+        /// <summary>
+        /// update of the main menu state
+        /// </summary>
+        /// <param name="gameTime"></param>
         private void UpdateMainMenu(GameTime gameTime)
         {
             //check for click on the freePlay button
@@ -705,11 +730,11 @@ namespace RubikCube
         {
             switch (CurrentGameState)
             {
-                    //if its the main menu
+                //if its the main menu
                 case GameState.MainMenu:
                     DrawMainMenu(spriteBatch);
                     break;
-                    //if its free play
+                //if its free play
                 case GameState.FreePlay:
                     DrawFreePlay(spriteBatch);
                     break;
@@ -738,16 +763,16 @@ namespace RubikCube
             //draw the english button
             button.BtnEnglish.Draw(spriteBatch);
             //draw the title
-            spriteBatch.DrawString(font, lang.OptionsTitle, new Vector2(graphicsDevice.Viewport.Width/3f, 10), Color.Black);
+            spriteBatch.DrawString(font, lang.OptionsTitle, new Vector2(graphicsDevice.Viewport.Width / 3f, 10), Color.Black);
             //draw the "add music"
             spriteBatch.DrawString(font, lang.OptionsAddMusic,
-                new Vector2(graphicsDevice.Viewport.Width/2f - font.MeasureString(lang.OptionsAddMusic).X/2, 100), Color.Black);
+                new Vector2(graphicsDevice.Viewport.Width / 2f - font.MeasureString(lang.OptionsAddMusic).X / 2, 100), Color.Black);
             //draw the word "english" above the button
-            spriteBatch.DrawString(font, "English", new Vector2(graphicsDevice.Viewport.Width/2.5f, 440), Color.Black);
+            spriteBatch.DrawString(font, "English", new Vector2(graphicsDevice.Viewport.Width / 2.5f, 440), Color.Black);
             //draw the word "hebrew" above the button
-            spriteBatch.DrawString(font, "ת י ר ב ע", new Vector2(graphicsDevice.Viewport.Width/1.85f, 440), Color.Black);
+            spriteBatch.DrawString(font, "ת י ר ב ע", new Vector2(graphicsDevice.Viewport.Width / 1.85f, 440), Color.Black);
             //draw the word "russian" above the button
-            spriteBatch.DrawString(font, "Russian", new Vector2(graphicsDevice.Viewport.Width/1.55f, 440), Color.Black);
+            spriteBatch.DrawString(font, "Russian", new Vector2(graphicsDevice.Viewport.Width / 1.55f, 440), Color.Black);
             spriteBatch.End();
         }
 
@@ -755,7 +780,7 @@ namespace RubikCube
         {
             spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
             //draw the title
-            spriteBatch.DrawString(font, lang.MainTitle, new Vector2(graphicsDevice.Viewport.Width/3f, 10), Color.Black);
+            spriteBatch.DrawString(font, lang.MainTitle, new Vector2(graphicsDevice.Viewport.Width / 3f, 10), Color.Black);
             //draw the tutorial button
             button.BtnTutorial.Draw(spriteBatch);
             //draw the options button
@@ -769,28 +794,28 @@ namespace RubikCube
         {
             spriteBatch.Begin();
             //draw the title
-            spriteBatch.DrawString(font, lang.FreePlayTitle, new Vector2(graphicsDevice.Viewport.Width/3f, 10), Color.Black);
+            spriteBatch.DrawString(font, lang.FreePlayTitle, new Vector2(graphicsDevice.Viewport.Width / 3f, 10), Color.Black);
             //draw the "scramble"
             spriteBatch.DrawString(font, lang.FreePlayScramble,
-                new Vector2(graphicsDevice.Viewport.Width/13f, graphicsDevice.Viewport.Height/1.4f), Color.Black);
+                new Vector2(graphicsDevice.Viewport.Width / 13f, graphicsDevice.Viewport.Height / 1.4f), Color.Black);
             //draw the "solve"
             spriteBatch.DrawString(font, lang.FreePlaySolve,
-                new Vector2(graphicsDevice.Viewport.Width/4f, graphicsDevice.Viewport.Height/1.4f), Color.Black);
+                new Vector2(graphicsDevice.Viewport.Width / 4f, graphicsDevice.Viewport.Height / 1.4f), Color.Black);
             //draw the show/hide stopper
             spriteBatch.DrawString(font, lang.FreePlayStopperShow,
-                new Vector2(graphicsDevice.Viewport.Width/1.35f, graphicsDevice.Viewport.Height/2f), Color.Black);
+                new Vector2(graphicsDevice.Viewport.Width / 1.35f, graphicsDevice.Viewport.Height / 2f), Color.Black);
             //draw the pause stopper                    
             spriteBatch.DrawString(font, lang.FreePlayStopperPause,
-                new Vector2(graphicsDevice.Viewport.Width/1.35f, 50 + graphicsDevice.Viewport.Height/2f), Color.Black);
+                new Vector2(graphicsDevice.Viewport.Width / 1.35f, 50 + graphicsDevice.Viewport.Height / 2f), Color.Black);
             //draw the resume stopper
             spriteBatch.DrawString(font, lang.FreePlayStopperResume,
-                new Vector2(graphicsDevice.Viewport.Width/1.35f, 100 + graphicsDevice.Viewport.Height/2f), Color.Black);
+                new Vector2(graphicsDevice.Viewport.Width / 1.35f, 100 + graphicsDevice.Viewport.Height / 2f), Color.Black);
             //draw the reset stopper
             spriteBatch.DrawString(font, lang.FreePlayStopperReset,
-                new Vector2(graphicsDevice.Viewport.Width/1.35f, 150 + graphicsDevice.Viewport.Height/2f), Color.Black);
+                new Vector2(graphicsDevice.Viewport.Width / 1.35f, 150 + graphicsDevice.Viewport.Height / 2f), Color.Black);
             //draw the stppper
             if (shouldShowStopper)
-                clocks.DrawStoper(spriteBatch, font, new Vector2(graphicsDevice.Viewport.Width/3f, 30));
+                clocks.DrawStoper(spriteBatch, font, new Vector2(graphicsDevice.Viewport.Width / 3f, 30));
             //draw the scramble button
             button.BtnScramble.Draw(spriteBatch);
             //draw the solve button
@@ -1103,7 +1128,7 @@ namespace RubikCube
                     {
                         //rotation right
                         if (centerOfClickedMesh.Y < 3)
-                            AlgOrder += "dI";
+                            AlgOrder += "DI";
                         else if (centerOfClickedMesh.Y > 4)
                         {
                             AlgOrder += "UI";
@@ -1113,7 +1138,7 @@ namespace RubikCube
                     {
                         //rotation left
                         if (centerOfClickedMesh.Y < 3)
-                            AlgOrder += "d";
+                            AlgOrder += "D";
                         else if (centerOfClickedMesh.Y > 4)
                         {
                             AlgOrder += "U";

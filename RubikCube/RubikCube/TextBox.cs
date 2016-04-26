@@ -324,6 +324,23 @@ namespace RubikCube
                     realVectorBox += "I";
                 }
             }
+
+            int limit = realVectorBox.Length;
+            //replace any double ii
+            for (int i = 0; i < limit; i++)
+            {
+                realVectorBox = realVectorBox.Replace("II", "I");
+            }
+
+            //removes any useless i
+            if (realVectorBox.Length > 0)
+            {
+                if (realVectorBox[0] == 'I')
+                {
+                    realVectorBox = realVectorBox.Substring(1, realVectorBox.Length - 1);
+                }
+            }
+
             if (algOrder.Length == 0)
             {
                 EnterPressed = true;

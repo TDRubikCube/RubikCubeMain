@@ -17,9 +17,11 @@ namespace RubikCube
         public Button BtnRussian;
         public Button BtnScramble;
         public Button BtnSolve;
+        public Button BtnContinue;
+
         #endregion
 
-        public ButtonSetUp(GraphicsDeviceManager graphics, GraphicsDevice graphicsDevice, ContentManager content)
+        public ButtonSetUp(GraphicsDevice graphicsDevice, ContentManager content)
         {
             #region texture initialize
             Texture2D scrambleButton = content.Load<Texture2D>("pics/scramble");
@@ -32,56 +34,62 @@ namespace RubikCube
             Texture2D englishButton = content.Load<Texture2D>("pics/english");
             Texture2D hebrewButton = content.Load<Texture2D>("pics/hebrew");
             Texture2D russianButton = content.Load<Texture2D>("pics/russian");
+            Texture2D continueButton = content.Load<Texture2D>("pics/continue");
             #endregion
 
             #region buttons initialize
             //tutorial button
-            BtnTutorial = new Button(tutorialButton, graphics.GraphicsDevice);
+            BtnTutorial = new Button(tutorialButton, graphicsDevice);
             BtnTutorial.SetPosition(new Vector2(graphicsDevice.Viewport.Width / 2.5f, graphicsDevice.Viewport.Height/4.5f));
 
             //freeplay button
-            BtnFreePlay = new Button(freePlayButton, graphics.GraphicsDevice);
+            BtnFreePlay = new Button(freePlayButton, graphicsDevice);
             BtnFreePlay.SetPosition(new Vector2(graphicsDevice.Viewport.Width / 2.5f, graphicsDevice.Viewport.Height / 2.3f));
 
             //options button
-            BtnOptions = new Button(optionsButton, graphics.GraphicsDevice);
+            BtnOptions = new Button(optionsButton, graphicsDevice);
             BtnOptions.SetPosition(new Vector2(graphicsDevice.Viewport.Width / 2.7f, graphicsDevice.Viewport.Height / 1.5f));
             BtnOptions.Size = new Vector2(graphicsDevice.Viewport.Width / 4f, graphicsDevice.Viewport.Height / 4f);
 
             //mute button
-            BtnMute = new Button(muteButton, graphics.GraphicsDevice);
+            BtnMute = new Button(muteButton, graphicsDevice);
             BtnMute.SetPosition(new Vector2(graphicsDevice.Viewport.Width / 1.09f, graphicsDevice.Viewport.Height / 30f));
             BtnMute.Size = new Vector2(graphicsDevice.Viewport.Width / 12f, graphicsDevice.Viewport.Height / 11f);
             
             //unMute button
-            BtnUnMute = new Button(unMuteButton, graphics.GraphicsDevice);
+            BtnUnMute = new Button(unMuteButton, graphicsDevice);
             BtnUnMute.SetPosition(new Vector2(graphicsDevice.Viewport.Width / 1.09f, graphicsDevice.Viewport.Height / 30f));
             BtnUnMute.Size = new Vector2(graphicsDevice.Viewport.Width / 12.8f, graphicsDevice.Viewport.Height / 11.8f);
             
             //english button
-            BtnEnglish = new Button(englishButton, graphics.GraphicsDevice);
+            BtnEnglish = new Button(englishButton, graphicsDevice);
             BtnEnglish.SetPosition(new Vector2(graphicsDevice.Viewport.Width / 2.5f, graphicsDevice.Viewport.Height / 1.25f));
             BtnEnglish.Size = new Vector2(graphicsDevice.Viewport.Width / 10f, graphicsDevice.Viewport.Height / 10f);
             
             //hebrew button
-            BtnHebrew = new Button(hebrewButton, graphics.GraphicsDevice);
+            BtnHebrew = new Button(hebrewButton, graphicsDevice);
             BtnHebrew.SetPosition(new Vector2(graphicsDevice.Viewport.Width / 1.9f, graphicsDevice.Viewport.Height / 1.25f));
             BtnHebrew.Size = new Vector2(graphicsDevice.Viewport.Width / 10f, graphicsDevice.Viewport.Height / 10f);
 
             //russian button
-            BtnRussian = new Button(russianButton, graphics.GraphicsDevice);
+            BtnRussian = new Button(russianButton, graphicsDevice);
             BtnRussian.SetPosition(new Vector2(graphicsDevice.Viewport.Width / 1.55f, graphicsDevice.Viewport.Height / 1.25f));
             BtnRussian.Size = new Vector2(graphicsDevice.Viewport.Width / 10f, graphicsDevice.Viewport.Height / 10f);
 
             //scramble button
-            BtnScramble = new Button(scrambleButton, graphics.GraphicsDevice);
+            BtnScramble = new Button(scrambleButton, graphicsDevice);
             BtnScramble.SetPosition(new Vector2(graphicsDevice.Viewport.Width / 20f, graphicsDevice.Viewport.Height / 1.25f));
             BtnScramble.Size = new Vector2(graphicsDevice.Viewport.Width / 6f, graphicsDevice.Viewport.Height / 5f);
             
             //solved button
-            BtnSolve = new Button(solveButton, graphics.GraphicsDevice);
+            BtnSolve = new Button(solveButton, graphicsDevice);
             BtnSolve.SetPosition(new Vector2(graphicsDevice.Viewport.Width / 4.5f, graphicsDevice.Viewport.Height / 1.25f));
             BtnSolve.Size = new Vector2(graphicsDevice.Viewport.Width / 7f, graphicsDevice.Viewport.Height / 5f);
+            
+            //continue button
+            BtnContinue = new Button(continueButton, graphicsDevice);
+            BtnContinue.SetPosition(new Vector2(graphicsDevice.Viewport.Width / 2f - continueButton.Width/2f, graphicsDevice.Viewport.Height - continueButton.Height));
+            BtnContinue.Size = new Vector2(continueButton.Width,continueButton.Height);
             #endregion
         }
 

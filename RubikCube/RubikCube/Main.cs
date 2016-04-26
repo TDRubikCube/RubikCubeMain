@@ -230,7 +230,7 @@ namespace RubikCube
             //loads the main classes
             gameState = new SwitchGameState(GraphicsDevice, graphics, Content, music);
             music = new Music(graphics, GraphicsDevice, Content);
-            button = new ButtonSetUp(graphics, GraphicsDevice, Content);
+            button = new ButtonSetUp(GraphicsDevice, Content);
             clocks = new Clocks();
             
             //sets the timer to 200 ms
