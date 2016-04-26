@@ -1,78 +1,169 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
+using System.Windows.Forms;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using ButtonState = Microsoft.Xna.Framework.Input.ButtonState;
+using Keys = Microsoft.Xna.Framework.Input.Keys;
 
 /*
 using System.Of[A].Down; */
 
 namespace RubikCube
 {
+    //defines the 4 main states of the game, each of which is an option of a "GameState"
     public enum GameState
     {
         MainMenu, Tutorial, FreePlay, Options
     }
+
     public class SwitchGameState
     {
         #region classes & xna.vars declaration
 
-        readonly Cube cube;
+        //creates an instance of buttonSetUp
         readonly ButtonSetUp button;
-        readonly Text lang;
-        readonly SelfSolve solve;
-        private Music music;
-        readonly Matrix world;
+
+        //creates an instance of Camera
         private readonly Camera camera;
-        Matrix view;
-        readonly TextBox textbox;
-        readonly Matrix projection;
-        private Vector3 cameraPos;
-        KeyboardState oldKeyboardState;
-        MouseState oldMouseState;
-        Ray currentRay;
-        readonly SpriteFont font;
+
+        //creates an instance of Clocks
         private readonly Clocks clocks;
-        readonly SpriteFont mono;
-        Point mousePos;
-        Vector3 centerOfClickedMesh = Vector3.Zero;
-        string currentFace = "";
-        private string faceClosestToRay = "";
+
+        //creates an instance of cube
+        readonly Cube cube;
+
+        //creates a graphicsDevice, in order for it to be accessible in the whole class
         private GraphicsDevice graphicsDevice;
-        private float previousDistanceToMesh;
+
+        //creates a keyboardState to save the keyboardState that was in the last frame
+        KeyboardState oldKeyboardState;
+
+        //creates the projection matrix
+        readonly Matrix projection;
+
+        //creates the view matrix
+        Matrix view;
+
+        //creates the world matrix
+        readonly Matrix world;
+
+        //creates a mouseState to save the mouseState that was in the last frame        
+        MouseState oldMouseState;
+
+        //creates an instance of music
+        private Music music;
+
+        //creates a point which will represent the position of the mouse
+        Point mousePos;
+
+        //creates an instace of Text
+        readonly Text lang;
+
+        //creates an instance of SelfSolve
+        readonly SelfSolve solve;
+
+        //creates an instance of TextBox
+        readonly TextBox textbox;
+
+        //creates a 3d vector represting the position of the camera
+        private Vector3 cameraPos;
+
+        //creates a ray that will represent the current ray projected
+        Ray currentRay;
+
+        //creates 2 font instances
+        readonly SpriteFont font;
+        readonly SpriteFont mono;
+
+        //creates a 3d vector representing the location of the center of the mesh clicked
+        Vector3 centerOfClickedMesh = Vector3.Zero;
 
         #endregion
 
         #region normal vars
 
+        //the face shown to the camera, which is the "front" face
+        string currentFace = "";
+
+        //distance to previous mesh checked
+        private float previousDistanceToMesh;
+
+        //the face which is closest to the point where the ray hit
+        private string faceClosestToRay = "";
+
+        //the scale of the cube
         private float currentScale;
-        public bool JustSwitched = false;
+
+        //the order of the algorithms
         public string AlgOrder = "";
+
+        //sets whether the camera should move or not    
         bool shouldAllowCameraMovement = true;
+
+        //history of all algorithms
         public string AllTimeAlgOrder = "";
+
+        //history of ctrl Z
         public string YAlgOrder = "";
+
+        //number of rotations left (used for debugging only)
         public int RotationsLeft;
+
+        //checks if should rotate or not (used for the scramble function)
         public bool ShouldRotate;
+
+        //defines the current game state
         public GameState CurrentGameState;
+
+        //checks if the mesh the ray currently colided with, has changed
         private bool changeDetected;
+
+        //the mouse position at the moment of pressing the mouse (when trying to rotate the cube)
         private Point mousePosOnClick;
+
+        //direction of the current ray
         private Vector3 direction;
+
+        // defines all the cube colors
         private readonly List<string> allCubeColors;
+
+        //marks whethear the stopeer should be visible/hidden
         private bool shouldShowStopper;
+
+        //marks whether the stopper should run or not
         private bool shouldRunStopper;
+
+        //texture used for the background of letters in the textbx
         readonly Texture2D textTex;
 
         #endregion
 
+        /// <summary>
+        /// in charge of the logic of what info such as buttons and text to show in each state of the game
+        /// also sends info between different classes and states
+        /// </summary>
+        /// <param name="graphicsDeviceFromMain">takes the graphicsDevice from Main</param>
+        /// <param name="graphics">takes the graphicsDeviceManager from Main</param>
+        /// <param name="content">takes the contentManager from Main</param>
+        /// <param name="_music">takes the Music from Main</param>
         public SwitchGameState(GraphicsDevice graphicsDeviceFromMain, GraphicsDeviceManager graphics, ContentManager content, Music _music)
         {
+            //sets the stopper to run and be shown
             shouldRunStopper = true;
             shouldShowStopper = true;
+            //sets the graphics device as the one from main
             graphicsDevice = graphicsDeviceFromMain;
+            //sets the cube colors (without the top and bottom)
             allCubeColors = new List<string> { "white", "yellow", "green", "blue" };
+
             //class initialize
             lang = new Text();
             cube = new Cube();
@@ -81,23 +172,21 @@ namespace RubikCube
             solve = new SelfSolve(cube);
             music = _music;
             textbox = new TextBox(cube, content);
-            button = new ButtonSetUp(graphics, graphicsDevice, content)
-            {
-                ClassicBound =
-                    new Rectangle((int)(graphicsDevice.Viewport.Width / 1.32f), graphicsDevice.Viewport.Height / 3, 60, 40),
-                RockBound =
-                    new Rectangle((int)(graphicsDevice.Viewport.Width / 1.55f), graphicsDevice.Viewport.Height / 3, 50, 40)
-            };
+            button = new ButtonSetUp(graphics, graphicsDevice, content);
+            //loads the cube model
             cube.Model = content.Load<Model>("rubik");
+            //loads the texture for the background of the letters in the textbox
             textTex = content.Load<Texture2D>("pics/TextSquere");
 
-            //text
+            //loads the font files
             font = content.Load<SpriteFont>("font");
             mono = content.Load<SpriteFont>("mono");
 
-            //matrixes
+            //sets where the model is in relation to the whole world
             world = Matrix.CreateTranslation(new Vector3(0, 0, 0));
+            //sets the camera matrix
             view = camera.View;
+            //determines properties of the camera such as field of view, min distance to object...
             projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45f), graphicsDevice.Viewport.AspectRatio, 10f, 200f);
 
         }
@@ -112,86 +201,202 @@ namespace RubikCube
         /// <param name="cameraPos"></param>
         private void RotateWhichSide(KeyboardState keyboardState, KeyboardState oldKeyboardState, Vector3 cameraPos)
         {
+            //make the camera find all the "real vectors"
             camera.RealRotate(cameraPos);
+            //checks whether it should rotate or not
             if (cube.Angle <= -100)
             {
-                if ((AlgOrder[0] == 'Z') || (AlgOrder[0] == 'z'))
+                //checks for any kind of useless comands and removes the letter of the command that just finished
+                RemoveLettersAfterRotation();
+
+                //sets the number of rotations left in total  (used for debug) and other debug stuff
+                StuffToDebugAfterRotation();
+
+                //reset the angle of rotation, since the rotation is done
+                cube.Angle = 0;
+            }
+
+            //more debug stuff 
+            CheckStuffInDebug(keyboardState, oldKeyboardState, cameraPos);
+
+            //check for a press of ctrl+y or ctrl +z
+            CheckPressOfCtrl(keyboardState, oldKeyboardState);
+
+            //check all possible rotations
+            CheckForRotation();
+        }
+
+        /// <summary>
+        /// removes any useless commands and deletes the last command that just finished
+        /// </summary>
+        private void RemoveLettersAfterRotation()
+        {
+            //sets the limit to the loop (nneded since the var used to set limit will change during the loop)
+            int limit = AllTimeAlgOrder.Length - 1;
+
+            //replace any double ii
+            for (int i = 0; i < limit; i++)
+            {
+                AllTimeAlgOrder = AllTimeAlgOrder.Replace("II", "I");
+            }
+
+            //removes any useless i
+            if (AllTimeAlgOrder.Length > 0)
+            {
+                if (AllTimeAlgOrder[0] == 'I')
                 {
-                    char lastCommnad = AllTimeAlgOrder[AllTimeAlgOrder.Length - 1];
-                    if ((lastCommnad == 'I') || (lastCommnad == 'i'))
-                    {
-                        YAlgOrder = lastCommnad + YAlgOrder;
-                        AllTimeAlgOrder = AllTimeAlgOrder.Substring(0, AllTimeAlgOrder.Length - 1);
-                    }
-                    YAlgOrder = lastCommnad + YAlgOrder;
+                    AllTimeAlgOrder = AllTimeAlgOrder.Substring(1, AllTimeAlgOrder.Length - 1);
+                }
+            }
+
+            //checks if the first letter is 'Z'
+            if ((AlgOrder[0] == 'Z') || (AlgOrder[0] == 'z'))
+            {
+                //inserts the one that z erased and puts it into Yalgo
+                char lastCommnad = AllTimeAlgOrder[AllTimeAlgOrder.Length - 1];
+
+                if ((lastCommnad == 'I') || (lastCommnad == 'i'))
+                {
+                    YAlgOrder += lastCommnad;
+
+                    //deletes the last letter in alltimealgo if its I
                     AllTimeAlgOrder = AllTimeAlgOrder.Substring(0, AllTimeAlgOrder.Length - 1);
-                }
-                if ((AlgOrder[0] == 'Y') || (AlgOrder[0] == 'y'))
-                {
-                    Debug.WriteLine("HELLO 1");
-                    AllTimeAlgOrder += YAlgOrder[0];
-                    YAlgOrder = YAlgOrder.Substring(1);
-                    if (YAlgOrder.Length > 0)
-                    {
-                        if ((YAlgOrder[0] == 'I') || (YAlgOrder[0] == 'i'))
-                        {
-                            Debug.WriteLine("HELLO 2");
-                            AllTimeAlgOrder += YAlgOrder[0];
-                            YAlgOrder = YAlgOrder.Substring(1);
-                        }
-                    }
-                    Debug.WriteLine("HELLO 3");
-                }
-                //////////////////////////////////////////////////////
-                Debug.WriteLine("Original=   " + AlgOrder);
-                if (AlgOrder.Length > 1)
-                {
-                    if ((AlgOrder[1] == 'i') || (AlgOrder[1] == 'I') || (AlgOrder[1] == '\''))
-                    {
-                        AllTimeAlgOrder += "I";
-                        AlgOrder = AlgOrder.Substring(2);
-                    }
-                    else
-                    {
-                        AlgOrder = AlgOrder.Substring(1);
 
-                    }
-                    Debug.WriteLine("After Change" + AlgOrder);
+                    //sets the new last command in alltimealgo
+                    lastCommnad = AllTimeAlgOrder[AllTimeAlgOrder.Length - 1];
+                }
 
+                //adds to Yalgo the last letter, and removes the last in alltimealgo
+                YAlgOrder += lastCommnad;
+                AllTimeAlgOrder = AllTimeAlgOrder.Substring(0, AllTimeAlgOrder.Length - 1);
+            }
+            //checks if the first letter is y
+            if ((AlgOrder[0] == 'Y') || (AlgOrder[0] == 'y'))
+            {
+                //add the last letter in yalgo, into alltimealgo
+                AllTimeAlgOrder += YAlgOrder[YAlgOrder.Length - 1];
+                //removes the last letter in yalgo
+                YAlgOrder = YAlgOrder.Substring(0, YAlgOrder.Length - 1);
+                //checks for an I
+                if (YAlgOrder.Length > 0)
+                {
+                    if ((YAlgOrder.Last() == 'I') || (YAlgOrder.Last() == 'i'))
+                    {
+                        //adds to alltimealgo the last letter in yalgo
+                        AllTimeAlgOrder += YAlgOrder.Last();
+                        //removes the last letter in yalgo
+                        YAlgOrder = YAlgOrder.Substring(0, YAlgOrder.Length - 1);
+                    }
+                }
+            }
+
+            //checks for an i
+            if (AlgOrder.Length > 1)
+            {
+                if ((AlgOrder[1] == 'i') || (AlgOrder[1] == 'I') || (AlgOrder[1] == '\''))
+                {
+                    //removes the i from algo, as well as the last command
+                    AlgOrder = AlgOrder.Substring(2);
                 }
                 else
                 {
-
-                    AlgOrder = "";
+                    //removes the last command from algo
+                    AlgOrder = AlgOrder.Substring(1);
                 }
-                RotationsLeft = AlgOrder.Length;
-                if (AlgOrder.Split('i').Length != -1)
-                {
-                    RotationsLeft -= AlgOrder.Split('i').Length - 1;
-
-                }
-                if (AlgOrder.Split('I').Length != -1)
-                {
-                    RotationsLeft -= AlgOrder.Split('I').Length - 1;
-
-                }
-                if (AlgOrder.Split('\'').Length != -1)
-                {
-                    RotationsLeft -= AlgOrder.Split('\'').Length - 1;
-
-                }
-                Debug.WriteLine("Number of rotations left:" + RotationsLeft);
-                Debug.WriteLine("AllTimeAlgOrder " + AllTimeAlgOrder);
-                Debug.WriteLine("YAlgOrder " + YAlgOrder);
-                cube.Angle = 0;
             }
-            /////////////
+            else
+            {
+                //if algo has just 1 letter in it, than make algo empty
+                AlgOrder = "";
+            }
+        }
+
+        /// <summary>
+        /// check for all possible torations
+        /// </summary>
+        private void CheckForRotation()
+        {
+            //makes sure that algo is not empty
+            if (AlgOrder.Length > 0)
+            {
+                //checks for ctrl+z
+                if ((AlgOrder[0] == 'Z') || (AlgOrder[0] == 'z'))
+                {
+                    //makes sure alltimealgo is not empty since ctrl+z depands on it
+                    if (AllTimeAlgOrder.Length > 0)
+                    {
+                        //make the turns using the following method
+                        ControlZ();
+                    }
+                    else
+                    {
+                        //this is in case of an error, it will make algorder empty (in most cases)
+                        AlgOrder = AlgOrder.Substring(1);
+                    }
+                }
+                //checks for ctrl+y
+                else if ((AlgOrder[0] == 'Y') || (AlgOrder[0] == 'y'))
+                {
+                    //makes sure that yalgo is not empty
+                    if (YAlgOrder.Length > 0)
+                    {
+                        //calls the method that make the turns
+                        ControlY();
+                    }
+                    else
+                    {
+                        //this is in case of an error, it makes algorder empty(in mose cases)
+                        AlgOrder = AlgOrder.Substring(1);
+                    }
+                }
+                else
+                {
+                    //check all other letters
+                    CheckAlgOrder();
+                }
+            }
+        }
+
+        /// <summary>
+        /// check for press of ctrl+z or ctrl +y
+        /// </summary>
+        /// <param name="keyboardState">current keyboard state</param>
+        /// <param name="oldKeyboardState">old keyboard state</param>
+        private void CheckPressOfCtrl(KeyboardState keyboardState, KeyboardState oldKeyboardState)
+        {
+            if ((keyboardState.IsKeyDown(Keys.LeftControl) || keyboardState.IsKeyDown(Keys.RightControl)))
+            {
+                //checks for a press of z
+                if (keyboardState.IsKeyUp(Keys.Z) && oldKeyboardState.IsKeyDown(Keys.Z) && AllTimeAlgOrder.Length > 0)
+                {
+                    AlgOrder += "Z";
+                }
+                //checks for a press of y
+                else if (keyboardState.IsKeyUp(Keys.Y) && oldKeyboardState.IsKeyDown(Keys.Y) && YAlgOrder.Length > 0)
+                {
+                    AlgOrder += "y";
+                }
+            }
+        }
+
+        /// <summary>
+        /// some debug options for the programmer
+        /// </summary>
+        /// <param name="keyboardState">current keyboard state</param>
+        /// <param name="oldKeyboardState">old keyboard state</param>
+        /// <param name="cameraPos">the camera position as a 3d vector</param>
+        private void CheckStuffInDebug(KeyboardState keyboardState, KeyboardState oldKeyboardState, Vector3 cameraPos)
+        {
+            //if user pressed q
             if (keyboardState.IsKeyDown(Keys.Q) && oldKeyboardState.IsKeyUp(Keys.Q))
             {
+                //make a /n line
                 DebugBorders("");
             }
+            //if user pressed w
             if (keyboardState.IsKeyDown(Keys.W) && oldKeyboardState.IsKeyUp(Keys.W))
             {
+                //debug all the following info
                 DebugBorders("w");
                 Debug.WriteLine("AlgOrder is: " + AlgOrder);
                 Debug.WriteLine("AllTimeAlgOrder is: " + AllTimeAlgOrder);
@@ -202,183 +407,68 @@ namespace RubikCube
                 Debug.WriteLine("Angle is: " + cube.Angle);
                 DebugBorders("w");
             }
-            if ((keyboardState.IsKeyDown(Keys.LeftControl) || keyboardState.IsKeyDown(Keys.RightControl)) && keyboardState.IsKeyUp(Keys.Z) && oldKeyboardState.IsKeyDown(Keys.Z))
+        }
+
+        /// <summary>
+        /// make some changes to rotations left and debug other info
+        /// </summary>
+        private void StuffToDebugAfterRotation()
+        {
+            //set rotations left
+            RotationsLeft = AlgOrder.Length;
+            //check for algorder length without the I's
+            if (AlgOrder.Split('i').Length != -1)
             {
-                if (AllTimeAlgOrder.Length > 0)
-                {
-                    AlgOrder += "Z";
-                }
+                RotationsLeft -= AlgOrder.Split('i').Length - 1;
             }
-            if ((keyboardState.IsKeyDown(Keys.LeftControl) || keyboardState.IsKeyDown(Keys.RightControl)) && keyboardState.IsKeyUp(Keys.Y) && oldKeyboardState.IsKeyDown(Keys.Y))
+            if (AlgOrder.Split('I').Length != -1)
             {
-                if (YAlgOrder.Length > 0)
-                    AlgOrder += "y";
+                RotationsLeft -= AlgOrder.Split('I').Length - 1;
             }
-
-            UpdateAlgo(AlgOrder);
-
-            //here the fun starts
-            //Debug.WriteLine("algOrder=    "+algOrder);
-
-            if (true) //Because we're getting rid of this fucking function ayyy
+            if (AlgOrder.Split('\'').Length != -1)
             {
-                if (AlgOrder.Length > 0)
+                RotationsLeft -= AlgOrder.Split('\'').Length - 1;
+            }
+            //debug some info
+            Debug.WriteLine("Number of rotations left:" + RotationsLeft);
+            Debug.WriteLine("AllTimeAlgOrder " + AllTimeAlgOrder);
+            Debug.WriteLine("YAlgOrder " + YAlgOrder);
+        }
+
+        /// <summary>
+        /// checks if the first command in algorder is any of the 6 sides
+        /// </summary>
+        private void CheckAlgOrder()
+        {
+            // a list containing all sides as letters
+            List<string> allSides = new List<string> { "L", "R", "U", "D", "F", "B" };
+            //run through all the letters
+            foreach (var s in allSides)
+            {
+                //if algorder is any of the letters than rotate that side
+                if (AlgOrder[0].ToString() == s)
                 {
-                    if ((AlgOrder[0] == 'Z') || (AlgOrder[0] == 'z')) //Check for control+Z
+                    //checks for an I
+                    if (AlgOrder.Length > 1)
                     {
-                        if (AllTimeAlgOrder.Length > 0)
+                        if ((AlgOrder[1] == 'i') || (AlgOrder[1] == 'I') || (AlgOrder[1] == '\''))
                         {
-                            ControlZ();
+                            //rotate counterClockWise
+                            cube.Rotate(CharToVector(s), false, AlgOrder);
                         }
                         else
                         {
-                            AlgOrder = AlgOrder.Substring(1);
-                            Console.Beep();
-                        }
-                    }
-                    else if ((AlgOrder[0] == 'Y') || (AlgOrder[0] == 'y')) //Check for control+Y
-                    {
-                        if (YAlgOrder.Length > 0)
-                        {
-                            ControlY();
-                        }
-                        else
-                        {
-                            AlgOrder = AlgOrder.Substring(1);
-                            Console.Beep(1, 100);
-                            Console.Beep(5, 100);
-                        }
-                    }
-
-                    else if ((AlgOrder[0] == 'L') || (AlgOrder[0] == 'l'))
-                    {
-                        if (AlgOrder.Length > 1)
-                        {
-                            if ((AlgOrder[1] == 'i') || (AlgOrder[1] == 'I') || (AlgOrder[1] == '\''))
-                            {
-                                cube.Rotate(CharToVector("L"), false, AlgOrder);
-                            }
-                            else
-                            {
-                                cube.Rotate(CharToVector("L"), true, AlgOrder);
-                            }
-                        }
-                        else
-                        {
-                            cube.Rotate(CharToVector("L"), true, AlgOrder);
-                        }
-                    }
-                    else if ((AlgOrder[0] == 'R') || (AlgOrder[0] == 'r'))
-                    {
-                        if (AlgOrder.Length > 1)
-                        {
-                            if ((AlgOrder[1] == 'i') || (AlgOrder[1] == 'I') || (AlgOrder[1] == '\''))
-                            {
-                                cube.Rotate(CharToVector("R"), false, AlgOrder);
-                            }
-                            else
-                            {
-                                cube.Rotate(CharToVector("R"), true, AlgOrder);
-                            }
-                        }
-                        else
-                        {
-                            cube.Rotate(CharToVector("R"), true, AlgOrder);
-                        }
-                    }
-                    else if ((AlgOrder[0] == 'U') || (AlgOrder[0] == 'u'))
-                    {
-                        if (AlgOrder.Length > 1)
-                        {
-                            if ((AlgOrder[1] == 'i') || (AlgOrder[1] == 'I') || (AlgOrder[1] == '\''))
-                            {
-
-                                cube.Rotate(Vector3.Up, false, AlgOrder);
-                            }
-                            else
-                            {
-                                cube.Rotate(Vector3.Up, true, AlgOrder);
-                            }
-                        }
-                        else
-                        {
-                            cube.Rotate(Vector3.Up, true, AlgOrder);
-                        }
-                    }
-                    else if ((AlgOrder[0] == 'D') || (AlgOrder[0] == 'd'))
-                    {
-                        if (AlgOrder.Length > 1)
-                        {
-                            if ((AlgOrder[1] == 'i') || (AlgOrder[1] == 'I') || (AlgOrder[1] == '\''))
-                            {
-                                cube.Rotate(Vector3.Down, false, AlgOrder);
-                            }
-                            else
-                            {
-                                cube.Rotate(Vector3.Down, true, AlgOrder);
-                            }
-                        }
-                        else
-                        {
-                            cube.Rotate(Vector3.Down, true, AlgOrder);
-                        }
-                    }
-                    else if ((AlgOrder[0] == 'B') || (AlgOrder[0] == 'b'))
-                    {
-                        if (AlgOrder.Length > 1)
-                        {
-                            if ((AlgOrder[1] == 'i') || (AlgOrder[1] == 'I') || (AlgOrder[1] == '\''))
-                            {
-                                cube.Rotate(CharToVector("B"), false, AlgOrder);
-                            }
-                            else
-                            {
-                                cube.Rotate(CharToVector("B"), true, AlgOrder);
-                            }
-                        }
-                        else
-                        {
-                            cube.Rotate(CharToVector("B"), true, AlgOrder);
-                        }
-                    }
-                    else if ((AlgOrder[0] == 'F') || (AlgOrder[0] == 'f'))
-                    {
-                        if (AlgOrder.Length > 1)
-                        {
-                            if ((AlgOrder[1] == 'i') || (AlgOrder[1] == 'I') || (AlgOrder[1] == '\''))
-                            {
-                                cube.Rotate(CharToVector("F"), false, AlgOrder);
-                            }
-                            else
-                            {
-                                cube.Rotate(CharToVector("F"), true, AlgOrder);
-                            }
-                        }
-                        else
-                        {
-                            cube.Rotate(CharToVector("F"), true, AlgOrder);
+                            //rotate clockWise
+                            cube.Rotate(CharToVector(s), true, AlgOrder);
                         }
                     }
                     else
                     {
-                        Debug.WriteLine("AlgOrder unknown = " + AlgOrder);
-                        AlgOrder = AlgOrder.Substring(1);
+                        //rotate clockWise
+                        cube.Rotate(CharToVector(s), true, AlgOrder);
                     }
                 }
             }
-        }
-
-        private void CheckForClick(ref KeyboardState keyboardState, ref KeyboardState oldKeyboardState, Keys key, Vector3 direction)
-        {
-            if (keyboardState.IsKeyDown(key) && oldKeyboardState.IsKeyUp(key))
-            {
-                AlgOrder += (VectorToChar(direction));
-                AllTimeAlgOrder += (VectorToChar(direction));
-                if (keyboardState.IsKeyDown(Keys.LeftShift) || keyboardState.IsKeyDown(Keys.RightShift))
-                    AlgOrder += "I";
-                YAlgOrder = "";
-            }
-            //camera.RealRotate(cameraPos);
         }
 
         /// <summary>
@@ -388,6 +478,7 @@ namespace RubikCube
         /// <param name="keyboardState"></param>
         private void OldState(ref MouseState mouseState, ref KeyboardState keyboardState)
         {
+            //set old states
             oldMouseState = mouseState;
             oldKeyboardState = keyboardState;
         }
@@ -400,122 +491,206 @@ namespace RubikCube
         /// <param name="gameTime"></param>
         private void SwitchUpdate(KeyboardState keyboardState, GameTime gameTime)
         {
+            //update specific stuff for each state
             switch (CurrentGameState)
             {
+                //if its the main menu
                 case GameState.MainMenu:
-                    if (button.BtnFreePlay.IsClicked)
-                        CurrentGameState = GameState.FreePlay;
-                    if (button.BtnTutorial.IsClicked) CurrentGameState = GameState.Tutorial;
-                    if (button.BtnOptions.IsClicked) CurrentGameState = GameState.Options;
-                    button.BtnOptions.Update(false, gameTime);
-                    button.BtnTutorial.Update(false, gameTime);
-                    button.BtnFreePlay.Update(false, gameTime);
+                    UpdateMainMenu(gameTime);
                     break;
+                //if its the tutorial
                 case GameState.Tutorial:
+                    //check for click on the "escape" button which will return to the main menu
                     if (keyboardState.IsKeyDown(Keys.Escape)) CurrentGameState = GameState.MainMenu;
                     break;
+                //if its the options
                 case GameState.Options:
-                    if (keyboardState.IsKeyDown(Keys.Right) && oldKeyboardState.IsKeyUp(Keys.Right)) MediaPlayer.Stop();
-                    if (button.BtnRussian.IsClicked) lang.Russian();
-                    if (button.BtnHebrew.IsClicked) lang.Hebrew();
-                    if (button.BtnEnglish.IsClicked) lang.English();
-                    button.BtnEnglish.Update(false, gameTime);
-                    button.BtnHebrew.Update(false, gameTime);
-                    button.BtnRussian.Update(false, gameTime);
-                    CheckClickOnAddMusic();
-                    music.Update();
-                    if (keyboardState.IsKeyDown(Keys.Escape)) CurrentGameState = GameState.MainMenu;
+                    UpdateOptions(keyboardState, gameTime);
                     break;
                 case GameState.FreePlay:
-                    if (keyboardState.IsKeyDown(Keys.Escape))
-                    {
-                        CurrentGameState = GameState.MainMenu;
-                        DebugBorders("MainMenu");
-                    }
-                    if (button.BtnScramble.IsClicked) ShouldRotate = true;
-                    if (button.BtnSolve.IsClicked)
-                    {
-                        clocks.StopStoper();
-                        cube.Angle = 0;
-                        ShouldRotate = false;
-                        AlgOrder = "";
-                        AllTimeAlgOrder = "";
-                        YAlgOrder = "";
-                        cube.Solve();
-                        DebugBorders("Reset!");
-                    }
-                    textbox.Update(keyboardState, oldKeyboardState, gameTime, mono, AlgOrder, camera, cube);
-                    //if (cube.ScrambleIndex >= 25)
-                    if (ShouldRotate || solve.ShouldScramble)
-                    {
-                        cube.Scramble();
-                        AlgOrder += cube.ScrambleResult;
-                        ShouldRotate = false;
-                        solve.ShouldScramble = false;
-                    }
-                    CheckClickOnStopper();
-                    clocks.UpdateStoper(gameTime);
-                    if (shouldRunStopper)
-                        clocks.StartStoper();
-                    button.BtnScramble.Update(false, gameTime);
-                    button.BtnSolve.Update(false, gameTime);
-
+                    UpdateFreePlay(keyboardState, gameTime);
                     break;
-
             }
         }
 
+        private void UpdateFreePlay(KeyboardState keyboardState, GameTime gameTime)
+        {
+            //check for click on the "escape" button which will return to the main menu
+            if (keyboardState.IsKeyDown(Keys.Escape)) CurrentGameState = GameState.MainMenu;
+            //check for click on the scramble button and flag it using the ShouldRotate bool
+            if (button.BtnScramble.IsClicked) ShouldRotate = true;
+            //check for click on the solve button
+            if (button.BtnSolve.IsClicked)
+            {
+                //reset the stopper
+                clocks.StopStoper();
+                //set the angle of rotation to 0
+                cube.Angle = 0;
+                //stop the scrambling
+                ShouldRotate = false;
+                //reset algorder
+                AlgOrder = "";
+                //reset alltimealgo
+                AllTimeAlgOrder = "";
+                //reset yalgorder
+                YAlgOrder = "";
+                //reset the cube itself
+                cube.Solve();
+                //debug that a reset just happened
+                DebugBorders("Reset!");
+            }
+            //necesary update of the textBox class
+            textbox.Update(keyboardState, oldKeyboardState, gameTime, mono, AlgOrder, camera, cube);
+            //checks whether should scramble or not
+            if (ShouldRotate || solve.ShouldScramble)
+            {
+                //create the scramble sequenece
+                cube.Scramble();
+                //add the result to algorder
+                AlgOrder += cube.ScrambleResult;
+                //disable the flag that activates scramble
+                ShouldRotate = false;
+                solve.ShouldScramble = false;
+            }
+            //check for click on each of the stopper options
+            CheckClickOnStopper();
+            //update the stopper
+            clocks.UpdateStoper(gameTime);
+            //start the stopper
+            if (shouldRunStopper)
+                clocks.StartStoper();
+            //update the scramble & solve buttons (needed to detect click)
+            button.BtnScramble.Update(false, gameTime);
+            button.BtnSolve.Update(false, gameTime);
+        }
+
+        private void UpdateOptions(KeyboardState keyboardState, GameTime gameTime)
+        {
+            //check for click on the russian button, and switch to russian if clicked
+            if (button.BtnRussian.IsClicked) lang.Russian();
+            //check for click on the hebrew button, and switch to hebrew if clicked
+            if (button.BtnHebrew.IsClicked) lang.Hebrew();
+            //check for click on the english button, and switch to english if clicked
+            if (button.BtnEnglish.IsClicked) lang.English();
+            //update all the said buttons (needed in order to check for click on them)
+            button.BtnEnglish.Update(false, gameTime);
+            button.BtnHebrew.Update(false, gameTime);
+            button.BtnRussian.Update(false, gameTime);
+            //check for click on the "add music" button
+            CheckClickOnAddMusic();
+            //update the music class
+            music.Update();
+            //check for click on the "escape" button which will return to the main menu
+            if (keyboardState.IsKeyDown(Keys.Escape)) CurrentGameState = GameState.MainMenu;
+        }
+
+        private void UpdateMainMenu(GameTime gameTime)
+        {
+            //check for click on the freePlay button
+            if (button.BtnFreePlay.IsClicked)
+            {
+                //switch to freeplay
+                CurrentGameState = GameState.FreePlay;
+            }
+            //check for click on the tutorial button
+            if (button.BtnTutorial.IsClicked)
+            {
+                //switch to tutorial
+                CurrentGameState = GameState.Tutorial;
+            }
+            //check for click on the options button
+            if (button.BtnOptions.IsClicked)
+            {
+                //switch to options
+                CurrentGameState = GameState.Options;
+            }
+            //update all the buttons (which checks for click every turn)
+            button.BtnOptions.Update(false, gameTime);
+            button.BtnTutorial.Update(false, gameTime);
+            button.BtnFreePlay.Update(false, gameTime);
+        }
+
+        /// <summary>
+        /// checks for click on the "add mouse" text in the options menu
+        /// </summary>
         private void CheckClickOnAddMusic()
         {
+            //create a rectangle which sorrunds the "add music" text
             Rectangle rect = new Rectangle((int)(graphicsDevice.Viewport.Width / 2f - font.MeasureString(lang.OptionsAddMusic).X / 2), 100, (int)font.MeasureString(lang.OptionsAddMusic).X, (int)font.MeasureString(lang.OptionsAddMusic).Y);
+            //get the mouse state
             MouseState mouse = Mouse.GetState();
+            //checks for click of the mouse
             if (mouse.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released)
             {
+                //checks if the mouse is inside the rectangle
                 if (rect.Contains(mousePos))
                 {
+                    //open the addMusic popup
                     music.AddMusic();
                 }
             }
         }
 
+        /// <summary>
+        /// check for click on any of the stopper options in the freeplay state
+        /// </summary>
         private void CheckClickOnStopper()
         {
+            //gets the mouse state
             MouseState mouse = Mouse.GetState();
+
+            //get the mouse position
             Point mousePoint = new Point(mouse.X, mouse.Y);
+
+            //sets the locaton of the begining of the rectangles
             int locX = (int)(graphicsDevice.Viewport.Width / 1.31);
             int locY = (int)(graphicsDevice.Viewport.Height / 2f);
+
+            //create each of the rectangles 
             Rectangle showStopperRect = new Rectangle(locX, locY, (int)font.MeasureString(lang.FreePlayStopperShow).X, (int)font.MeasureString(lang.FreePlayStopperShow).Y);
             Rectangle pauseStopperRect = new Rectangle(locX, 50 + locY, (int)font.MeasureString(lang.FreePlayStopperPause).X, (int)font.MeasureString(lang.FreePlayStopperPause).Y);
             Rectangle resumeStopperRect = new Rectangle(locX, 100 + locY, (int)font.MeasureString(lang.FreePlayStopperResume).X, (int)font.MeasureString(lang.FreePlayStopperResume).Y);
             Rectangle resetStopperRect = new Rectangle(locX, 150 + locY, (int)font.MeasureString(lang.FreePlayStopperReset).X, (int)font.MeasureString(lang.FreePlayStopperReset).Y);
+
+            //check if the mouse was clicked
             if (mouse.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released)
             {
+                //checks if the mouse was on the show/hide rectangle
                 if (showStopperRect.Contains(mousePoint))
                 {
+                    //make the stopper show/hide, opposite of what it was before
                     shouldShowStopper = !shouldShowStopper;
+                    //disable the stopper if it was running beforehand (case of hiding the stopper)
                     if (shouldRunStopper)
                     {
                         shouldRunStopper = false;
                         clocks.PauseStoper();
                     }
+                    //make the stopper run again (case of showing the stopper)
                     else
                     {
                         shouldRunStopper = true;
                         clocks.ResumeStoper();
                     }
                 }
+                //check for click on the pause rectangle, as well as if the stopper is runing
                 else if (pauseStopperRect.Contains(mousePoint) && shouldRunStopper)
                 {
+                    //pause the stopper
                     shouldRunStopper = false;
                     clocks.PauseStoper();
                 }
-                else if (resumeStopperRect.Contains(mousePoint) && !shouldRunStopper)
+                //checks for click on the resume rectangle, as well as if the stopper was not runing, and visible
+                else if (resumeStopperRect.Contains(mousePoint) && !shouldRunStopper && shouldShowStopper)
                 {
+                    //reactivate the stopper
                     shouldRunStopper = true;
                     clocks.ResumeStoper();
                 }
+                //checks for click on the reset rectangle
                 else if (resetStopperRect.Contains(mousePoint))
                 {
+                    //reset the stopper
                     clocks.StopStoper();
                 }
             }
@@ -530,47 +705,22 @@ namespace RubikCube
         {
             switch (CurrentGameState)
             {
+                    //if its the main menu
                 case GameState.MainMenu:
-                    spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
-                    spriteBatch.DrawString(font, lang.MainTitle, new Vector2(graphicsDevice.Viewport.Width / 3f, 10), Color.Black);
-                    button.BtnTutorial.Draw(spriteBatch);
-                    button.BtnOptions.Draw(spriteBatch);
-                    button.BtnFreePlay.Draw(spriteBatch);
-                    spriteBatch.End();
+                    DrawMainMenu(spriteBatch);
                     break;
+                    //if its free play
                 case GameState.FreePlay:
-                    spriteBatch.Begin();
-                    spriteBatch.DrawString(font, lang.FreePlayTitle, new Vector2(graphicsDevice.Viewport.Width / 3f, 10), Color.Black);
-                    spriteBatch.DrawString(font, lang.FreePlayScramble, new Vector2(graphicsDevice.Viewport.Width / 13f, graphicsDevice.Viewport.Height / 1.4f), Color.Black);
-                    spriteBatch.DrawString(font, lang.FreePlaySolve, new Vector2(graphicsDevice.Viewport.Width / 4f, graphicsDevice.Viewport.Height / 1.4f), Color.Black);
-                    spriteBatch.DrawString(font, lang.FreePlayStopperShow, new Vector2(graphicsDevice.Viewport.Width / 1.35f, graphicsDevice.Viewport.Height / 2f), Color.Black);
-                    spriteBatch.DrawString(font, lang.FreePlayStopperPause, new Vector2(graphicsDevice.Viewport.Width / 1.35f, 50 + graphicsDevice.Viewport.Height / 2f), Color.Black);
-                    spriteBatch.DrawString(font, lang.FreePlayStopperResume, new Vector2(graphicsDevice.Viewport.Width / 1.35f, 100 + graphicsDevice.Viewport.Height / 2f), Color.Black);
-                    spriteBatch.DrawString(font, lang.FreePlayStopperReset, new Vector2(graphicsDevice.Viewport.Width / 1.35f, 150 + graphicsDevice.Viewport.Height / 2f), Color.Black);
-                    if (shouldShowStopper)
-                        clocks.DrawStoper(spriteBatch, font, new Vector2(graphicsDevice.Viewport.Width / 3f, 30));
-                    button.BtnScramble.Draw(spriteBatch);
-                    button.BtnSolve.Draw(spriteBatch);
-                    spriteBatch.End();
-                    DrawModel(cube, world, view, projection);
-                    textbox.Draw(spriteBatch, mono, font, textTex);
+                    DrawFreePlay(spriteBatch);
                     break;
                 case GameState.Options:
-                    spriteBatch.Begin();
-                    button.BtnRussian.Draw(spriteBatch);
-                    button.BtnHebrew.Draw(spriteBatch);
-                    button.BtnEnglish.Draw(spriteBatch);
-                    spriteBatch.DrawString(font, lang.OptionsTitle, new Vector2(graphicsDevice.Viewport.Width / 3f, 10), Color.Black);
-                    spriteBatch.DrawString(font, lang.OptionsFreeText, new Vector2(graphicsDevice.Viewport.Width / 3f, 40), Color.Black);
-                    spriteBatch.DrawString(font, lang.OptionsAddMusic, new Vector2(graphicsDevice.Viewport.Width / 2f - font.MeasureString(lang.OptionsAddMusic).X / 2, 100), Color.Black);
-                    spriteBatch.DrawString(font, "English", new Vector2(graphicsDevice.Viewport.Width / 2.5f, 440), Color.Black);
-                    spriteBatch.DrawString(font, "ת י ר ב ע", new Vector2(graphicsDevice.Viewport.Width / 1.85f, 440), Color.Black);
-                    spriteBatch.DrawString(font, "Russian", new Vector2(graphicsDevice.Viewport.Width / 1.55f, 440), Color.Black);
-                    spriteBatch.End();
+                    DrawOptions(spriteBatch);
                     break;
                 case GameState.Tutorial:
                     spriteBatch.Begin();
+                    //draw the title
                     spriteBatch.DrawString(font, lang.TutorialTitle, new Vector2(graphicsDevice.Viewport.Width / 3f, 10), Color.Black);
+                    //draw the instructions
                     spriteBatch.DrawString(font, lang.TutorialFreeText, new Vector2(graphicsDevice.Viewport.Width / 3f, 50), Color.Black);
                     spriteBatch.DrawString(font, lang.TutorialFreeText2, new Vector2(graphicsDevice.Viewport.Width / 3f, 90), Color.Black);
                     spriteBatch.End();
@@ -578,10 +728,179 @@ namespace RubikCube
             }
         }
 
+        private void DrawOptions(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Begin();
+            //draw the russian button
+            button.BtnRussian.Draw(spriteBatch);
+            //draw the hebrew button
+            button.BtnHebrew.Draw(spriteBatch);
+            //draw the english button
+            button.BtnEnglish.Draw(spriteBatch);
+            //draw the title
+            spriteBatch.DrawString(font, lang.OptionsTitle, new Vector2(graphicsDevice.Viewport.Width/3f, 10), Color.Black);
+            //draw the "add music"
+            spriteBatch.DrawString(font, lang.OptionsAddMusic,
+                new Vector2(graphicsDevice.Viewport.Width/2f - font.MeasureString(lang.OptionsAddMusic).X/2, 100), Color.Black);
+            //draw the word "english" above the button
+            spriteBatch.DrawString(font, "English", new Vector2(graphicsDevice.Viewport.Width/2.5f, 440), Color.Black);
+            //draw the word "hebrew" above the button
+            spriteBatch.DrawString(font, "ת י ר ב ע", new Vector2(graphicsDevice.Viewport.Width/1.85f, 440), Color.Black);
+            //draw the word "russian" above the button
+            spriteBatch.DrawString(font, "Russian", new Vector2(graphicsDevice.Viewport.Width/1.55f, 440), Color.Black);
+            spriteBatch.End();
+        }
+
+        private void DrawMainMenu(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
+            //draw the title
+            spriteBatch.DrawString(font, lang.MainTitle, new Vector2(graphicsDevice.Viewport.Width/3f, 10), Color.Black);
+            //draw the tutorial button
+            button.BtnTutorial.Draw(spriteBatch);
+            //draw the options button
+            button.BtnOptions.Draw(spriteBatch);
+            //draw the free play button
+            button.BtnFreePlay.Draw(spriteBatch);
+            spriteBatch.End();
+        }
+
+        private void DrawFreePlay(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Begin();
+            //draw the title
+            spriteBatch.DrawString(font, lang.FreePlayTitle, new Vector2(graphicsDevice.Viewport.Width/3f, 10), Color.Black);
+            //draw the "scramble"
+            spriteBatch.DrawString(font, lang.FreePlayScramble,
+                new Vector2(graphicsDevice.Viewport.Width/13f, graphicsDevice.Viewport.Height/1.4f), Color.Black);
+            //draw the "solve"
+            spriteBatch.DrawString(font, lang.FreePlaySolve,
+                new Vector2(graphicsDevice.Viewport.Width/4f, graphicsDevice.Viewport.Height/1.4f), Color.Black);
+            //draw the show/hide stopper
+            spriteBatch.DrawString(font, lang.FreePlayStopperShow,
+                new Vector2(graphicsDevice.Viewport.Width/1.35f, graphicsDevice.Viewport.Height/2f), Color.Black);
+            //draw the pause stopper                    
+            spriteBatch.DrawString(font, lang.FreePlayStopperPause,
+                new Vector2(graphicsDevice.Viewport.Width/1.35f, 50 + graphicsDevice.Viewport.Height/2f), Color.Black);
+            //draw the resume stopper
+            spriteBatch.DrawString(font, lang.FreePlayStopperResume,
+                new Vector2(graphicsDevice.Viewport.Width/1.35f, 100 + graphicsDevice.Viewport.Height/2f), Color.Black);
+            //draw the reset stopper
+            spriteBatch.DrawString(font, lang.FreePlayStopperReset,
+                new Vector2(graphicsDevice.Viewport.Width/1.35f, 150 + graphicsDevice.Viewport.Height/2f), Color.Black);
+            //draw the stppper
+            if (shouldShowStopper)
+                clocks.DrawStoper(spriteBatch, font, new Vector2(graphicsDevice.Viewport.Width/3f, 30));
+            //draw the scramble button
+            button.BtnScramble.Draw(spriteBatch);
+            //draw the solve button
+            button.BtnSolve.Draw(spriteBatch);
+            spriteBatch.End();
+            //draw the cube itself
+            DrawModel(cube, world, view, projection);
+            //draw the textbox and anything in it
+            textbox.Draw(spriteBatch, mono, font, textTex);
+        }
+
+        #endregion
+
+        #region public methods
+
+        /// <summary>
+        /// the main draw
+        /// </summary>
+        /// <param name="spriteBatch"></param>
+        /// <param name="graphicsDevice"></param>
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            //call the specific draw for each game state
+            SwitchDraw(spriteBatch);
+        }
+
+        /// <summary>
+        /// the main update
+        /// </summary>
+        /// <param name="gameTime">the gameTime from Main</param>
+        /// <param name="graphicsDeviceFromMain">the graphicsDevice from main</param>
+        /// <param name="_music">the music from main</param>
+        public void Update(GameTime gameTime, GraphicsDevice graphicsDeviceFromMain, Music _music)
+        {
+            //set the graphics device from main
+            graphicsDevice = graphicsDeviceFromMain;
+            //set the music from main            
+            music = _music;
+            //get the keyboard and mouse states
+            KeyboardState keyboardState = Keyboard.GetState();
+            MouseState mouseState = Mouse.GetState();
+            //set the view matrix to be the one from the camera class
+            view = camera.View;
+            //convert the position of the camera to a 3d vector
+            cameraPos = Matrix.Invert(view).Translation;
+            //
+            if (CurrentGameState == GameState.FreePlay)
+            {
+                solve.Update();
+                SetCurrentFace();
+                if (keyboardState.IsKeyDown(Keys.C) && oldKeyboardState.IsKeyUp(Keys.C))
+                    shouldAllowCameraMovement = !shouldAllowCameraMovement;
+                if (shouldAllowCameraMovement)
+                    camera.CameraMovement(mouseState, oldMouseState);
+                else
+                    MainRayControl(mouseState);
+                camera.Update();
+                RotateWhichSide(keyboardState, oldKeyboardState, cameraPos);
+                if (textbox.EnterPressed)
+                {
+                    AlgOrder += textbox.GetRealVectorBox;
+                    AllTimeAlgOrder += textbox.GetRealVectorBox;
+                }
+            }
+            mousePos = new Point(mouseState.X, mouseState.Y);
+            SwitchUpdate(keyboardState, gameTime);
+            OldState(ref mouseState, ref keyboardState);
+            currentScale = Main.CubieSize * 3 / graphicsDevice.Viewport.AspectRatio / Main.OriginalScale;
+        }
+
+        /// <summary>
+        /// switches the GameState to tutorial
+        /// </summary>
+        public void SwitchToTutorial()
+        {
+            CurrentGameState = GameState.Tutorial;
+        }
+
+        /// <summary>
+        /// draws the model given
+        /// </summary>
+        /// <param name="cube"></param>
+        /// <param name="objectWorldMatrix"></param>
+        /// <param name="view"></param>
+        /// <param name="projection"></param>
+        /// <param name="graphicsDevice"></param>
+        public void DrawModel(Cube cube, Matrix objectWorldMatrix, Matrix view, Matrix projection)
+        {
+            graphicsDevice.BlendState = BlendState.Opaque;
+            graphicsDevice.DepthStencilState = DepthStencilState.Default;
+            for (int index = 0; index < cube.Model.Meshes.Count; index++)
+            {
+                ModelMesh mesh = cube.Model.Meshes[index];
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.EnableDefaultLighting();
+                    effect.World = Matrix.CreateScale(currentScale) * mesh.ParentBone.Transform * Matrix.CreateTranslation(Main.CubieSize, -Main.CubieSize, -Main.CubieSize) * cube.MeshTransforms[index] * objectWorldMatrix;
+                    effect.View = view;
+                    effect.Projection = projection;
+                }
+                mesh.Draw();
+
+            }
+        }
+
         public void ControlZ()
         {
             if (AllTimeAlgOrder.Length > 0)
             {
+                Debug.WriteLine(cube.Angle);
                 int num = 0;
                 int length = AllTimeAlgOrder.Length - 1;
                 bool counterClockWise = false;
@@ -620,51 +939,58 @@ namespace RubikCube
                 Debug.WriteLine("AllTimeAlgOrder is 0!!!");
             }
         }
+
         public void ControlY()
         {
             if (YAlgOrder.Length > 0)
             {
+                Debug.WriteLine(cube.Angle);
                 int num = 0;
                 int length = YAlgOrder.Length - 1;
                 bool counterClockWise = true;
                 if (YAlgOrder.Length > 1)
                 {
-                    if ((YAlgOrder[1] == 'I') || (YAlgOrder[1] == 'i'))
+                    if (((YAlgOrder[YAlgOrder.Length - 2] == 'I') || (YAlgOrder[YAlgOrder.Length - 2] == 'i')))
                     {
-                        num += 1;
                         counterClockWise = false;
                     }
                 }
-                if (YAlgOrder[num] == 'L')
+                if (YAlgOrder[length] == 'L')
                 {
                     cube.Rotate(Vector3.Left, counterClockWise, AlgOrder);
                 }
-                else if (YAlgOrder[num] == 'R')
+                else if (YAlgOrder[length] == 'R')
                 {
                     cube.Rotate(Vector3.Right, counterClockWise, AlgOrder);
                 }
-                else if (YAlgOrder[num] == 'U')
+                else if (YAlgOrder[length] == 'U')
                 {
                     cube.Rotate(Vector3.Up, counterClockWise, AlgOrder);
                 }
-                else if (YAlgOrder[num] == 'D')
+                else if (YAlgOrder[length] == 'D')
                 {
                     cube.Rotate(Vector3.Down, counterClockWise, AlgOrder);
                 }
-                else if (YAlgOrder[num] == 'F')
+                else if (YAlgOrder[length] == 'F')
                 {
                     cube.Rotate(Vector3.Forward, counterClockWise, AlgOrder);
                 }
-                else if (YAlgOrder[num] == 'B')
+                else if (YAlgOrder[length] == 'B')
                 {
                     cube.Rotate(Vector3.Backward, counterClockWise, AlgOrder);
                 }
+                //if (cube.Angle == -100 && YAlgOrder.Length == 3)
+                //{
+                //    if (YAlgOrder[1] == 'I' || YAlgOrder[1] == 'I')
+                //        YAlgOrder = YAlgOrder[0].ToString() + YAlgOrder[2];
+                //}
             }
             else
             {
                 Debug.WriteLine("YAlgOrder is 0!!!");
             }
         }
+
         public string VectorToChar(Vector3 real)
         {
             if (real == Vector3.Left)
@@ -750,99 +1076,6 @@ namespace RubikCube
             {
                 Debug.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             }
-        }
-
-        #endregion
-
-        #region public methods
-
-        /// <summary>
-        /// the main draw
-        /// </summary>
-        /// <param name="spriteBatch"></param>
-        /// <param name="graphicsDevice"></param>
-        public void Draw(SpriteBatch spriteBatch)
-        {
-            SwitchDraw(spriteBatch);
-        }
-
-        /// <summary>
-        /// the main update
-        /// </summary>
-        /// <param name="gameTime"></param>
-        /// <param name="graphics"></param>
-        /// <param name="graphicsDeviceFromMain"></param>
-        /// <param name="_music"></param>
-        public void Update(GameTime gameTime, GraphicsDevice graphicsDeviceFromMain, Music _music)
-        {
-            graphicsDevice = graphicsDeviceFromMain;
-            music = _music;
-            KeyboardState keyboardState = Keyboard.GetState();
-            MouseState mouseState = Mouse.GetState();
-            view = camera.View;
-            cameraPos = Matrix.Invert(view).Translation;
-            if (CurrentGameState == GameState.FreePlay)
-            {
-                solve.Update();
-                SetCurrentFace();
-                if (keyboardState.IsKeyDown(Keys.C) && oldKeyboardState.IsKeyUp(Keys.C))
-                    shouldAllowCameraMovement = !shouldAllowCameraMovement;
-                if (shouldAllowCameraMovement)
-                    camera.CameraMovement(mouseState, oldMouseState);
-                else
-                    MainRayControl(mouseState);
-                camera.Update();
-                RotateWhichSide(keyboardState, oldKeyboardState, cameraPos);
-                if (textbox.EnterPressed)
-                {
-                    AlgOrder += textbox.GetRealVectorBox;
-                    AllTimeAlgOrder += textbox.GetRealVectorBox;
-                }
-            }
-            mousePos = new Point(mouseState.X, mouseState.Y);
-            SwitchUpdate(keyboardState, gameTime);
-            OldState(ref mouseState, ref keyboardState);
-            currentScale = Main.CubieSize * 3 / graphicsDevice.Viewport.AspectRatio / Main.OriginalScale;
-        }
-
-        /// <summary>
-        /// switches the GameState to tutorial
-        /// </summary>
-        public void SwitchToTutorial()
-        {
-            CurrentGameState = GameState.Tutorial;
-        }
-
-        /// <summary>
-        /// draws the model given
-        /// </summary>
-        /// <param name="cube"></param>
-        /// <param name="objectWorldMatrix"></param>
-        /// <param name="view"></param>
-        /// <param name="projection"></param>
-        /// <param name="graphicsDevice"></param>
-        public void DrawModel(Cube cube, Matrix objectWorldMatrix, Matrix view, Matrix projection)
-        {
-            graphicsDevice.BlendState = BlendState.Opaque;
-            graphicsDevice.DepthStencilState = DepthStencilState.Default;
-            for (int index = 0; index < cube.Model.Meshes.Count; index++)
-            {
-                ModelMesh mesh = cube.Model.Meshes[index];
-                foreach (BasicEffect effect in mesh.Effects)
-                {
-                    effect.EnableDefaultLighting();
-                    effect.World = Matrix.CreateScale(currentScale) * mesh.ParentBone.Transform * Matrix.CreateTranslation(Main.CubieSize, -Main.CubieSize, -Main.CubieSize) * cube.MeshTransforms[index] * objectWorldMatrix;
-                    effect.View = view;
-                    effect.Projection = projection;
-                }
-                mesh.Draw();
-
-            }
-        }
-
-        public void UpdateAlgo(string algo)
-        {
-            AlgOrder = algo;
         }
 
         #endregion
