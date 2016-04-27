@@ -522,6 +522,47 @@ namespace RubikCube
         {
             //check for click on the "escape" button which will return to the main menu
             if (keyboardState.IsKeyDown(Keys.Escape)) CurrentGameState = GameState.MainMenu;
+            if (IsUsingKeyboard)
+            {
+                if (keyboardState.IsKeyDown(Keys.U) && oldKeyboardState.IsKeyUp(Keys.U))
+                {
+                    CheckKeysTTR["Up"] = true;
+                    AlgOrder += CharToVector("U");
+                    AllTimeAlgOrder += CharToVector("U");
+                }
+                else if (keyboardState.IsKeyDown(Keys.D) && oldKeyboardState.IsKeyUp(Keys.D))
+                {
+                    CheckKeysTTR["Down"] = true;
+                    AlgOrder += CharToVector("D");
+                    AllTimeAlgOrder += CharToVector("D");
+
+                }
+                else if (keyboardState.IsKeyDown(Keys.R) && oldKeyboardState.IsKeyUp(Keys.R))
+                {
+                    CheckKeysTTR["Right"] = true;
+                    AlgOrder += CharToVector("R");
+                    AllTimeAlgOrder += CharToVector("R");
+
+                }
+                else if (keyboardState.IsKeyDown(Keys.L) && oldKeyboardState.IsKeyUp(Keys.L))
+                {
+                    CheckKeysTTR["Left"] = true;
+                    AlgOrder += CharToVector("L");
+                    AllTimeAlgOrder += CharToVector("L");
+                }
+                else if (keyboardState.IsKeyDown(Keys.F) && oldKeyboardState.IsKeyUp(Keys.F))
+                {
+                    CheckKeysTTR["Forward"] = true;
+                    AlgOrder += CharToVector("F");
+                    AllTimeAlgOrder += CharToVector("F");
+                }
+                else if (keyboardState.IsKeyDown(Keys.B) && oldKeyboardState.IsKeyUp(Keys.B))
+                {
+                    CheckKeysTTR["Backwards"] = true;
+                    AlgOrder += CharToVector("B");
+                    AllTimeAlgOrder += CharToVector("B");
+                }
+            }
         }
 
         /// <summary>

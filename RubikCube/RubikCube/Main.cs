@@ -1,11 +1,13 @@
 ﻿using System;
 using System.ComponentModel.Design.Serialization;
 using System.Diagnostics;
+using System.Drawing;
 using System.Threading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace RubikCube
 {
@@ -44,6 +46,8 @@ namespace RubikCube
 
         //calls the SaveGame class, in charge of saving the state of the cube and various other details
         private SaveGame save;
+
+        private Tutorial tutorial;
 
         #endregion
 
@@ -177,6 +181,10 @@ namespace RubikCube
                 button.BtnUnMute.Update(true, gameTime);
                 MuteEvent();
                 gameState.Update(gameTime, GraphicsDevice, music);
+                if (gameState.CurrentGameState == GameState.Tutorial)
+                {
+                    tutorial.Update(gameTime);
+                }
             }
             else
             {
@@ -203,6 +211,11 @@ namespace RubikCube
             {
                 //draw main game components
                 gameState.Draw(spriteBatch);
+
+                if (gameState.CurrentGameState == GameState.Tutorial)
+                {
+                    tutorial.Draw(spriteBatch);
+                }
 
                 spriteBatch.Begin();
                 //draw mute/unmute button
@@ -232,6 +245,7 @@ namespace RubikCube
             music = new Music(graphics, GraphicsDevice, Content);
             button = new ButtonSetUp(GraphicsDevice, Content);
             clocks = new Clocks();
+            tutorial = new Tutorial(GraphicsDevice,gameState,Content,music);
             
             //sets the timer to 200 ms
             clocks.InitTimer(200);

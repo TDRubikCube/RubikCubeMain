@@ -48,8 +48,11 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using System.Diagnostics;
+using System.Drawing;
 using System.Windows.Forms;
+using Color = Microsoft.Xna.Framework.Color;
 using Keys = Microsoft.Xna.Framework.Input.Keys;
+using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace RubikCube
 {
@@ -82,7 +85,7 @@ namespace RubikCube
         private bool areKeysWorking;
         private Music music;
 
-        public Tutorial(GraphicsDevice GraphicsDevice, SpriteFont Font, SwitchGameState _gameState, ContentManager Content,Music _music)
+        public Tutorial(GraphicsDevice GraphicsDevice, SwitchGameState _gameState, ContentManager Content,Music _music)
         {
             button = new ButtonSetUp(GraphicsDevice, Content);
             cube = new Cube();
@@ -90,7 +93,7 @@ namespace RubikCube
             welcome = new Welcome();
             cube.Model = Content.Load<Model>("rubik");
             graphicsDevice = GraphicsDevice;
-            font = Font;
+            font = Content.Load<SpriteFont>("font");
             music = _music;
             gameState = _gameState;
             gameState.IsUsingKeyboard = false;
@@ -99,7 +102,7 @@ namespace RubikCube
             Vtex = Content.Load<Texture2D>("pics/V");
         }
 
-        public void Update(GameTime gameTime, GraphicsDeviceManager graphicsDeviceManager)
+        public void Update(GameTime gameTime)
         {
             KeyboardState keyboard = Keyboard.GetState();
             MouseState mouse = Mouse.GetState();
