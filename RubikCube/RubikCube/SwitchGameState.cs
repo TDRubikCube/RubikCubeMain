@@ -40,7 +40,7 @@ namespace RubikCube
         private readonly Clocks clocks;
 
         //creates an instance of cube
-        readonly Cube cube;
+        public Cube cube;
 
         //creates a graphicsDevice, in order for it to be accessible in the whole class
         private GraphicsDevice graphicsDevice;
@@ -193,8 +193,14 @@ namespace RubikCube
 
         }
 
+        //TUTORIAL STUFF
         public Dictionary<string, bool> CheckKeysTTR { get; set; }
         public bool IsUsingKeyboard { get; set; }
+        public bool IsUsingTextBox { get; set; }
+        public bool IsUsingMouse { get; set; }  
+        public bool ShouldActivateTutorial { get; set; }
+        //
+
 
         #region private methods
 
@@ -522,48 +528,55 @@ namespace RubikCube
         {
             //check for click on the "escape" button which will return to the main menu
             if (keyboardState.IsKeyDown(Keys.Escape)) CurrentGameState = GameState.MainMenu;
+            ShouldActivateTutorial = true;
+        }
+
+
+        //TUTORIAL STUFF
+        private void DetectClickTTR(KeyboardState keyboardState)
+        {
             if (IsUsingKeyboard)
             {
                 if (keyboardState.IsKeyDown(Keys.U) && oldKeyboardState.IsKeyUp(Keys.U))
                 {
                     CheckKeysTTR["Up"] = true;
-                    AlgOrder += CharToVector("U");
-                    AllTimeAlgOrder += CharToVector("U");
+                    AlgOrder += "U";
+                    AllTimeAlgOrder += "U";
                 }
                 else if (keyboardState.IsKeyDown(Keys.D) && oldKeyboardState.IsKeyUp(Keys.D))
                 {
                     CheckKeysTTR["Down"] = true;
-                    AlgOrder += CharToVector("D");
-                    AllTimeAlgOrder += CharToVector("D");
-
+                    AlgOrder += "D";
+                    AllTimeAlgOrder += "D";
                 }
                 else if (keyboardState.IsKeyDown(Keys.R) && oldKeyboardState.IsKeyUp(Keys.R))
                 {
                     CheckKeysTTR["Right"] = true;
-                    AlgOrder += CharToVector("R");
-                    AllTimeAlgOrder += CharToVector("R");
-
+                    AlgOrder += VectorToChar(camera.RealRight);
+                    AllTimeAlgOrder += VectorToChar(camera.RealRight);
                 }
                 else if (keyboardState.IsKeyDown(Keys.L) && oldKeyboardState.IsKeyUp(Keys.L))
                 {
                     CheckKeysTTR["Left"] = true;
-                    AlgOrder += CharToVector("L");
-                    AllTimeAlgOrder += CharToVector("L");
+                    AlgOrder += VectorToChar(camera.RealLeft);
+                    AllTimeAlgOrder += VectorToChar(camera.RealLeft);
                 }
                 else if (keyboardState.IsKeyDown(Keys.F) && oldKeyboardState.IsKeyUp(Keys.F))
                 {
                     CheckKeysTTR["Forward"] = true;
-                    AlgOrder += CharToVector("F");
-                    AllTimeAlgOrder += CharToVector("F");
+                    AlgOrder += VectorToChar(camera.RealForward);
+                    AllTimeAlgOrder += VectorToChar(camera.RealForward);
                 }
                 else if (keyboardState.IsKeyDown(Keys.B) && oldKeyboardState.IsKeyUp(Keys.B))
                 {
                     CheckKeysTTR["Backwards"] = true;
-                    AlgOrder += CharToVector("B");
-                    AllTimeAlgOrder += CharToVector("B");
+                    AlgOrder += VectorToChar(camera.RealBackward);
+                    AllTimeAlgOrder += VectorToChar(camera.RealBackward);
                 }
             }
         }
+        //
+
 
         /// <summary>
         /// update of the freeplay state
@@ -572,6 +585,11 @@ namespace RubikCube
         /// <param name="gameTime"></param>
         private void UpdateFreePlay(KeyboardState keyboardState, GameTime gameTime)
         {
+            if (IsUsingKeyboard)
+            {
+                DetectClickTTR(keyboardState);
+            }
+
             //check for click on the "escape" button which will return to the main menu
             if (keyboardState.IsKeyDown(Keys.Escape)) CurrentGameState = GameState.MainMenu;
             //check for click on the scramble button and flag it using the ShouldRotate bool
@@ -786,9 +804,6 @@ namespace RubikCube
                     spriteBatch.Begin();
                     //draw the title
                     spriteBatch.DrawString(font, lang.TutorialTitle, new Vector2(graphicsDevice.Viewport.Width / 3f, 10), Color.Black);
-                    //draw the instructions
-                    spriteBatch.DrawString(font, lang.TutorialFreeText, new Vector2(graphicsDevice.Viewport.Width / 3f, 50), Color.Black);
-                    spriteBatch.DrawString(font, lang.TutorialFreeText2, new Vector2(graphicsDevice.Viewport.Width / 3f, 90), Color.Black);
                     spriteBatch.End();
                     break;
             }
@@ -836,36 +851,45 @@ namespace RubikCube
             spriteBatch.Begin();
             //draw the title
             spriteBatch.DrawString(font, lang.FreePlayTitle, new Vector2(graphicsDevice.Viewport.Width / 3f, 10), Color.Black);
-            //draw the "scramble"
-            spriteBatch.DrawString(font, lang.FreePlayScramble,
-                new Vector2(graphicsDevice.Viewport.Width / 13f, graphicsDevice.Viewport.Height / 1.4f), Color.Black);
-            //draw the "solve"
-            spriteBatch.DrawString(font, lang.FreePlaySolve,
-                new Vector2(graphicsDevice.Viewport.Width / 4f, graphicsDevice.Viewport.Height / 1.4f), Color.Black);
-            //draw the show/hide stopper
-            spriteBatch.DrawString(font, lang.FreePlayStopperShow,
-                new Vector2(graphicsDevice.Viewport.Width / 1.35f, graphicsDevice.Viewport.Height / 2f), Color.Black);
-            //draw the pause stopper                    
-            spriteBatch.DrawString(font, lang.FreePlayStopperPause,
-                new Vector2(graphicsDevice.Viewport.Width / 1.35f, 50 + graphicsDevice.Viewport.Height / 2f), Color.Black);
-            //draw the resume stopper
-            spriteBatch.DrawString(font, lang.FreePlayStopperResume,
-                new Vector2(graphicsDevice.Viewport.Width / 1.35f, 100 + graphicsDevice.Viewport.Height / 2f), Color.Black);
-            //draw the reset stopper
-            spriteBatch.DrawString(font, lang.FreePlayStopperReset,
-                new Vector2(graphicsDevice.Viewport.Width / 1.35f, 150 + graphicsDevice.Viewport.Height / 2f), Color.Black);
-            //draw the stppper
-            if (shouldShowStopper)
-                clocks.DrawStoper(spriteBatch, font, new Vector2(graphicsDevice.Viewport.Width / 3f, 30));
-            //draw the scramble button
-            button.BtnScramble.Draw(spriteBatch);
-            //draw the solve button
-            button.BtnSolve.Draw(spriteBatch);
+            if (!IsUsingKeyboard && !IsUsingMouse)
+            {
+                //draw the "scramble"
+                spriteBatch.DrawString(font, lang.FreePlayScramble,
+                    new Vector2(graphicsDevice.Viewport.Width/13f, graphicsDevice.Viewport.Height/1.4f), Color.Black);
+                //draw the "solve"
+                spriteBatch.DrawString(font, lang.FreePlaySolve,
+                    new Vector2(graphicsDevice.Viewport.Width/4f, graphicsDevice.Viewport.Height/1.4f), Color.Black);
+                //draw the show/hide stopper
+                spriteBatch.DrawString(font, lang.FreePlayStopperShow,
+                    new Vector2(graphicsDevice.Viewport.Width/1.35f, graphicsDevice.Viewport.Height/2f), Color.Black);
+                //draw the pause stopper                    
+                spriteBatch.DrawString(font, lang.FreePlayStopperPause,
+                    new Vector2(graphicsDevice.Viewport.Width/1.35f, 50 + graphicsDevice.Viewport.Height/2f),
+                    Color.Black);
+                //draw the resume stopper
+                spriteBatch.DrawString(font, lang.FreePlayStopperResume,
+                    new Vector2(graphicsDevice.Viewport.Width/1.35f, 100 + graphicsDevice.Viewport.Height/2f),
+                    Color.Black);
+                //draw the reset stopper
+                spriteBatch.DrawString(font, lang.FreePlayStopperReset,
+                    new Vector2(graphicsDevice.Viewport.Width/1.35f, 150 + graphicsDevice.Viewport.Height/2f),
+                    Color.Black);
+                //draw the stppper
+                if (shouldShowStopper)
+                    clocks.DrawStoper(spriteBatch, font, new Vector2(graphicsDevice.Viewport.Width/3f, 30));
+                //draw the scramble button
+                button.BtnScramble.Draw(spriteBatch);
+                //draw the solve button
+                button.BtnSolve.Draw(spriteBatch);
+            }
             spriteBatch.End();
             //draw the cube itself
             DrawModel(cube, world, view, projection);
-            //draw the textbox and anything in it
-            textbox.Draw(spriteBatch, mono, font, textTex);
+            if (IsUsingTextBox)
+            {
+                //draw the textbox and anything in it
+                textbox.Draw(spriteBatch, mono, font, textTex);
+            }
         }
 
         #endregion

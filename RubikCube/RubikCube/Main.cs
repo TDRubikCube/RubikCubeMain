@@ -181,7 +181,7 @@ namespace RubikCube
                 button.BtnUnMute.Update(true, gameTime);
                 MuteEvent();
                 gameState.Update(gameTime, GraphicsDevice, music);
-                if (gameState.CurrentGameState == GameState.Tutorial)
+                if (gameState.ShouldActivateTutorial)
                 {
                     tutorial.Update(gameTime);
                 }
@@ -212,7 +212,7 @@ namespace RubikCube
                 //draw main game components
                 gameState.Draw(spriteBatch);
 
-                if (gameState.CurrentGameState == GameState.Tutorial)
+                if (gameState.ShouldActivateTutorial)
                 {
                     tutorial.Draw(spriteBatch);
                 }

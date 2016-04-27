@@ -62,36 +62,31 @@ namespace RubikCube
     }
     class Tutorial
     {
-        private SpriteFont font;
-        private Text lang;
-        private GraphicsDevice graphicsDevice;
-        private Welcome welcome;
+        private readonly SpriteFont font;
+        private readonly GraphicsDevice graphicsDevice;
+        private readonly Welcome welcome;
         private bool justFinished = true;
-        private SwitchGameState gameState;
+        private readonly SwitchGameState gameState;
         private TutorialStage currentStage;
         private MouseState oldMouseState;
         private KeyboardState oldKeyboardState;
         private bool checkedMouse;
         private bool isMouseWorking;
         private bool isFirstTime = true;
-        private string allKeys = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        private const string allKeys = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         private bool isKeyboardWorikng;
         private bool shouldCheckKeyboard;
-        private ButtonSetUp button;
-        Cube cube;
-        Texture2D Xtex;
-        Texture2D Vtex;
-        List<string> allSides = new List<string> { "Up", "Down", "Left", "Right", "Forward", "Backwards" };
+        private readonly ButtonSetUp button;
+        readonly Texture2D Xtex;
+        readonly Texture2D Vtex;
+        readonly List<string> allSides = new List<string> { "Up", "Down", "Left", "Right", "Forward", "Backwards" };
         private bool areKeysWorking;
-        private Music music;
+        private readonly Music music;
 
         public Tutorial(GraphicsDevice GraphicsDevice, SwitchGameState _gameState, ContentManager Content,Music _music)
         {
             button = new ButtonSetUp(GraphicsDevice, Content);
-            cube = new Cube();
-            lang = new Text();
             welcome = new Welcome();
-            cube.Model = Content.Load<Model>("rubik");
             graphicsDevice = GraphicsDevice;
             font = Content.Load<SpriteFont>("font");
             music = _music;
@@ -161,10 +156,20 @@ namespace RubikCube
                             countBools++;
                     }
                     if (countBools == 6)
+                    {
                         areKeysWorking = true;
+                        button.BtnContinue.Update(false, gameTime);
+                        if (button.BtnContinue.IsClicked)
+                        {
+                            gameState.cube.Solve();
+                            currentStage = TutorialStage.Mouse;
+                        }
+                    }
                     break;
                 case TutorialStage.Mouse:
                     gameState.IsUsingKeyboard = false;
+                    gameState.IsUsingMouse = true;
+                    gameState.Update(gameTime, graphicsDevice,music);
                     break;
                 case TutorialStage.CodeLine:
                     gameState.IsUsingKeyboard = false;
@@ -191,7 +196,6 @@ namespace RubikCube
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Begin();
-            spriteBatch.DrawString(font, lang.TutorialTitle, new Vector2(graphicsDevice.Viewport.Width / 3f, 10), Color.Black);
             switch (currentStage)
             {
                 case TutorialStage.BasicUsage:
@@ -225,8 +229,11 @@ namespace RubikCube
                 case TutorialStage.Keyboard:
                     if (!areKeysWorking)
                     {
+                        spriteBatch.DrawString(font, "Try Pressing the U,D,R,L,F,B buttons", new Vector2(graphicsDevice.Viewport.Width / 3f, 40), Color.Black);
+                        spriteBatch.DrawString(font, "You can also hold Shift to rotate counter-clockwise", new Vector2(graphicsDevice.Viewport.Width / 3f, 70), Color.Black);
                         for (int i = 0; i < allSides.Count; i++)
                         {
+                           
                             spriteBatch.DrawString(font, allSides[i], new Vector2(0, 50 + Xtex.Height/5*i), Color.Black);
                             DrawXV(spriteBatch, allSides[i], 50 + Xtex.Height/5*i);
                         }
@@ -234,12 +241,17 @@ namespace RubikCube
                     else
                     {
                         spriteBatch.DrawString(font, "Seems you mastered the art of pressing buttons",
-                            new Vector2(graphicsDevice.Viewport.Width / 3f, 50), Color.Black);
+                            new Vector2(graphicsDevice.Viewport.Width / 3f, 40), Color.Black);
+                        spriteBatch.DrawString(font, "Now Lets move on to the next method", new Vector2(graphicsDevice.Viewport.Width / 3f, 70), Color.Black);
+                        button.BtnContinue.Draw(spriteBatch);
                     }
                     break;
                 case TutorialStage.CodeLine:
                     break;
                 case TutorialStage.Mouse:
+                    spriteBatch.DrawString(font, "You can press C on the keyboard at any time to stop the camera", new Vector2(graphicsDevice.Viewport.Width / 8f, 30), Color.Black);
+                    spriteBatch.DrawString(font, "Once the camera isn't moving, you can use the mouse to rotate the cube!", new Vector2(graphicsDevice.Viewport.Width / 8f, 50), Color.Black);
+                    spriteBatch.DrawString(font, "Give it a try! Click a part, hold and move the mouse", new Vector2(graphicsDevice.Viewport.Width / 8f, 70), Color.Black);
                     break;
             }
             spriteBatch.End();
