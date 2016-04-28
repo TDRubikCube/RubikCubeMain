@@ -83,16 +83,12 @@ namespace RubikCube
         {
             Angle -= RotationSpeed;
             float sidePosition = Main.CubieSize;
-            //Debug.WriteLine("animAngle=     " + Angle);
-            //Debug.WriteLine("Angle " + MathHelper.ToRadians(Angle));
             float partOfRotation = 100f / RotationSpeed;
-            //Debug.WriteLine(partOfRotation + " = part");
             if (side == Vector3.Left)
             {
                 howManyTurns++;
                 foreach (int i in cubeState.FindCubiesOnSide(side, isClockWise))
                 {
-                    //Debug.WriteLine(i);
                     if (isClockWise)
                     {
                         RotateSide(i, MathHelper.PiOver2 / partOfRotation, 1.5f * sidePosition, -1.5f * sidePosition, 0, 'x');
@@ -181,9 +177,7 @@ namespace RubikCube
             }
             if (howManyTurns == (110 - RotationSpeed) / 10)
             {
-                //cubeConfig.CheckFaceColor();
                 CubeConfig.Rotate(side,isClockWise);
-                //cubeConfig.CheckFaceColor();
                 cubeState.Rotate(side, isClockWise);
                 howManyTurns = 0;
             }

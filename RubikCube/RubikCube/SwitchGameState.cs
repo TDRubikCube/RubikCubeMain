@@ -982,7 +982,6 @@ namespace RubikCube
                     effect.Projection = projection;
                 }
                 mesh.Draw();
-
             }
         }
 
