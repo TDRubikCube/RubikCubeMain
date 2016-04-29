@@ -229,7 +229,7 @@ namespace RubikCube
         {
             //loads the main classes
             gameState = new SwitchGameState(GraphicsDevice, graphics, Content, music);
-            music = new Music(graphics, GraphicsDevice, Content);
+            music = new Music(Content);
             button = new ButtonSetUp(graphics, GraphicsDevice, Content);
             clocks = new Clocks();
             

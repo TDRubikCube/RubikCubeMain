@@ -545,7 +545,7 @@ namespace RubikCube
             //necesary update of the textBox class
             textbox.Update(keyboardState, oldKeyboardState, gameTime, mono, AlgOrder, camera, cube);
             //checks whether should scramble or not
-            if (ShouldRotate || solve.ShouldScramble)
+            if (ShouldRotate)
             {
                 //create the scramble sequenece
                 cube.Scramble();
@@ -553,7 +553,6 @@ namespace RubikCube
                 AlgOrder += cube.ScrambleResult;
                 //disable the flag that activates scramble
                 ShouldRotate = false;
-                solve.ShouldScramble = false;
             }
             //check for click on each of the stopper options
             CheckClickOnStopper();

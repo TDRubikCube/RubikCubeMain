@@ -12,8 +12,6 @@ namespace RubikCube
 
         public Tutorial(ContentManager content)
         {
-            var welcome = new Welcome();
-            welcome.Show();
             lang = new Text();
             font = content.Load<SpriteFont>("font");
         }
