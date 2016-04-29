@@ -254,7 +254,8 @@ namespace RubikCube
         /// rotate the back side
         /// </summary>
         /// <param name="isClockWise"></param>
-        private void BackTurn(bool isClockWise){
+        private void BackTurn(bool isClockWise)
+        {
             //turn the axis on which the face rotates
             TurnAxis(ref back, isClockWise);
 

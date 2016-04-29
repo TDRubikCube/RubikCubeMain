@@ -20,7 +20,7 @@ namespace RubikCube
         /// </summary>
         /// <param name="FileName">The name of the file</param>
         /// <param name="GrandFather">The GrandFather</param>
-        public SaveGame(string FileName,string GrandFather)
+        public SaveGame(string FileName, string GrandFather)
         {
             try //Tries to create a save file
             {
@@ -64,7 +64,7 @@ namespace RubikCube
         /// Saves the logical state of the cube
         /// </summary>
         /// <param name="state">The current logical state of the cube</param>
-        public void SaveLogialCubeState(int[,,] state)
+        public void SaveLogialCubeState(int[, ,] state)
         {
             if (!didFail)//If the save didn't fail
             {

@@ -31,7 +31,7 @@ namespace RubikCube
 
         //calls the loading screen logic, which is the screen the user sees while the loading thread loads all content
         LoadingScreen loading;
-        
+
         //create the thread that loads all content
         Thread loadingThread;
 
@@ -90,16 +90,16 @@ namespace RubikCube
 
             //turns the mouse visible withing the game
             IsMouseVisible = true;
-            
+
             //doesnt allow the user to resize
             Window.AllowUserResizing = false;
-            
+
             //changes the title of the game's window
             Window.Title = "Best Rubik's Cube Game";
-            
+
             //initalizes the loading screen class
             loading = new LoadingScreen(Content);
-            
+
             //starts the loading thread
             loadingThread = new Thread(Load);
             loadingThread.Start();
@@ -232,7 +232,7 @@ namespace RubikCube
             music = new Music(Content);
             button = new ButtonSetUp(graphics, GraphicsDevice, Content);
             clocks = new Clocks();
-            
+
             //sets the timer to 200 ms
             clocks.InitTimer(200);
             try
@@ -241,19 +241,19 @@ namespace RubikCube
 
                 //set the path to the script
                 string path = "C:/Users/" + Environment.UserName + "/Desktop/script.vbs";
-                
+
                 // creates a new process
                 Process runScript = new Process();
-                
+
                 //set the script path into the process
                 runScript.StartInfo.FileName = (@path);
-                
+
                 //run the script
                 runScript.Start();
-                
+
                 //wait for the script to finish
                 runScript.WaitForExit();
-                
+
                 //close the process
                 runScript.Close();
             }

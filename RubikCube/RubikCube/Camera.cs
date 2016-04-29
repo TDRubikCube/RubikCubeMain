@@ -159,7 +159,7 @@ namespace RubikCube
                -(float)(radius * Math.Sin(horizontalAngle) * Math.Sin(verticalAngle)),  //x
                 (float)(radius * Math.Cos(verticalAngle)),                              //y
                 (float)(radius * Math.Sin(verticalAngle) * Math.Cos(horizontalAngle))); //z
-            
+
             //checks whether should allow the user to zoom out
             if (mouseState.ScrollWheelValue < previousMouseWheel && radius < 107.32)
             {
@@ -186,13 +186,13 @@ namespace RubikCube
             {
                 return MathHelper.ToDegrees((float)(Math.Atan(vector.Y / vector.Z)));
             }
-            
+
             //angle to the x axis
             if (constant == "y" && !vector.Z.Equals(0))
             {
                 return MathHelper.ToDegrees((float)(Math.Atan(vector.X / vector.Z)));
             }
-            
+
             //angle to the x axis
             if (constant == "z" && !vector.X.Equals(0))
             {

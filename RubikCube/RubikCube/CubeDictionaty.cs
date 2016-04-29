@@ -65,7 +65,7 @@
         public const int YellowBottomLeft = 23;
         public const int YellowBottomMid = 20;
         public const int YellowBottomRight = 17;
-        
+
         // dictionary acording to index (location in array)
         //
         // 0 - BLUE WHITE 

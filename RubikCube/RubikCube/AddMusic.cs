@@ -104,11 +104,11 @@ namespace RubikCube
             string[] files = Directory.GetFiles("c:/users/" + Environment.UserName + "/Documents/RubikCube/Songs", "*", SearchOption.TopDirectoryOnly);
 
             //get the number of files
-            
+
             int fCount = files.Length;
 
             //add the songs to the list of songs
-            for (int i = 0; i <fCount ; i++)
+            for (int i = 0; i < fCount; i++)
             {
                 //get the name of the songs (since it gives the full path, the subsrtring changes it to just the name)
                 string name = files[i].Substring(36 + Environment.UserName.Length,

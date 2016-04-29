@@ -1029,38 +1029,6 @@ namespace RubikCube
             }
             return Vector3.Zero;
         }
-<<<<<<< HEAD
-=======
-        /// <summary>
-        /// Used for debugging, as an easy way to display text inside a bordor insidea debug message
-        /// </summary>
-        /// <param name="a"></param>
-        public void DebugBorders(string a)
-        {
-            string b = "~~~~~~~~~~~~~~";
-            if (a.Length < (b.Length * 2))
-            {
-                for (int i = 0; i < (a.Length) / 2; i++)
-                {
-                    b = b.Substring(1);
-                }
-                if ((a.Length % 2) == 1)
-                {
-                    b = b.Substring(1) + a + b;
-                }
-                else
-                {
-                    b += a + b;
-                }
-                Debug.WriteLine(b);
-              //Debug.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-            }
-            else
-            {
-                Debug.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-            }
-        }
->>>>>>> origin/Tamir's-branch
 
         #endregion
 
@@ -1320,7 +1288,7 @@ namespace RubikCube
         private Tuple<string, bool> CheckIndex(int i)
         {
             //check the cube dictionry to translate the index to a part of the cube
-            
+
             //if its 1 than its the green face
             if (i == 1)
             {
@@ -1373,7 +1341,7 @@ namespace RubikCube
 
             //the direction vector of the two points
             direction = farPoint - nearPoint;
-            
+
             //normalize the direction
             direction.Normalize();
 
@@ -1401,7 +1369,7 @@ namespace RubikCube
                 if (meshCenter.X < 0)
                 {
                     if (whichDirection == "down")
-                        return VectorToChar(camera.RealLeft) + 'i';
+                        return VectorToChar(camera.RealLeft) + 'I';
                     if (whichDirection == "up")
                         return VectorToChar(camera.RealLeft);
                 }
@@ -1410,7 +1378,7 @@ namespace RubikCube
                     if (whichDirection == "down")
                         return VectorToChar(camera.RealRight);
                     if (whichDirection == "up")
-                        return VectorToChar(camera.RealRight) + 'i';
+                        return VectorToChar(camera.RealRight) + 'I';
                 }
             }
             else if (whichFace == "blue")
@@ -1418,7 +1386,7 @@ namespace RubikCube
                 if (meshCenter.X > 0)
                 {
                     if (whichDirection == "down")
-                        return VectorToChar(camera.RealLeft) + 'i';
+                        return VectorToChar(camera.RealLeft) + 'I';
                     if (whichDirection == "up")
                         return VectorToChar(camera.RealLeft);
                 }
@@ -1427,7 +1395,7 @@ namespace RubikCube
                     if (whichDirection == "down")
                         return VectorToChar(camera.RealRight);
                     if (whichDirection == "up")
-                        return VectorToChar(camera.RealRight) + 'i';
+                        return VectorToChar(camera.RealRight) + 'I';
                 }
             }
             else if (whichFace == "yellow")
@@ -1435,7 +1403,7 @@ namespace RubikCube
                 if (meshCenter.Z > 1)
                 {
                     if (whichDirection == "down")
-                        return VectorToChar(camera.RealLeft) + 'i';
+                        return VectorToChar(camera.RealLeft) + 'I';
                     if (whichDirection == "up")
                         return VectorToChar(camera.RealLeft);
                 }
@@ -1444,7 +1412,7 @@ namespace RubikCube
                     if (whichDirection == "down")
                         return VectorToChar(camera.RealRight);
                     if (whichDirection == "up")
-                        return VectorToChar(camera.RealRight) + 'i';
+                        return VectorToChar(camera.RealRight) + 'I';
                 }
             }
             else if (whichFace == "white")
@@ -1452,7 +1420,7 @@ namespace RubikCube
                 if (meshCenter.Z < 1)
                 {
                     if (whichDirection == "down")
-                        return VectorToChar(camera.RealLeft) + 'i';
+                        return VectorToChar(camera.RealLeft) + 'I';
                     if (whichDirection == "up")
                         return VectorToChar(camera.RealLeft);
                 }
@@ -1461,7 +1429,7 @@ namespace RubikCube
                     if (whichDirection == "down")
                         return VectorToChar(camera.RealRight);
                     if (whichDirection == "up")
-                        return VectorToChar(camera.RealRight) + 'i';
+                        return VectorToChar(camera.RealRight) + 'I';
                 }
             }
             return "";

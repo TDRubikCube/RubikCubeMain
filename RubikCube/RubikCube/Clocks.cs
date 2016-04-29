@@ -10,34 +10,34 @@ namespace RubikCube
     {
         //The logical timer 
         private float timer;
-        
+
         //The miliseconds of the stopper
         private int mSeconds;
-        
+
         //The seconds of the stopper
         private int seconds;
-        
+
         //The minutes of the stopper
         private int minutes;
-        
+
         //The hours of the stopper
         private int hours;
-        
+
         //The hours to dsiplay
         string displayHours;
-        
+
         //The seconds to display
         string displayMinutes;
-        
+
         //The seconds to display
         string displaySeconds;
-        
+
         //The miliseconds to display
         string displayMSseconds;
-        
+
         //Marks if the stopper is paused
         private bool isStoperPaused;
-        
+
         //Marks whether the stopper should run
         private bool shouldStartStoper;
 
@@ -47,7 +47,7 @@ namespace RubikCube
         /// <param name="intervel">The intervel between "rings" of the timer</param>
         public void InitTimer(int intervel)
         {
-            timer = intervel;            
+            timer = intervel;
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace RubikCube
         public bool CallTimer(GameTime gameTime)
         {
             float elpased = gameTime.ElapsedGameTime.Milliseconds; //Sets elpased, depending on gameTime 
-           
+
             //decrease time from the timer
             timer -= elpased;
 

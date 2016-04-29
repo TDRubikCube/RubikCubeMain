@@ -37,7 +37,6 @@ namespace RubikCube
             meshTransforms = new Matrix[26];
             OriginalCubeDraw(); //Calls for the original state of the cube and draws it
             ScramblingVectors = new List<Vector3>();
-            model = null;
             CubeConfig = new CubeConfig();
         }
 
@@ -56,7 +55,7 @@ namespace RubikCube
             for (int i = 0; i < 25; i++)
             {
                 char currentChar = possibleTurns[rand.Next(0, 6)];
-                //Makes sure that neighbor turns won't cancle each other
+                //Makes sure that neighbor turns won't cancel each other
                 if (temp.Count >= 3)
                 {
                     if (currentChar == temp[temp.Count - 1] && temp[temp.Count - 2] == temp[temp.Count - 3] && currentChar == temp[temp.Count - 2])
@@ -104,7 +103,7 @@ namespace RubikCube
             Angle -= RotationSpeed; //Changes the angle of the side depending on the rotation speed
             float sidePosition = Main.CubieSize;
             float partOfRotation = 100f / RotationSpeed;
-            
+
             //Send directions to RotateSide based on the side
             #region turn each side
             if (side == Vector3.Left)
@@ -199,16 +198,16 @@ namespace RubikCube
                 }
             }
             #endregion
-           
+
             //When the program is done rotating
             if (howManyTurns == (110 - RotationSpeed) / 10)
             {
                 //rotate the colors
-                CubeConfig.Rotate(side,isClockWise);
-                
+                CubeConfig.Rotate(side, isClockWise);
+
                 //logical rotation of the cube
                 cubeState.Rotate(side, isClockWise);
-               
+
                 //reset the turn counter
                 howManyTurns = 0;
             }
@@ -261,6 +260,7 @@ namespace RubikCube
             set { meshTransforms = value; }
         }
         #endregion
+
         /// <summary>
         /// Gets and sets the results of the scramble
         /// </summary>

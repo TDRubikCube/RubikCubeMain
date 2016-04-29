@@ -160,7 +160,7 @@ namespace RubikCube
                     //set the temp state as the base state
                     tempState.SetStates(currentBaseState);
                 }
-                    //if it ran once, but didnt finish checking the first 12 states
+                //if it ran once, but didnt finish checking the first 12 states
                 else
                 {
                     //set the base state as the first of the 12 states
@@ -257,7 +257,7 @@ namespace RubikCube
                 //clear the list of states needed to check (since we copied it the other list)
                 StatesToCheck.Clear();
             }
-                //if its not the first run, and the first 12 states list isnt empty yet
+            //if its not the first run, and the first 12 states list isnt empty yet
             else if (FirstCheckRun.Count > 0)
             {
                 //remove the first state in it

@@ -8,13 +8,13 @@ namespace RubikCube
     {
         //calls the font file
         readonly SpriteFont font;
-        
+
         //counts the number of dots currently shown
         int totalDots = 1;
-        
+
         //checks if the Draw should start drawing the dots
         public bool ShouldStart;
-        
+
         //creates the limit of the timer, meaning after 500 ms, the timer will 
         //logically go off
         float timer = 500;
