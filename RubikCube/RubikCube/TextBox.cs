@@ -141,42 +141,57 @@ namespace RubikCube
 
             if ((state.IsKeyDown(Keys.Back)) && (Textbox.Length > 0)) //Code regarding the backspace button, and deleting text
             {
+                //adds the time passed between the frames to the counter
                 timeSincePress += gameTime.ElapsedGameTime.Milliseconds;
+
+                //checks if backspace was pressed on the last frame or the time passed is 250ms or higher
                 if ((oldState.IsKeyUp(Keys.Back) || (timeSincePress > 250)))
                 {
+                    //decresase the time a bit if it reached the limir
                     if (timeSincePress > 250)
                     {
                         timeSincePress = 225;
                     }
+
+                    //if there are letters that moved to the left and are not shown in the textbox
                     if ((TabPlace + MovedTo) > 0)
                     {
+                        //checks if the amount of letters currently shows is smaller or equal to the max number of letters allowed
                         if (Textbox.Length <= BoxSize)
                         {
+                            //put the tab back by 1 spot
                             TabPlace--;
                         }
+                        //if letters were moved both to the left and the right
                         else if ((MovedToRight() > 0 && (MovedTo > 0)))
                         {
+                            //if tab place is not at the begining, move him back
                             if (TabPlace > 0)
                             {
                                 TabPlace--;
                             }
+                            //decrease the number of letters that were moved to the right
                             else
                             {
                                 MovedTo--;
                             }
                         }
+                        //if letters were moved to the right but not to the left
                         else if (MovedToRight() > 0 && (MovedTo == 0))
                         {
                             TabPlace--;
                         }
+                        //if letters were moved left but not right
                         else if ((MovedToRight() == 0) && (MovedTo > 0))
                         {
                             MovedTo--;
                         }
+                        //remove the last letter in textbox
                         Textbox = Textbox.Remove(MovedTo + TabPlace, 1);
+
+                        //reset the tabtimer
                         tabTimer = 0;
                     }
-
                 }
             }
             else if (state.IsKeyDown(Keys.Right))//Code regarding the right arrow button, and moving the tab cursor
@@ -237,7 +252,7 @@ namespace RubikCube
 
             CheckForDeviation(mono); //Checks how to crop the box depending on the font.
             //Re-defies what part of the text box should be visible on screen, after CheckForDeviation
-            if (Textbox.Length > BoxSize && (MovedTo + BoxSize + MovedToRight()) == Textbox.Length) 
+            if (Textbox.Length > BoxSize && (MovedTo + BoxSize + MovedToRight()) == Textbox.Length)
             {
                 DrawBox = Textbox.Substring(MovedTo, BoxSize);
             }
@@ -286,7 +301,7 @@ namespace RubikCube
             MovedToRight();
             TabPlace = 0;
             //Adds the right letter based on the angle of the camera to realVectorBox
-            foreach (var s in Textbox) 
+            foreach (var s in Textbox)
             {
 
                 if (s == 'F')
@@ -318,8 +333,9 @@ namespace RubikCube
                     realVectorBox += "I";
                 }
             }
-<<<<<<< HEAD
+            //sets the limit of the loop
             int limit = realVectorBox.Length;
+
             //replace any double ii
             for (int i = 0; i < limit; i++)
             {
@@ -335,16 +351,14 @@ namespace RubikCube
                 }
             }
 
-=======
             //If the length of algOrder is 0, change the state of the next bools.
->>>>>>> origin/Tamir's-branch
             if (algOrder.Length == 0)
             {
                 EnterPressed = true;
                 startedRot = true;
             }
         }
-        
+
         /// <summary>
         /// Gets and Sets the state of GetRealVectorBox so it could be used outisde of the class TextBox
         /// </summary>

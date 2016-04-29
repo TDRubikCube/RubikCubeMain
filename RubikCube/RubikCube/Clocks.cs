@@ -5,23 +5,53 @@ namespace RubikCube
 {
     class Clocks
     {
+        //the logical timer 
         private float timer;
+        
+        //the miliseconds of the stopper
         private int mSeconds;
+        
+        //the seconds of the stopper
         private int seconds;
+        
+        //the minutes of the stopper
         private int minutes;
+        
+        //the hours of the stopper
         private int hours;
+        
+        // the hours to dsiplay
         string displayHours;
+        
+        //the seconds to display
         string displayMinutes;
+        
+        //the seconds to display
         string displaySeconds;
+        
+        //the miliseconds to display
         string displayMSseconds;
+        
+        //marks if the stopper is paused
         private bool isStoperPaused;
+        
+        //marks whether the stopper should run
         private bool shouldStartStoper;
 
+        /// <summary>
+        /// sets the timer according to the intervel
+        /// </summary>
+        /// <param name="intervel">the intervel between "rings" of the timer</param>
         public void InitTimer(int intervel)
         {
             timer = intervel;            
         }
 
+        /// <summary>
+        /// the timer function
+        /// </summary>
+        /// <param name="gameTime"></param>
+        /// <returns></returns>
         public bool CallTimer(GameTime gameTime)
         {
             float elpased = gameTime.ElapsedGameTime.Milliseconds;
