@@ -50,7 +50,7 @@ namespace RubikCube
                 doc.Load(fileName); //Loads the file into the doc
                 XmlElement boolElement = doc.CreateElement("bool");
                 XmlElement name = doc.CreateElement("name"); //Creates a new element in the doc named "name"
-                XmlElement value = doc.CreateElement("value")//Creates a new element in the doc named "value"
+                XmlElement value = doc.CreateElement("value");//Creates a new element in the doc named "value"
                 name.InnerText = boolName;
                 value.InnerText = boolValue;
                 boolElement.AppendChild(name);

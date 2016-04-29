@@ -855,6 +855,7 @@ namespace RubikCube
                 {
                     AlgOrder += textbox.GetRealVectorBox;
                     AllTimeAlgOrder += textbox.GetRealVectorBox;
+                    YAlgOrder = "";
                 }
             }
             mousePos = new Point(mouseState.X, mouseState.Y);
@@ -1076,7 +1077,7 @@ namespace RubikCube
                     b += a + b;
                 }
                 Debug.WriteLine(b);
-                //Debug.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+              //Debug.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             }
             else
             {
@@ -1109,20 +1110,28 @@ namespace RubikCube
                     {
                         //rotation right
                         if (centerOfClickedMesh.Y < 3)
-                            AlgOrder += "dI";
+                        {
+                            AlgOrder += "DI";
+                            AllTimeAlgOrder += "DI";
+                        }
                         else if (centerOfClickedMesh.Y > 4)
                         {
                             AlgOrder += "UI";
+                            AllTimeAlgOrder += "UI";
                         }
                     }
                     else
                     {
                         //rotation left
                         if (centerOfClickedMesh.Y < 3)
-                            AlgOrder += "d";
+                        {
+                            AlgOrder += "D";
+                            AllTimeAlgOrder += "D";
+                        }
                         else if (centerOfClickedMesh.Y > 4)
                         {
                             AlgOrder += "U";
+                            AllTimeAlgOrder += "U";
                         }
                     }
                 }
@@ -1144,10 +1153,12 @@ namespace RubikCube
                 if (diffY > 0)
                 {
                     AlgOrder += RotateWhichLayer(centerOfClickedMesh, currentFace, "down");
+                    AllTimeAlgOrder += RotateWhichLayer(centerOfClickedMesh, currentFace, "down");
                 }
                 else
                 {
                     AlgOrder += RotateWhichLayer(centerOfClickedMesh, currentFace, "up");
+                    AllTimeAlgOrder += RotateWhichLayer(centerOfClickedMesh, currentFace, "up");
                 }
             }
         }
