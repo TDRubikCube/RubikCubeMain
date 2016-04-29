@@ -5,155 +5,99 @@ using System.Xml;
 
 namespace RubikCube
 {
+    /// <summary>
+    /// Saves some elements of the game into the computer of the user
+    /// </summary>
     class SaveGame
     {
-        //create a new xmlDoc, which will be the save file
-        private readonly XmlDocument doc;
-
-        //the name of the save file
-        private readonly string fileName;
-
-        //the root which binds the bools together under it
-        private readonly string grandFather;
-
-        //a flag which represents whether the initializing failed or not
-        private readonly bool didFail;
-
+        private readonly XmlDocument doc; //An XML Document
+        private readonly string fileName; //The name of the file
+        private readonly string grandFather; //Contains all Vars from the same type
+        private readonly bool didFail; //Did the save fail
         /// <summary>
-        /// Saving the cube state and other information of the user's preferences
+        /// Constract SaveGame
+        /// Tries to save the game
         /// </summary>
-        /// <param name="FileName">the name of the save file (full path)</param>
-        /// <param name="GrandFather">the name of the grandfather root</param>
+        /// <param name="FileName">The name of the file</param>
+        /// <param name="GrandFather">The GrandFather</param>
         public SaveGame(string FileName,string GrandFather)
         {
-            //this is int "try" since its expreimental
-            try
+            try //Tries to create a save file
             {
-                //create a new xmlDoc
-                doc = new XmlDocument();
-
-                //get the file name
-                fileName = FileName;
-
-                //get the path to the file
-                Path.GetFullPath(fileName);
-
-                //load the file into the doc
-                doc.Load(fileName);
-
-                //set the grandfather
-                grandFather = GrandFather;
-
-                //save and close
+                doc = new XmlDocument(); //Sets dox as a XML file
+                fileName = FileName; //Sets the name of the file in fileName
+                Path.GetFullPath(fileName); //Gets the path of the file
+                doc.Load(fileName); //Loads the file to the dox
+                grandFather = GrandFather; //Sets the grandFather
                 EndingProt();
-
-                //since it reached the end, mark it as false
-                didFail = false;
+                didFail = false; //Notifies the game that the save did not fail
             }
-            catch (Exception)
+            catch (Exception) //If the game fails saving
             {
-                //since it failed mark as true
-                didFail = true;
+                didFail = true; //Notifies the game that the save failed
             }
 
         }
-
         /// <summary>
-        /// add a new bool to save in the file
+        /// Edits the XML document
         /// </summary>
-        /// <param name="boolName">name of the bool</param>
-        /// <param name="boolValue">the bool's value</param>
+        /// <param name="boolName">The name of the bool</param>
+        /// <param name="boolValue">The value of the bool</param>
         public void AddBool(string boolName, string boolValue)
         {
-            if (!didFail)
+            if (!didFail) //If the save did not fail
             {
-                //load the save file
-                doc.Load(fileName);
-
-                //create a new element of "bool"
+                doc.Load(fileName); //Loads the file into the doc
                 XmlElement boolElement = doc.CreateElement("bool");
-
-                //create a new element of "name"
-                XmlElement name = doc.CreateElement("name");
-
-                //create a new element of "value"
-                XmlElement value = doc.CreateElement("value");
-
-                //set bool name as the one given
+                XmlElement name = doc.CreateElement("name"); //Creates a new element in the doc named "name"
+                XmlElement value = doc.CreateElement("value");//Creates a new element in the doc named "value"
                 name.InnerText = boolName;
-
-                //set the bool value as the one given
                 value.InnerText = boolValue;
-
-                //set the name as a child of the bool
                 boolElement.AppendChild(name);
-
-                //set the value as a child of the bool
                 boolElement.AppendChild(value);
-
-                //set the bool as the child of the grandfather
                 doc.GetElementsByTagName(grandFather)[0].AppendChild(boolElement);
-
-                //save and close
                 EndingProt();
             }
         }
 
         /// <summary>
-        /// meant to save the state of the cube
+        /// Saves the logical state of the cube
         /// </summary>
-        /// <param name="state">state to save</param>
+        /// <param name="state">The current logical state of the cube</param>
         public void SaveLogialCubeState(int[,,] state)
         {
-            //it should be noted that this is a work in progress 
-
-            if (!didFail)
+            if (!didFail)//If the save didn't fail
             {
-                //load the file
-                doc.Load(fileName);
+                doc.Load(fileName); //Loads the file from the doc
+                XmlElement intElement = doc.CreateElement("");
             }
         }
-
         /// <summary>
-        /// load the bools from the save file
+        /// Loads bools
         /// </summary>
         /// <returns></returns>
         public List<Tuple<string, string>> LoadBools()
         {
-            //create the return value
             List<Tuple<string, string>> result = new List<Tuple<string, string>>();
             if (!didFail)
             {
-                //load the file
                 doc.Load(fileName);
-
-                //make a list of nodes, which contains all the elements named bool
                 XmlNodeList nodeList = doc.GetElementsByTagName("bool");
-
                 for (int i = 0; i < nodeList.Count; i++)
                 {
-                    //add each bool to the list of result
-                    result.Add(new Tuple<string, string>(nodeList[i].ChildNodes[0].InnerText, // the name of the bool
-                        nodeList[i].ChildNodes[1].InnerText)); // the value of the bool
+                    result.Add(new Tuple<string, string>(nodeList[i].ChildNodes[0].InnerText,
+                        nodeList[i].ChildNodes[1].InnerText));
                 }
             }
             return result;
         }
 
-        /// <summary>
-        /// save the file with the new changes
-        /// </summary>
         private void EndingProt()
         {
             if (!didFail)
             {
-                //open the stream
                 FileStream stream = new FileStream(fileName, FileMode.Truncate, FileAccess.Write, FileShare.ReadWrite);
-
-                //save
                 doc.Save(stream);
-
-                //close the stream
                 stream.Close();
             }
         }

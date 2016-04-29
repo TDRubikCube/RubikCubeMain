@@ -496,8 +496,9 @@ namespace RubikCube
             {
                 //create the scramble sequenece
                 cube.Scramble();
-                //add the result to algorder
+                //add the result to algorder and AllTimeAlgOrder
                 AlgOrder += cube.ScrambleResult;
+                AllTimeAlgOrder += cube.ScrambleResult;
                 //disable the flag that activates scramble
                 ShouldRotate = false;
             }
@@ -824,6 +825,7 @@ namespace RubikCube
                 {
                     AlgOrder += textbox.GetRealVectorBox;
                     AllTimeAlgOrder += textbox.GetRealVectorBox;
+                    YAlgOrder = "";
                 }
             }
             mousePos = new Point(mouseState.X, mouseState.Y);
@@ -1027,6 +1029,38 @@ namespace RubikCube
             }
             return Vector3.Zero;
         }
+<<<<<<< HEAD
+=======
+        /// <summary>
+        /// Used for debugging, as an easy way to display text inside a bordor insidea debug message
+        /// </summary>
+        /// <param name="a"></param>
+        public void DebugBorders(string a)
+        {
+            string b = "~~~~~~~~~~~~~~";
+            if (a.Length < (b.Length * 2))
+            {
+                for (int i = 0; i < (a.Length) / 2; i++)
+                {
+                    b = b.Substring(1);
+                }
+                if ((a.Length % 2) == 1)
+                {
+                    b = b.Substring(1) + a + b;
+                }
+                else
+                {
+                    b += a + b;
+                }
+                Debug.WriteLine(b);
+              //Debug.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            }
+            else
+            {
+                Debug.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            }
+        }
+>>>>>>> origin/Tamir's-branch
 
         #endregion
 
@@ -1072,10 +1106,14 @@ namespace RubikCube
                     {
                         //if the y coordinate of the mesh clicked was smaller than 3, it was the down bottom, else it was the up
                         if (centerOfClickedMesh.Y < 3)
-                            AlgOrder += "dI";
+                        {
+                            AlgOrder += "DI";
+                            AllTimeAlgOrder += "DI";
+                        }
                         else if (centerOfClickedMesh.Y > 4)
                         {
                             AlgOrder += "UI";
+                            AllTimeAlgOrder += "UI";
                         }
                     }
                     else
@@ -1083,10 +1121,14 @@ namespace RubikCube
                         //rotation left
                         //if the y coordinate of the mesh clicked was smaller than 3, it was the down bottom, else it was the up
                         if (centerOfClickedMesh.Y < 3)
-                            AlgOrder += "d";
+                        {
+                            AlgOrder += "D";
+                            AllTimeAlgOrder += "D";
+                        }
                         else if (centerOfClickedMesh.Y > 4)
                         {
                             AlgOrder += "U";
+                            AllTimeAlgOrder += "U";
                         }
                     }
                 }
@@ -1117,10 +1159,12 @@ namespace RubikCube
                 if (diffY > 0)
                 {
                     AlgOrder += RotateWhichLayer(centerOfClickedMesh, currentFace, "down");
+                    AllTimeAlgOrder += RotateWhichLayer(centerOfClickedMesh, currentFace, "down");
                 }
                 else
                 {
                     AlgOrder += RotateWhichLayer(centerOfClickedMesh, currentFace, "up");
+                    AllTimeAlgOrder += RotateWhichLayer(centerOfClickedMesh, currentFace, "up");
                 }
             }
         }
