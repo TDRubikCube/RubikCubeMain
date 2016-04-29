@@ -26,7 +26,6 @@ namespace RubikCube
             catch (Exception)
             {
                 didFail = true;
-                throw;
             }
 
         }

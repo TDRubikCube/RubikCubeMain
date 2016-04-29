@@ -25,25 +25,42 @@ namespace RubikCube
         public int BoxSize = 20; //the boxsize in letters, not in vector.x!!! this size changes depending on the string vector.x size!
         public const int RealBoxSize = 266; //the real box size in vectors.x, const!
         public int TabPlace; //the logical place of the tab in the string
-        public bool FocusTextBox;
-        public Rectangle TextBoxRect;
-        public Texture2D GraphicBox;
-        int alpha;
+        public bool FocusTextBox; //Should the game focus on the textBox, and type in it.
+        public Rectangle TextBoxRect; //Rectangle around the textBox to find out when the user clicks on it
+        public Texture2D GraphicBox; //The image of the bordors of the textBox
+        int alpha; //The brightness of the bordors of the textbox
         Cube cube;
         Camera camera;
-        string algOrder;
-        bool startedRot;
-        string realVectorBox = "";
-        int orderLength;
-        bool didStart;
+        string algOrder; //The orders of the algoritems
+        bool startedRot; //Has the cube started to apply the algoritems from the textBox. 
+        string realVectorBox = ""; //The textbox with vector-algo
+        int oldAlgoLength; //the old length of algOrder
+        bool didStart; //Has the textBox started to send it's algo
         MouseState oldMouseState;
 
+        /// <summary>
+        /// A Text Box for writing algorithems in it, and applying them on the cube.
+        /// </summary>
+        /// <param name="_cube">The Cube</param>
+        /// <param name="content">The texture of the border of the TextBox</param>
         public TextBox(Cube _cube, ContentManager content)
         {
+            //loading the image and stuff of the textBox
             GraphicBox = content.Load<Texture2D>("pics/box2");
             TextBoxRect = new Rectangle(300, 375, 266, 20);
             cube = _cube;
+            //calling cube to use it
         }
+        /// <summary>
+        /// Updates and does all the logical calculations of the TextBox, decides what to draw, and where to put the Tab |
+        /// </summary>
+        /// <param name="state">The state of the Keyboard</param>
+        /// <param name="oldState">The old state of the Keyboard</param>
+        /// <param name="gameTime">Time since the Game started running</param>
+        /// <param name="mono">The Mono-Space font</param>
+        /// <param name="algorder">The order of the algorithem</param>
+        /// <param name="_camera">The Camera</param>
+        /// <param name="_cube">The Cube</param>
         public void Update(KeyboardState state, KeyboardState oldState, GameTime gameTime, SpriteFont mono, string algorder, Camera _camera, Cube _cube)
         {
             //check
@@ -51,7 +68,7 @@ namespace RubikCube
             MouseState mouse = Mouse.GetState();
             Point mousePos = new Point(mouse.X, mouse.Y);
             if (mouse.LeftButton == ButtonState.Pressed &&
-                oldMouseState.LeftButton == ButtonState.Released)
+                oldMouseState.LeftButton == ButtonState.Released) //If the user click on the textBox, focus on it
             {
                 if (TextBoxRect.Contains(mousePos))
                 {
@@ -62,11 +79,9 @@ namespace RubikCube
             }
             camera = _camera;
             algOrder = algorder;
-            if (state.IsKeyDown(Keys.D1) && oldState.IsKeyUp(Keys.D1))
-                Debug.WriteLine("");
-            if (DrawBox.Count() == 0)
+            if (Textbox.Length == 0) //Stop rotating, if it's rotating
                 startedRot = false;
-            if ((algOrder.Length != orderLength) && (EnterPressed || didStart))
+            if ((algOrder.Length != oldAlgoLength) && (EnterPressed || didStart)) //Should it delete from the algo if the cube is rotating by the textBox
             {
                 didStart = true;
                 if (Textbox.Length == 1)
@@ -76,34 +91,30 @@ namespace RubikCube
                 }
                 else if (Textbox.Length > 0)
                 {
-                        Textbox = Textbox.Substring(1, Textbox.Length - 2);
+                    Textbox = Textbox.Substring(1, Textbox.Length - 2);
                     TabPlace = 0;
                 }
                 if (Textbox.Length == 0)
                     didStart = false;
-                orderLength = algOrder.Length;
+                oldAlgoLength = algOrder.Length;
             }
             //34
-            CheckForDeviation(mono);
-            tabTimer += gameTime.ElapsedGameTime.Milliseconds % 1000;
+            CheckForDeviation(mono); //checks length of the text, considering the font
+            tabTimer += gameTime.ElapsedGameTime.Milliseconds % 1000; //Timer of the Tab, decides if it should flash or not.
             //(Keys)(Enum.Parse(typeof(Keys), "A"));
-            string usedKeys = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            if (state.IsKeyDown(Keys.P) && oldState.IsKeyUp(Keys.P))
-            {
-                StartAlgo();
-            }
+            string usedKeys = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; //All the keys that you can type to the textBox
 
             if (FocusTextBox)
             {
-                for (int i = 0; i < usedKeys.Length; i++)
+                for (int i = 0; i < usedKeys.Length; i++) ///
                 {
                     CheckForClick(ref state, ref oldState, gameTime, (Keys)(Enum.Parse(typeof(Keys), usedKeys.Substring(i, 1)))); //converts string letter from usedKeys to Keys, and send to cheak.
                 }
-                CheckForClick(ref state, ref oldState, gameTime, Keys.Space);
-                CheckForClick(ref state, ref oldState, gameTime, Keys.OemSemicolon); //nope
+                CheckForClick(ref state, ref oldState, gameTime, Keys.Space); //checks if the Space bar is pressed 
+                CheckForClick(ref state, ref oldState, gameTime, Keys.OemSemicolon); //This is not the right char 
 
 
-                if (state.IsKeyDown(Keys.Enter) && oldState.IsKeyUp(Keys.Enter))
+                if (state.IsKeyDown(Keys.Enter) && oldState.IsKeyUp(Keys.Enter)) //If enter has been pressed, call StartAlgo to send the command 
                 {
                     StartAlgo();
                     //textbox = textbox.Insert(movedTo + tabPlace, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
@@ -128,7 +139,7 @@ namespace RubikCube
                 tabTimer = 0;
             }
 
-            if ((state.IsKeyDown(Keys.Back)) && (Textbox.Length > 0))
+            if ((state.IsKeyDown(Keys.Back)) && (Textbox.Length > 0)) //Code regarding the backspace button, and deleting text
             {
                 timeSincePress += gameTime.ElapsedGameTime.Milliseconds;
                 if ((oldState.IsKeyUp(Keys.Back) || (timeSincePress > 250)))
@@ -165,14 +176,10 @@ namespace RubikCube
                         Textbox = Textbox.Remove(MovedTo + TabPlace, 1);
                         tabTimer = 0;
                     }
-                    else
-                    {
-                        Console.Beep();
-                    }
 
                 }
             }
-            else if (state.IsKeyDown(Keys.Right))
+            else if (state.IsKeyDown(Keys.Right))//Code regarding the right arrow button, and moving the tab cursor
             {
                 timeSincePress += gameTime.ElapsedGameTime.Milliseconds;
                 if ((oldState.IsKeyUp(Keys.Right) || (timeSincePress > 250)))
@@ -193,13 +200,9 @@ namespace RubikCube
                         }
                         tabTimer = 0;
                     }
-                    else
-                    {
-                        Console.Beep();
-                    }
                 }
             }
-            else if (state.IsKeyDown(Keys.Left))
+            else if (state.IsKeyDown(Keys.Left))//Code regarding the left arrow button, and moving the tab cursor
             {
                 timeSincePress += gameTime.ElapsedGameTime.Milliseconds;
                 if ((oldState.IsKeyUp(Keys.Left) || (timeSincePress > 250)))
@@ -220,13 +223,9 @@ namespace RubikCube
                         }
                         tabTimer = 0;
                     }
-                    else
-                    {
-                        Console.Beep();
-                    }
-
                 }
             }
+            //Decides what part of the text box should be visible on screen
             if (Textbox.Length > BoxSize && (MovedTo + BoxSize + MovedToRight()) == Textbox.Length)
             {
                 DrawBox = Textbox.Substring(MovedTo, BoxSize);
@@ -236,18 +235,9 @@ namespace RubikCube
                 DrawBox = Textbox;
             }
 
-            //}
-            //else if (drawBox.Length < (boxSize - 1))
-            //{
-            //    if (mono.MeasureString(textbox.Substring(movedTo, drawBox.Length + 1)).X <= realBoxSize)
-            //    {
-            //        boxSize++;
-            //    }
-
-            //}
-            CheckForDeviation(mono);
-
-            if (Textbox.Length > BoxSize && (MovedTo + BoxSize + MovedToRight()) == Textbox.Length)
+            CheckForDeviation(mono); //Checks how to crop the box depending on the font.
+            //Re-defies what part of the text box should be visible on screen, after CheckForDeviation
+            if (Textbox.Length > BoxSize && (MovedTo + BoxSize + MovedToRight()) == Textbox.Length) 
             {
                 DrawBox = Textbox.Substring(MovedTo, BoxSize);
             }
@@ -257,6 +247,7 @@ namespace RubikCube
             }
             if (FocusTextBox)
             {
+                //Decides if the tab cursor should flash or not
                 if (tabTimer < 500)
                 {
                     physTab = "|";
@@ -274,25 +265,28 @@ namespace RubikCube
             {
                 tabTimer = 0;
             }
-            oldState = state;
+            oldState = state; //Defines the old state of the keyboard
 
             //END OF UPDATE
         }
+        /// <summary>
+        /// When called, clears all non-algorithm related chars from textbox, and sends the right command of the algorith
+        /// </summary>
         private void StartAlgo()
         {
-            didStart = false;
-            orderLength = algOrder.Length;
+            oldAlgoLength = algOrder.Length;
             realVectorBox = "";
             string nono = " ACEGHJKMNOPQSTVWXYZ";
-            TabPlace = 0;
-            for (int i = 0; i < nono.Length; i++)
+            TabPlace = 0; //sets the place of the the tab cursor to 0 to avoid problems 
+            for (int i = 0; i < nono.Length; i++) //clears all non-algorithm related chars
             {
                 Textbox = Textbox.Replace(nono[i].ToString(), "");
             }
             MovedTo = 0;
             MovedToRight();
             TabPlace = 0;
-            foreach (var s in Textbox)
+            //Adds the right letter based on the angle of the camera to realVectorBox
+            foreach (var s in Textbox) 
             {
 
                 if (s == 'F')
@@ -324,6 +318,7 @@ namespace RubikCube
                     realVectorBox += "I";
                 }
             }
+<<<<<<< HEAD
             int limit = realVectorBox.Length;
             //replace any double ii
             for (int i = 0; i < limit; i++)
@@ -340,30 +335,39 @@ namespace RubikCube
                 }
             }
 
+=======
+            //If the length of algOrder is 0, change the state of the next bools.
+>>>>>>> origin/Tamir's-branch
             if (algOrder.Length == 0)
             {
                 EnterPressed = true;
                 startedRot = true;
             }
-            Debug.WriteLine("Somthing's in the way");
         }
+        
+        /// <summary>
+        /// Gets and Sets the state of GetRealVectorBox so it could be used outisde of the class TextBox
+        /// </summary>
         public string GetRealVectorBox { get; set; }
+
+        /// <summary>
+        /// Gets and Sets the state of EnterPressed so it could be used outisde of the class TextBox
+        /// </summary>
         public bool EnterPressed { get; set; }
+        /// <summary>
+        /// checks length of the text, considering the font
+        /// </summary>
+        /// <param name="mono"></param>
         private void CheckForDeviation(SpriteFont mono)
         {
+            //Measures the vector length of the etxt in DrawBox using the mono-space font
             Vector2 boxVector = (mono.MeasureString(DrawBox));
             if (boxVector.X >= RealBoxSize)
             {
-                if (DrawBox.Length > 0)
-                {
-                    if (DrawBox.Last() == 'M')
-                        Debug.WriteLine("");
-                }
                 int check = 1;
-                Debug.WriteLine((mono.MeasureString(DrawBox.Substring(0, DrawBox.Length - check)).X));
+                //While the vector2 size of DrawBox using the mono-space font is not smaller then RealBoxSize
                 while ((mono.MeasureString(DrawBox.Substring(0, DrawBox.Length - check)).X) >= RealBoxSize)
                 {
-                    Debug.WriteLine("size of string" + mono.MeasureString(DrawBox.Substring(0, DrawBox.Length - check)).X);
                     if (TabPlace >= BoxSize)
                     {
                         TabPlace--;
@@ -378,19 +382,32 @@ namespace RubikCube
                 BoxSize++;
             }
         }
+        /// <summary>
+        /// Acts as a sort of Var, updates depending on the state of MovedTo, when called
+        /// </summary>
+        /// <returns></returns>
         private int MovedToRight()
         {
+            //The amount of chars outside from the right are depended on the amount of chars outisde from the left, and on the size of the box
             if ((Textbox.Length - BoxSize - MovedTo) <= 0)
             {
                 return 0;
             }
-            Debug.Write("");
             return Textbox.Length - BoxSize - MovedTo;
         }
+
+        /// <summary>
+        /// Checks for clicks of char keys, adds chars to the textbox depending on what was pressed
+        /// </summary>
+        /// <param name="keyboardState"></param>
+        /// <param name="oldKeyboardState"></param>
+        /// <param name="gameTime"></param>
+        /// <param name="key"></param>
         private void CheckForClick(ref KeyboardState keyboardState, ref KeyboardState oldKeyboardState, GameTime gameTime, Keys key)
         {
             if (keyboardState.IsKeyDown(key) && (keyboardState.IsKeyUp(Keys.LeftControl)) && (keyboardState.IsKeyUp(Keys.RightControl)))
             {
+                //This code is for when you press and hold a key
                 timeSinceLetterPress += gameTime.ElapsedGameTime.Milliseconds;
                 if (key != oldKey)
                 {
@@ -404,23 +421,28 @@ namespace RubikCube
                     {
                         timeSinceLetterPress = 225;
                     }
+                    //Adds the chars pressed to the textbox
                     Textbox = Textbox.Insert(MovedTo + TabPlace, KeyToChar(key, keyboardState, oldKeyboardState));
+                    //Decides if it should change the value of Tab place and MovedTo
                     if (TabPlace < BoxSize)
                     {
-                        if (TabPlace >= 52)
-                            Debug.Write("");
                         TabPlace++;
                     }
                     else
                     {
-                        if (TabPlace >= 52)
-                            Debug.Write("");
                         TabPlace = BoxSize;
                         MovedTo++;
                     }
                 }
             }
         }
+        /// <summary>
+        /// Checks for change between char keys, used for adding the press-and-hold affect for pressing char keys
+        /// </summary>
+        /// <param name="keyboardState"></param>
+        /// <param name="oldKeyboardState"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
         private bool CheakForKeyChange(KeyboardState keyboardState, KeyboardState oldKeyboardState, Keys key)
         {
             if (((keyboardState.IsKeyUp(key)) && (oldKeyboardState.IsKeyDown(key))) || (keyboardState.IsKeyDown(key) && oldKeyboardState.IsKeyUp(key)))
@@ -429,7 +451,11 @@ namespace RubikCube
             }
             return false;
         }
-
+        /// <summary>
+        /// Returns a char depending on the Vector3, to be used in the algorithm
+        /// </summary>
+        /// <param name="real"></param>
+        /// <returns></returns>
         public string VectorToChar(Vector3 real)
         {
             if (real == Vector3.Left)
@@ -456,10 +482,14 @@ namespace RubikCube
             {
                 return "D";
             }
-            Debug.WriteLine("VectorToChar returned null");
             return "";
 
         }
+        /// <summary>
+        /// Returns a vector3 depending on the char, to be used when working with the algorithm
+        /// </summary>
+        /// <param name="real"></param>
+        /// <returns></returns>
         public Vector3 CharToVector(string real)
         {
             if ((real == "l") || (real == "L"))
@@ -486,17 +516,25 @@ namespace RubikCube
             {
                 return Vector3.Down;
             }
-            Debug.WriteLine("CharToVector returned null");
             return Vector3.Zero;
         }
-
+        /// <summary>
+        /// Draws the text box on screen, as well as the tab cursor, and the image of the borders of the text box
+        /// </summary>
+        /// <param name="spriteBatch">The spriteBatch</param>
+        /// <param name="mono">Mono-space font</param>
+        /// <param name="font">Regular font</param>
+        /// <param name="tex">The textre of the borders of the text box</param>
         public void Draw(SpriteBatch spriteBatch, SpriteFont mono, SpriteFont font, Texture2D tex)
         {
             //265
-            // should it get to the if before this error
+            //Measures the vector size of DrawBox from start to the place of the tab cursor
             Vector2 tabVector = (mono.MeasureString(DrawBox.Substring(0, TabPlace)));
+            //takes only the X size of the vector, and changes the X size a bit
             tabVector = new Vector2((tabVector.X + 295), (375));
+
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+            //If the cube is currently rotating from the textbox, draws rectangles behind the text, in colors depending on what part of the algorithm is currently at use
             if (startedRot)
             {
                 bool shouldMakeBothGreen = false;
@@ -506,27 +544,33 @@ namespace RubikCube
                     {
                         if (DrawBox.Length > 1)
                         {
+                            //If the second char is ' or I, it should be made green as well
                             if ((DrawBox[1] == 'I' || DrawBox[1] == '\'') && (DrawBox[0] != 'I' && DrawBox[0] != '\''))
                             {
                                 shouldMakeBothGreen = true;
                                 spriteBatch.Draw(tex, new Rectangle(300 + 11, 375, 11, (int)mono.MeasureString(DrawBox[1].ToString()).Y), null,
+                                    //Draws the algorithm currently at use in green
                                Color.LimeGreen, 0f, new Vector2(0, 0), SpriteEffects.None, 0.3f);
                             }
                         }
                         spriteBatch.Draw(tex, new Rectangle(300, 375, 11, (int)mono.MeasureString(DrawBox[i].ToString()).Y), null,
+                            //Draws the algorithm currently at use in green
                            Color.LimeGreen, 0f, new Vector2(0, 0), SpriteEffects.None, 0.3f);
                     }
                     else if (!(i == 1 && shouldMakeBothGreen))
                     {
                         spriteBatch.Draw(tex, new Rectangle(300 + (i) * 11, 375, 11, (int)mono.MeasureString(DrawBox[i].ToString()).Y), null,
+                            //Draws the algorithm that's not currently at use in gray
                             Color.LightGray, 0f, new Vector2(0, 0), SpriteEffects.None, 0.3f);
                     }
                 }
             }
+            //If the textbox is on focus, meaning the user is using it, change the Alpha of the borders of the textbox
             if (FocusTextBox)
                 alpha = 250;
             else
                 alpha = 225;
+            //Draws the text inside the textBox, the tab cursor, and other text-related string
             spriteBatch.DrawString(font, "Enter your algorithm here:", new Vector2(300, 350), Color.Black);
             spriteBatch.DrawString(font, ("|"), new Vector2(300 + RealBoxSize, 375), Color.Red);
             spriteBatch.DrawString(mono, (DrawBox), new Vector2(300, 375), Color.Black, 0f, new Vector2(0, 0), 1f, SpriteEffects.None, 0.5f);
@@ -535,7 +579,13 @@ namespace RubikCube
 
             spriteBatch.End();
         }
-
+        /// <summary>
+        /// Returns a char based on the key sent, to be used when typing inside the textbox from keys
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="state"></param>
+        /// <param name="oldstate"></param>
+        /// <returns></returns>
         public string KeyToChar(Keys key, KeyboardState state, KeyboardState oldstate)
         {
 
