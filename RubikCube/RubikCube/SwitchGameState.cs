@@ -532,6 +532,11 @@ namespace RubikCube
                 AllTimeAlgOrder = "";
                 //reset yalgorder
                 YAlgOrder = "";
+                //resets the textbox and all the diffrent vars it includes
+                textbox.Textbox = "";
+                textbox.MovedTo = 0;
+                textbox.TabPlace = 0;
+                textbox.DrawBox = "";
                 //reset the cube itself
                 cube.Reset();
                 //debug that a reset just happened
