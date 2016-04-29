@@ -4,9 +4,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-
-/*
+using Microsoft.Xna.Framework.Input;                                  /*
 using System.Of[A].Down;                                            */
 
 namespace RubikCube
@@ -15,7 +13,6 @@ namespace RubikCube
     {
         public string Textbox = ""; // the entirety of what u wrote
         public string DrawBox = ""; // what u see on screen
-        int drawTab = 0; // physical place of tab in vector.x
         string physTab = ""; // the flashing tab
         public int MovedTo; // how much u moved to the right
         int timeSincePress; // time passed since last click
@@ -63,12 +60,11 @@ namespace RubikCube
         /// <param name="_cube">The Cube</param>
         public void Update(KeyboardState state, KeyboardState oldState, GameTime gameTime, SpriteFont mono, string algorder, Camera _camera, Cube _cube)
         {
-            //check
-            cube = _cube;
-            MouseState mouse = Mouse.GetState();
-            Point mousePos = new Point(mouse.X, mouse.Y);
+            cube = _cube; //Saves Cube
+            MouseState mouse = Mouse.GetState(); //Gets the state of the mouse
+            Point mousePos = new Point(mouse.X, mouse.Y); //Creates a poitn from the position of the mouse
             if (mouse.LeftButton == ButtonState.Pressed &&
-                oldMouseState.LeftButton == ButtonState.Released) //If the user click on the textBox, focus on it
+                oldMouseState.LeftButton == ButtonState.Released) //Checks If the user clicks on the textBox, focus on it
             {
                 if (TextBoxRect.Contains(mousePos))
                 {
@@ -84,12 +80,12 @@ namespace RubikCube
             if ((algOrder.Length != oldAlgoLength) && (EnterPressed || didStart)) //Should it delete from the algo if the cube is rotating by the textBox
             {
                 didStart = true;
-                if (Textbox.Length == 1)
+                if (Textbox.Length == 1) //If the textbox is made only of one character, delete it
                 {
                     Textbox = "";
                     TabPlace = 0;
                 }
-                else if (Textbox.Length > 0)
+                else if (Textbox.Length > 0) //delets the first char in the textbox
                 {
                     Textbox = Textbox.Substring(1, Textbox.Length - 2);
                     TabPlace = 0;
@@ -104,20 +100,20 @@ namespace RubikCube
             //(Keys)(Enum.Parse(typeof(Keys), "A"));
             string usedKeys = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; //All the keys that you can type to the textBox
 
-            if (FocusTextBox)
+            if (FocusTextBox) //If the user is focused on the textBox
             {
-                for (int i = 0; i < usedKeys.Length; i++) ///
+                for (int i = 0; i < usedKeys.Length; i++) //Checks each char button to see if it was pressed
                 {
-                    CheckForClick(ref state, ref oldState, gameTime, (Keys)(Enum.Parse(typeof(Keys), usedKeys.Substring(i, 1)))); //converts string letter from usedKeys to Keys, and send to cheak.
+                    //Converts string chars from usedKeys to Keys, and send to check.
+                    CheckForClick(ref state, ref oldState, gameTime, (Keys)(Enum.Parse(typeof(Keys), usedKeys.Substring(i, 1))));
                 }
-                CheckForClick(ref state, ref oldState, gameTime, Keys.Space); //checks if the Space bar is pressed 
+                CheckForClick(ref state, ref oldState, gameTime, Keys.Space); //checks if the Space bar has been pressed 
                 CheckForClick(ref state, ref oldState, gameTime, Keys.OemSemicolon); //This is not the right char 
 
 
                 if (state.IsKeyDown(Keys.Enter) && oldState.IsKeyUp(Keys.Enter)) //If enter has been pressed, call StartAlgo to send the command 
                 {
                     StartAlgo();
-                    //textbox = textbox.Insert(movedTo + tabPlace, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
                 }
                 else
                 {
@@ -144,39 +140,39 @@ namespace RubikCube
                 //adds the time passed between the frames to the counter
                 timeSincePress += gameTime.ElapsedGameTime.Milliseconds;
 
-                //checks if backspace was pressed on the last frame or the time passed is 250ms or higher
+                //Checks if backspace was pressed on the last frame or the time passed is 250ms or higher
                 if ((oldState.IsKeyUp(Keys.Back) || (timeSincePress > 250)))
                 {
-                    //decresase the time a bit if it reached the limir
+                    //Decresase the time a bit if it reached the limit
                     if (timeSincePress > 250)
                     {
                         timeSincePress = 225;
                     }
 
-                    //if there are letters that moved to the left and are not shown in the textbox
+                    //If there are letters that moved to the left and are not shown in the textbox
                     if ((TabPlace + MovedTo) > 0)
                     {
-                        //checks if the amount of letters currently shows is smaller or equal to the max number of letters allowed
+                        //Checks if the amount of letters currently shows is smaller or equal to the max number of letters allowed
                         if (Textbox.Length <= BoxSize)
                         {
-                            //put the tab back by 1 spot
+                            //Move the tab back by a spot
                             TabPlace--;
                         }
-                        //if letters were moved both to the left and the right
+                        //If letters were moved both to the left and the right
                         else if ((MovedToRight() > 0 && (MovedTo > 0)))
                         {
-                            //if tab place is not at the begining, move him back
+                            //If tab place is not at the begining, move him back
                             if (TabPlace > 0)
                             {
                                 TabPlace--;
                             }
-                            //decrease the number of letters that were moved to the right
+                            //Decrease the number of letters that were moved to the right
                             else
                             {
                                 MovedTo--;
                             }
                         }
-                        //if letters were moved to the right but not to the left
+                        //If letters were moved to the right but not to the left
                         else if (MovedToRight() > 0 && (MovedTo == 0))
                         {
                             TabPlace--;
@@ -186,98 +182,124 @@ namespace RubikCube
                         {
                             MovedTo--;
                         }
-                        //remove the last letter in textbox
+                        //Remove the last letter in textbox
                         Textbox = Textbox.Remove(MovedTo + TabPlace, 1);
 
-                        //reset the tabtimer
+                        //Reset the tabtimer
                         tabTimer = 0;
                     }
                 }
             }
             else if (state.IsKeyDown(Keys.Right))//Code regarding the right arrow button, and moving the tab cursor
             {
+                //adds the time passed between the frames to the counter
                 timeSincePress += gameTime.ElapsedGameTime.Milliseconds;
+                //Checks if backspace was pressed on the last frame or the time passed is 250ms or higher
                 if ((oldState.IsKeyUp(Keys.Right) || (timeSincePress > 250)))
                 {
+                    //If the place of the tab cursor isn't at the end of box, and there are chars outside the box on the right
                     if (!((TabPlace == BoxSize) && (MovedToRight() == 0)))
                     {
+                        //Decresase the time a bit if it reached the limit
                         if (timeSincePress > 250)
                         {
                             timeSincePress = 225;
                         }
+                        //If the tab cursor is in the end of the box, and there are chars outside the box on the right
                         if ((TabPlace == BoxSize) && (MovedToRight() > 0))
                         {
+                            //Moved the text left
                             MovedTo++;
                         }
+                        //If the tab cursor is not at the end of the box and not at the end
                         else if ((TabPlace < BoxSize) && (Textbox.Length - TabPlace > 0))
                         {
+                            //Move the tab right
                             TabPlace++;
                         }
+                        //Reset the tabtimer
                         tabTimer = 0;
                     }
                 }
             }
             else if (state.IsKeyDown(Keys.Left))//Code regarding the left arrow button, and moving the tab cursor
             {
+                //adds the time passed between the frames to the counter
                 timeSincePress += gameTime.ElapsedGameTime.Milliseconds;
+                //Checks if backspace was pressed on the last frame or the time passed is 250ms or higher
                 if ((oldState.IsKeyUp(Keys.Left) || (timeSincePress > 250)))
                 {
+                    //If the tab cursor is not at the start of the textbox
                     if (MovedTo + TabPlace > 0)
                     {
+                        //Decresase the time a bit if it reached the limit
                         if (timeSincePress > 250)
                         {
                             timeSincePress = 225;
                         }
+                        //If the tab cursor is not in 0
                         if (TabPlace > 0)
                         {
+                            //move the tab left
                             TabPlace--;
                         }
+                        //If the tab cursor is at 0, but not at the start of the textbox
                         if ((TabPlace == 0) && (MovedTo > 0))
                         {
+                            //Move the textBox left
                             MovedTo--;
                         }
+                        //Reset the tabtimer
                         tabTimer = 0;
                     }
                 }
             }
             //Decides what part of the text box should be visible on screen
-            if (Textbox.Length > BoxSize && (MovedTo + BoxSize + MovedToRight()) == Textbox.Length)
+            if (Textbox.Length > BoxSize && (MovedTo + BoxSize + MovedToRight()) == Textbox.Length)//If the length of the box is bigger then it's size on screen
             {
+                //Creates Drawbox based on the amount the textbox moved to.
                 DrawBox = Textbox.Substring(MovedTo, BoxSize);
             }
-            else
+            else //If the box is not bigger then it's size on screen
             {
+                //Make DrawBox be equal to TextBox
                 DrawBox = Textbox;
             }
 
             CheckForDeviation(mono); //Checks how to crop the box depending on the font.
+
             //Re-defies what part of the text box should be visible on screen, after CheckForDeviation
-            if (Textbox.Length > BoxSize && (MovedTo + BoxSize + MovedToRight()) == Textbox.Length)
+            if (Textbox.Length > BoxSize && (MovedTo + BoxSize + MovedToRight()) == Textbox.Length)//If the length of the box is bigger then it's size on screen
             {
+                //Creates Drawbox based on the amount the textbox moved to.
                 DrawBox = Textbox.Substring(MovedTo, BoxSize);
             }
-            else
+            else //If the box is not bigger then it's size on screen
             {
+                //Make DrawBox be equal to TextBox
                 DrawBox = Textbox;
             }
-            if (FocusTextBox)
+            if (FocusTextBox) //If the user is focused on the text box
             {
                 //Decides if the tab cursor should flash or not
                 if (tabTimer < 500)
                 {
+                    //Makes it so the tab cursor could be seen
                     physTab = "|";
                 }
                 else
                 {
+                    //Makes it so the tab cursor couldn't be seen
                     physTab = "";
                 }
             }
-            else
+            else //If the user isn't focused on the textbox, don't show the tab cursor
             {
                 physTab = "";
             }
             if (tabTimer >= 1000)
             {
+                //Resets the timer of the tab cursor if it's too big
                 tabTimer = 0;
             }
             oldState = state; //Defines the old state of the keyboard
@@ -297,9 +319,10 @@ namespace RubikCube
             {
                 Textbox = Textbox.Replace(nono[i].ToString(), "");
             }
-            MovedTo = 0;
+            MovedTo = 0; //Sets the value of Moved to to 0 to avoid problems
             MovedToRight();
-            TabPlace = 0;
+            TabPlace = 0; //Sets the place of the the tab cursor to 0 again, to avoid problems 
+
             //Adds the right letter based on the angle of the camera to realVectorBox
             foreach (var s in Textbox)
             {
@@ -336,13 +359,13 @@ namespace RubikCube
             //sets the limit of the loop
             int limit = realVectorBox.Length;
 
-            //replace any double ii
+            //Deletes any double I's in the text
             for (int i = 0; i < limit; i++)
             {
                 realVectorBox = realVectorBox.Replace("II", "I");
             }
 
-            //removes any useless i
+            //removes any useless I's at the start of the text box
             if (realVectorBox.Length > 0)
             {
                 if (realVectorBox[0] == 'I')
@@ -425,6 +448,7 @@ namespace RubikCube
                 timeSinceLetterPress += gameTime.ElapsedGameTime.Milliseconds;
                 if (key != oldKey)
                 {
+                    //Resets the timer
                     timeSinceLetterPress = 0;
                 }
                 oldKey = key;
@@ -596,9 +620,9 @@ namespace RubikCube
         /// <summary>
         /// Returns a char based on the key sent, to be used when typing inside the textbox from keys
         /// </summary>
-        /// <param name="key"></param>
-        /// <param name="state"></param>
-        /// <param name="oldstate"></param>
+        /// <param name="key">The current key</param>
+        /// <param name="state">The state of the keyboard</param>
+        /// <param name="oldstate">The old state of the keyboard</param>
         /// <returns></returns>
         public string KeyToChar(Keys key, KeyboardState state, KeyboardState oldstate)
         {

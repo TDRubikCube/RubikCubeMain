@@ -1,7 +1,11 @@
 ﻿namespace RubikCube
 {
+    /// <summary>
+    /// Responsible for all text shown in the program, and showing the text in the right language
+    /// </summary>
     class Text
     {
+        //List of diffrent strings for diffrent lines of text in the game
         public string MainTitle;
         public string OptionsTitle;
         public string OptionsAddMusic;
@@ -16,13 +20,18 @@
         public string FreePlayStopperResume;
         public string FreePlayStopperReset;
 
-
+        /// <summary>
+        /// Constracts the Text
+        /// </summary>
         public Text()
         {
+            //English is the default language
             English();
         }
 
-
+        /// <summary>
+        /// List of all the diffrent text shown in the game, in the English language, and puts it in its matching string
+        /// </summary>
         public void English()
         {
             MainTitle = "Rubik's Cube -  Main Menu";
@@ -39,9 +48,12 @@
             FreePlayStopperResume = "Resume Stopper";
             FreePlayStopperReset = "Reset Stopper";
         }
-
+        /// <summary>
+        /// List of all the diffrent text shown in the game, in the Hebrew language, and puts it in its matching string
+        /// </summary>
         public void Hebrew()
         {
+            //The text is written in reverse, and with spaces between each char, in order for it to show properly in the game
             MainTitle = "י ש א ר  ט י ר פ ת - ת י ר ג נ ו ה  ה י ב ו ק";
             FreePlayTitle = "י ש פ ו ח  ק ח ש מ - ת י ר ג נ ו ה  ה י ב ו ק";
             OptionsTitle = "ת ו ר ד ג ה - ת י ר ג נ ו ה  ה י ב ו ק";
@@ -56,9 +68,12 @@
             FreePlayStopperResume = "ר פ ו ט ס  ך ש מ ה";
             FreePlayStopperReset = "ר פ ו ט ס  ס פ א";
         }
-
+        /// <summary>
+        /// List of all the diffrent text shown in the game, in the Russian language, and puts it in its matching string
+        /// </summary>
         public void Russian()
         {
+            //The text is written with spaces between each char, in order for it to show properly in the game
             MainTitle = "К у б и к  Р у б и к а   -   Г л а в н о е  M е н ю";
             FreePlayTitle = "К у б и к  Р у б и к а  -   С в о б о д н а я  И г р а";
             OptionsTitle = "К у б и к  Р у б и к а  -   Н а с т р о й к и";

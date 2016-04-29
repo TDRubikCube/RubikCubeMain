@@ -3,58 +3,61 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace RubikCube
 {
+    /// <summary>
+    /// Responsible for all clocks, timers and stopers in the program
+    /// </summary>
     class Clocks
     {
-        //the logical timer 
+        //The logical timer 
         private float timer;
         
-        //the miliseconds of the stopper
+        //The miliseconds of the stopper
         private int mSeconds;
         
-        //the seconds of the stopper
+        //The seconds of the stopper
         private int seconds;
         
-        //the minutes of the stopper
+        //The minutes of the stopper
         private int minutes;
         
-        //the hours of the stopper
+        //The hours of the stopper
         private int hours;
         
-        // the hours to dsiplay
+        //The hours to dsiplay
         string displayHours;
         
-        //the seconds to display
+        //The seconds to display
         string displayMinutes;
         
-        //the seconds to display
+        //The seconds to display
         string displaySeconds;
         
-        //the miliseconds to display
+        //The miliseconds to display
         string displayMSseconds;
         
-        //marks if the stopper is paused
+        //Marks if the stopper is paused
         private bool isStoperPaused;
         
-        //marks whether the stopper should run
+        //Marks whether the stopper should run
         private bool shouldStartStoper;
 
         /// <summary>
-        /// sets the timer according to the intervel
+        /// Sets the timer according to the intervel
         /// </summary>
-        /// <param name="intervel">the intervel between "rings" of the timer</param>
+        /// <param name="intervel">The intervel between "rings" of the timer</param>
         public void InitTimer(int intervel)
         {
             timer = intervel;            
         }
 
         /// <summary>
-        /// the timer function
+        /// The timer function
         /// </summary>
         /// <param name="gameTime"></param>
         /// <returns></returns>
         public bool CallTimer(GameTime gameTime)
         {
-            float elpased = gameTime.ElapsedGameTime.Milliseconds;
+            float elpased = gameTime.ElapsedGameTime.Milliseconds; //Sets elpased, depending on gameTime 
             timer -= elpased;
             if (timer < 0)
             {
@@ -64,15 +67,19 @@ namespace RubikCube
             return false;
         }
 
+        /// <summary>
+        /// Updates the stoper tyo show the right time
+        /// </summary>
+        /// <param name="gameTime"></param>
         public void UpdateStoper(GameTime gameTime)
         {
-            //init display
+            //Init display
             displayHours = hours.ToString();
             displayMinutes = minutes.ToString();
             displaySeconds = seconds.ToString();
             displayMSseconds = mSeconds.ToString();
 
-            //add zeroes to each value if the num of digits is smaller than its max value
+            //Add zeroes to each value if the num of digits is smaller than its max value
             if (hours < 10)
                 displayHours = '0' + hours.ToString();
             if (minutes < 10)
@@ -89,20 +96,23 @@ namespace RubikCube
                 displayMSseconds += mSeconds;
             }
 
-            //start the logic of the stoper, adding time to each value accordingly
+            //Start the logic of the stoper, adding time to each value accordingly
             if (shouldStartStoper)
             {
                 mSeconds += gameTime.ElapsedGameTime.Milliseconds;
+                //Adds seconds
                 if (mSeconds >= 1000)
                 {
                     mSeconds = 0;
                     seconds++;
                 }
+                //Adds minutes
                 if (seconds >= 60)
                 {
                     seconds = 0;
                     minutes++;
                 }
+                //Adds hours
                 if (minutes >= 60)
                 {
                     minutes = 0;
@@ -110,19 +120,28 @@ namespace RubikCube
                 }
             }
         }
-
+        /// <summary>
+        /// draws the stoper
+        /// </summary>
+        /// <param name="spriteBatch">SpriteBatch</param>
+        /// <param name="font">Regular Font</param>
+        /// <param name="position">The position of the stoper</param>
         public void DrawStoper(SpriteBatch spriteBatch, SpriteFont font, Vector2 position)
         {
-            //draw the stoper
             spriteBatch.DrawString(font, displayHours + ":" + displayMinutes + ":" + displaySeconds + ":" + displayMSseconds, position, Color.Black);
         }
-
+        /// <summary>
+        /// Starts the stoper
+        /// </summary>
         public void StartStoper()
         {
             if (!isStoperPaused)
                 shouldStartStoper = true;
         }
 
+        /// <summary>
+        /// Stops the stoper, resets all of its values
+        /// </summary>
         public void StopStoper()
         {
             shouldStartStoper = false;
@@ -131,13 +150,17 @@ namespace RubikCube
             minutes = 0;
             hours = 0;
         }
-
+        /// <summary>
+        /// Pauses the stoper
+        /// </summary>
         public void PauseStoper()
         {
             isStoperPaused = true;
             shouldStartStoper = false;
         }
-
+        /// <summary>
+        /// Resumes the stoper after it was paused
+        /// </summary>
         public void ResumeStoper()
         {
             if (isStoperPaused)

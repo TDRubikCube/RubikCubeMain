@@ -1,5 +1,9 @@
 ﻿namespace RubikCube
 {
+    /// <summary>
+    /// A logical map of the cube and it's colors, with their matching values.
+    /// Made for the programmer, dosn't have any value for the program itself
+    /// </summary>
     class CubeDictionary
     {   //WHITE
         public const int WhiteTopLeft = 12;

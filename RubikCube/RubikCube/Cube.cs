@@ -35,7 +35,7 @@ namespace RubikCube
         {
             //loads the cube in its original state
             meshTransforms = new Matrix[26];
-            OriginalCubeDraw();
+            OriginalCubeDraw(); //Calls for the original state of the cube and draws it
             ScramblingVectors = new List<Vector3>();
             model = null;
             CubeConfig = new CubeConfig();
@@ -49,7 +49,7 @@ namespace RubikCube
         /// </summary>
         public void Scramble()
         {
-            ScrambleResult = "";
+            ScrambleResult = ""; //Resets the results of the scramble,
             List<char> temp = new List<char>();
             //All posible turns for the scramble
             List<char> possibleTurns = new List<char> { 'R', 'L', 'U', 'D', 'F', 'B', 'I' };
@@ -217,10 +217,10 @@ namespace RubikCube
         /// Decides what side to roatate and rotates it
         /// </summary>
         /// <param name="i"></param>
-        /// <param name="angle"></param>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="z"></param>
+        /// <param name="angle">The angle</param>
+        /// <param name="x">X value</param>
+        /// <param name="y">Y value</param>
+        /// <param name="z">Z value</param>
         /// <param name="rotationAxis"></param>
         private void RotateSide(int i, float angle, float x, float y, float z, char rotationAxis)
         {
