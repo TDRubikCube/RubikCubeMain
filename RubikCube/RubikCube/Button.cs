@@ -4,22 +4,32 @@ using Microsoft.Xna.Framework.Input;
 
 namespace RubikCube
 {
+    /// <summary>
+    /// Responsible of all the buttons
+    /// </summary>
     class Button
     {
-        readonly Texture2D texture;
-        Vector2 position;
-        Rectangle rectangle;
-        public Vector2 Size;
-        public bool IsClicked;
-        private readonly Clocks normalClocks;
-        private readonly Clocks muteClocks;
-        private bool clickDetected;
-        private MouseState oldMouseState;
+        readonly Texture2D texture; //Texture in use
+        Vector2 position; //Position of the button
+        Rectangle rectangle; //Rectangle of the button
+        public Vector2 Size; //Size of the button
+        public bool IsClicked; //If button was clicked, turns True
+        private readonly Clocks normalClocks; //The delay after you press a button for normal buttoms
+        private readonly Clocks muteClocks; //The delay after you press a button for the mute button
+        private bool clickDetected; //If a click was detected
+        private MouseState oldMouseState; //The old state of the mouse
 
+        /// <summary>
+        /// Constracts the Button
+        /// </summary>
+        /// <param name="newTexture"></param>
+        /// <param name="graphics"></param>
         public Button(Texture2D newTexture, GraphicsDevice graphics)
         {
+            //Creates a Clock for the delay of regular buttons, sets it to 500 mili-seconds
             normalClocks = new Clocks();
             normalClocks.InitTimer(500);
+            //Creates a Clock for the delay of the mute buttons, sets it to 20 mili-seconds
             muteClocks = new Clocks();
             muteClocks.InitTimer(20);
             texture = newTexture;

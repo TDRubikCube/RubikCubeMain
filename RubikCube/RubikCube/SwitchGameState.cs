@@ -533,7 +533,7 @@ namespace RubikCube
                 //reset yalgorder
                 YAlgOrder = "";
                 //reset the cube itself
-                cube.Solve();
+                cube.Reset();
                 //debug that a reset just happened
                 DebugBorders("Reset!");
             }
