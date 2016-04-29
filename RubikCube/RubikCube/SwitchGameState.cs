@@ -549,8 +549,9 @@ namespace RubikCube
             {
                 //create the scramble sequenece
                 cube.Scramble();
-                //add the result to algorder
+                //add the result to algorder and AllTimeAlgOrder
                 AlgOrder += cube.ScrambleResult;
+                AllTimeAlgOrder += cube.ScrambleResult;
                 //disable the flag that activates scramble
                 ShouldRotate = false;
             }
