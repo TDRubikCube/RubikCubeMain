@@ -11,9 +11,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using ButtonState = Microsoft.Xna.Framework.Input.ButtonState;
-using Keys = Microsoft.Xna.Framework.Input.Keys;
-
-/*
+using Keys = Microsoft.Xna.Framework.Input.Keys;   /*
 using System.Of[A].Down; */
 
 namespace RubikCube
@@ -895,20 +893,24 @@ namespace RubikCube
 
             }
         }
-
+        /// <summary>
+        /// Cancels the last command given, un-doing it
+        /// </summary>
         public void ControlZ()
         {
+            //If there's somthing to undo...
             if (AllTimeAlgOrder.Length > 0)
             {
-                Debug.WriteLine(cube.Angle);
                 int num = 0;
                 int length = AllTimeAlgOrder.Length - 1;
                 bool counterClockWise = false;
+                //If there's an I in the old algorithm, it should consider it too
                 if (AllTimeAlgOrder[0] != 'I' && ((AllTimeAlgOrder[length - num] == 'I') || (AllTimeAlgOrder[length - num] == 'i')))
                 {
                     num += 1;
                     counterClockWise = true;
                 }
+                //Returns the oposite vector to the char, to undo it
                 if (AllTimeAlgOrder[length - num] == 'L')
                 {
                     cube.Rotate(Vector3.Left, counterClockWise, AlgOrder);
@@ -934,27 +936,27 @@ namespace RubikCube
                     cube.Rotate(Vector3.Backward, counterClockWise, AlgOrder);
                 }
             }
-            else
-            {
-                Debug.WriteLine("AllTimeAlgOrder is 0!!!");
-            }
         }
-
+        /// <summary>
+        /// Re-does the last command given, doing it again
+        /// </summary>
         public void ControlY()
         {
+            //If there's somthing to re-do
             if (YAlgOrder.Length > 0)
             {
-                Debug.WriteLine(cube.Angle);
-                int num = 0;
                 int length = YAlgOrder.Length - 1;
                 bool counterClockWise = true;
+
                 if (YAlgOrder.Length > 1)
                 {
+                    //If there's an I in the old algorithm, it should consider it too
                     if (((YAlgOrder[YAlgOrder.Length - 2] == 'I') || (YAlgOrder[YAlgOrder.Length - 2] == 'i')))
                     {
                         counterClockWise = false;
                     }
                 }
+                //Returns a vector depending on the character, to re-do it
                 if (YAlgOrder[length] == 'L')
                 {
                     cube.Rotate(Vector3.Left, counterClockWise, AlgOrder);
@@ -979,18 +981,13 @@ namespace RubikCube
                 {
                     cube.Rotate(Vector3.Backward, counterClockWise, AlgOrder);
                 }
-                //if (cube.Angle == -100 && YAlgOrder.Length == 3)
-                //{
-                //    if (YAlgOrder[1] == 'I' || YAlgOrder[1] == 'I')
-                //        YAlgOrder = YAlgOrder[0].ToString() + YAlgOrder[2];
-                //}
-            }
-            else
-            {
-                Debug.WriteLine("YAlgOrder is 0!!!");
             }
         }
-
+        /// <summary>
+        /// Returns a char depending on the Vector3, to be used in the algorithm
+        /// </summary>
+        /// <param name="real"></param>
+        /// <returns></returns>
         public string VectorToChar(Vector3 real)
         {
             if (real == Vector3.Left)
@@ -1017,11 +1014,14 @@ namespace RubikCube
             {
                 return "D";
             }
-            Debug.WriteLine("VectorToChar returned null");
             return "";
 
         }
-
+        /// <summary>
+        /// Returns a vector3 depending on the char, to be used when working with the algorithm
+        /// </summary>
+        /// <param name="real"></param>
+        /// <returns></returns>
         public Vector3 CharToVector(string real)
         {
             if ((real == "l") || (real == "L"))
@@ -1048,10 +1048,12 @@ namespace RubikCube
             {
                 return Vector3.Down;
             }
-            Debug.WriteLine("CharToVector returned null");
             return Vector3.Zero;
         }
-
+        /// <summary>
+        /// Used for debugging, as an easy way to display text inside a bordor insidea debug message
+        /// </summary>
+        /// <param name="a"></param>
         public void DebugBorders(string a)
         {
             string b = "~~~~~~~~~~~~~~";
@@ -1172,7 +1174,6 @@ namespace RubikCube
                     cube.MeshTransforms[index] * world);
 
                 BoundingSphere bs = new BoundingSphere(meshCenter, Main.CubieSize / 2);
-                //Debug.WriteLine(meshCenter);
                 if (CheckIndex(index).Item2 && !previousDistanceToMesh.Equals(0))
                 {
                     if (FindDistance(bs, mouseState, previousDistanceToMesh) < closestFace.Item2)
@@ -1194,7 +1195,6 @@ namespace RubikCube
                         closestMesh = new Tuple<ModelMesh, float, Vector3>(mesh, distance, meshCenter);
                 }
             }
-            //Debug.WriteLine(faceClosestToRay + " here2");
             if (closestMesh == null)
                 return null;
             previousDistanceToMesh = closestMesh.Item2;
