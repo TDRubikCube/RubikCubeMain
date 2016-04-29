@@ -29,7 +29,7 @@ namespace RubikCube
 
         #region constructor
         /// <summary>
-        /// Constract the cube
+        /// Constracts the cube
         /// </summary>
         public Cube()
         {
