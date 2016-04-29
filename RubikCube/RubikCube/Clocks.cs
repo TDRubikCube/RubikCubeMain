@@ -58,9 +58,14 @@ namespace RubikCube
         public bool CallTimer(GameTime gameTime)
         {
             float elpased = gameTime.ElapsedGameTime.Milliseconds; //Sets elpased, depending on gameTime 
+           
+            //decrease time from the timer
             timer -= elpased;
+
+            //if the timer finished
             if (timer < 0)
             {
+                //reset and mark as finished
                 timer = 500;
                 return true;
             }

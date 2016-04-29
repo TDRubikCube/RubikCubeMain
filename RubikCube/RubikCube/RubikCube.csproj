@@ -98,10 +98,6 @@
     <Compile Include="Text.cs" />
     <Compile Include="TextBox.cs" />
     <Compile Include="Tutorial.cs" />
-    <Compile Include="Welcome.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Welcome.Designer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />
@@ -118,7 +114,6 @@
     <EmbeddedResource Include="AddMusic.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Welcome.resx" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
